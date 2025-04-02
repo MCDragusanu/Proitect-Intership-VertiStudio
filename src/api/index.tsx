@@ -1,9 +1,9 @@
 import { serve } from "bun";
 import { Database } from "bun:sqlite";
-import { seedDatabase } from "./seed";
+import { seedDatabase } from "../seed";
 import index from "./index.html";
-import { computeBitSlow } from "./bitslow";
-import Transaction from "./shared/transaction";
+import { computeBitSlow } from "../client/bitslow";
+import Transaction from "../shared/transaction";
 // Initialize the database
 const db = new Database(":memory:");
 

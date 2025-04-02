@@ -3,6 +3,11 @@ import Transaction from "@/shared/transaction";
 
 interface TransactionDao{
 
+    createSource() : void
+    deleteSource() : void
+    clearSource() : void
+    checkSource() : Boolean
+
     insertTransaction(transaction : Transaction) : Promise<Boolean>
     updateTransaction(transaction : Transaction) : Promise<Boolean>
 
@@ -11,6 +16,7 @@ interface TransactionDao{
     getUserTransactions(userUid : String)        : Promise<Transaction[] | null>
 
 
-    bitsAlreadyInUse(bit1 : number , bit2 : number , bit3 : number) : Promise<Boolean>
+    
     
 }
+export default TransactionDao

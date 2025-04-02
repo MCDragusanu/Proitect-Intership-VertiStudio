@@ -1,6 +1,6 @@
 import "./index.css";
 import { useState, useEffect } from "react";
-import Transaction from "./shared/transaction";
+import Transaction from "../shared/transaction";
 
 
 const ENDPOINT_URL = "http://localhost:3000/"; // NOTE: change this based on your environment.
