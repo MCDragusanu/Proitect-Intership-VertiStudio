@@ -5,6 +5,12 @@ import {
   WeakCredentials,
   UserCollision,
 } from "@/api/auth/AuthService";
+import {
+  JWTError,
+  JWTExpired,
+  JWTInvalid,
+  TokenPayLoad,
+} from "@/api/auth/JWTService";
 
 export const buildRefreshTokenCookie = (token: string): string => {
   return [
@@ -37,24 +43,75 @@ export const validateEmail = (email: string): boolean => {
   return emailValid;
 };
 
+// Check if the result is a TokenPayLoad (which has a userUid and userRole)
+export function isTokenPayLoad(
+  result: TokenPayLoad | JWTError
+): result is TokenPayLoad {
+  return (
+    (result as TokenPayLoad).userUid !== undefined &&
+    (result as TokenPayLoad).userRole !== undefined
+  );
+}
+
+// Check if the result is an AuthResult (which has a userUid and userRole)
 export function isAuthResult(
   result: AuthResult | AuthError
 ): result is AuthResult {
-  return (result as AuthResult).userUid !== undefined;
+  return (
+    (result as AuthResult).userUid !== undefined &&
+    (result as AuthResult).userRole !== undefined
+  );
 }
 
+// Check if the result is weak credentials (no userUid, userRole is missing)
 export function isWeakCredentials(
   result: AuthResult | AuthError
 ): result is WeakCredentials {
-  return (result as AuthResult).userUid !== undefined;
+  return (result as AuthError).message !== undefined; // Weak credentials should have an error message or specific property
 }
 
+// Check if the result is a UserCollision error (no userUid)
 export function isUserCollision(
   result: AuthResult | AuthError
 ): result is UserCollision {
-  return (result as AuthResult).userUid !== undefined;
+  return (result as AuthError).message === "User already exists"; // Assuming 'message' defines a user collision error
 }
-// Function to validate user profile fields (first name, last name, country, city, and phone number)
+
+// Check if the result is an expired JWT (no userUid, specific expiry-related error)
+export function isJWTExpired(
+  result: TokenPayLoad | JWTError
+): result is JWTExpired {
+  return (result as JWTError).message === "Token expired"; // Assuming JWT error has a specific message indicating expiration
+}
+
+// Check if the result is an invalid JWT (no userUid, invalid token-related error)
+export function isJWTInvalid(
+  result: TokenPayLoad | JWTError
+): result is JWTInvalid {
+  return (result as JWTError).message === "Invalid token"; // Assuming JWT error has a specific message indicating invalidity
+}
+
+// Check if the result is any JWT error (doesn't have a userUid, and has a message or error-related property)
+export function isJWTError(
+  result: TokenPayLoad | JWTError
+): result is JWTError {
+  return (result as JWTError).message !== undefined;
+} // Function to validate user profile fields (first name, last name, country, city, and phone number)
+
+export const extractAccessToken = (req: Request): string | null => {
+  const authorizationHeader = req.headers.get("Authorization");
+  if (!authorizationHeader) return null;
+  const match = authorizationHeader.match(/^Bearer (.+)$/);
+  return match ? match[1] : null;
+};
+
+export const extractRefreshToken = (req: Request): string | null => {
+  const cookies = req.headers.get("Cookie");
+  if (!cookies) return null;
+  const match = cookies.match(/refreshToken=([^;]+)/);
+  return match ? match[1] : null;
+};
+
 export const validateUserProfile = (
   firstName: string,
   lastName: string,
