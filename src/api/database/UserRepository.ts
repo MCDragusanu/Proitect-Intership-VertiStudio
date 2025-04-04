@@ -3,20 +3,19 @@ import UserCredentials from "@/shared/user_credentials";
 
 export default interface UserRepository{
 
-    initialise() : Promise<void>
-
-    insertUserProfile(profile : UserProfile)              : Promise<Boolean>
-    insertUserCredentials( credentials : UserCredentials) : Promise<Boolean>
     
-    updateUserCredentials( credentials : UserCredentials) : Promise<Boolean>
-    updateUserProfile(profile : UserProfile)              : Promise<Boolean>
+    insertProfile(profile : UserProfile)              : Promise<Boolean>
+    insertCredentials( credentials : UserCredentials) : Promise<Boolean>
     
-    getCredentialsByToken( refreshToken : string)         : Promise<UserCredentials | null>
-    getCredentialsByUid  (userUid : string)               : Promise<UserCredentials | null>
-    getCredentialsByEmail(userEmail : string)             : Promise<UserCredentials | null>
-    getUserProfileByUid(uuid : string)                    : Promise<UserProfile | null>
+    updateCredentials( credentials : UserCredentials) : Promise<Boolean>
+    updateProfile(profile : UserProfile)              : Promise<Boolean>
+    
+    getUserCredentialsByToken( refreshToken : string)         : Promise<UserCredentials | null>
+    getUserCredentialsByUid  (userUid : string)               : Promise<UserCredentials | null>
+    getUserCredentialsByEmail(userEmail : string)             : Promise<UserCredentials | null>
+    getProfileByUid(uuid : string)                    : Promise<UserProfile | null>
 
-    deleteUserProfileByUid(uuid : string)                 : Promise<Boolean>
-    deleteUserCredentialsByUid(userUid : string)          : Promise<Boolean>
-    deleteUserCredentialsByEmail(userEmail : string)      : Promise<Boolean>
+    deletProfileByUid(uuid : string)                 : Promise<Boolean>
+    deleteCredentialsByUid(userUid : string)          : Promise<Boolean>
+    deleteCredentialsByEmail(userEmail : string)      : Promise<Boolean>
 }

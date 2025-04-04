@@ -1,10 +1,11 @@
 interface UserProfile{
-    userUid : string,
-    firstName : string
-    lastName : string,
-    accountCreationDate : string,
-    country : string | null,
-    city : string | null,
+    user_uid : string,
+    first_name : string
+    last_name : string,
+    adress : string,
+    account_creation_date : string,
+    country : string ,
+    city : string,
 }
 
 

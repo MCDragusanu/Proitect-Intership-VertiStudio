@@ -4,46 +4,67 @@ import { SQLLiteUserRepository } from "../api/database_impl/UserRepositoryImpl";
 import { AuthServiceImpl } from "./auth_impl/AuthServiceImpl";
 import JWTServiceImpl from "./auth_impl/JWTServiceImpl";
 import UserRepository from "./database/UserRepository";
-import SQLiteUserCredentialsDao from "./database_impl/UserCredentialsDaoImpl";
-import SQLiteUserProfileDao from "./database_impl/UserProfileDaoImpl";
+import { SQLiteUserCredentialsDao } from "./database_impl/UserCredentialsDaoImpl";
+import { SQLiteUserProfileDao } from "./database_impl/UserProfileDaoImpl";
+import { Database } from "bun:sqlite";
+import { seedDatabase } from "./seed";
 
 export abstract class BackendModule {
   public readonly authService: AuthService;
   public readonly jwtService: JWTService;
   public readonly userRepository: UserRepository;
+  public readonly database: Database;
 
-  constructor(authService: AuthService, jwtService: JWTService, userRepo: UserRepository) {
+  constructor(
+    authService: AuthService,
+    jwtService: JWTService,
+    userRepo: UserRepository,
+    database: Database
+  ) {
     this.authService = authService;
     this.jwtService = jwtService;
     this.userRepository = userRepo;
+    this.database = database;
+  }
+
+  async initialize(): Promise<void> {
+    seedDatabase(this.database, {
+      clientCount: 30,
+      bitSlowCount: 50,
+      transactionCount: 50,
+      clearExisting: true,
+    });
+    await this.userRepository.initialise();
   }
 }
 
-class MainModule extends BackendModule {
-  private static instance: MainModule | null = null;
+// Factory function to create the module
+ function createBackendModule(): BackendModule {
+  const db = new Database(":memory:");
+  const credentialsDao = new SQLiteUserCredentialsDao();
+  const profileDao = new SQLiteUserProfileDao();
+  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
 
-  private constructor() {
-    const credentialsDao = new SQLiteUserCredentialsDao()
-    const profileDao = new SQLiteUserProfileDao()
-    const repository = new SQLLiteUserRepository(
-     credentialsDao,
-      profileDao
-    );
-    
-    super(new AuthServiceImpl(credentialsDao), new JWTServiceImpl(), repository);
-  }
-
-  public static getInstance(): MainModule {
-    if (!this.instance) {
-      this.instance = new MainModule();
-      this.instance.userRepository.initialise()
+  const authService = new AuthServiceImpl(credentialsDao);
+  const jwtService = new JWTServiceImpl();
+ 
+  seedDatabase(db , {clientCount : 20 , transactionCount : 20 , bitSlowCount : 20 , clearExisting : false})
+  const moduleInstance = new (class extends BackendModule {
+    constructor() {
+      super(authService, jwtService, repository, db);
     }
-    return this.instance;
-  }
+  })();
+
+  return moduleInstance;
 }
 
-// Export a single instance for global use
-export const module = MainModule.getInstance();
+// Singleton holder
+let instance: BackendModule | null = null;
+
+// Exported getter
 export function getModule(): BackendModule {
-  return module;
+  if (!instance) {
+    instance = createBackendModule();
+  }
+  return instance;
 }

@@ -29,7 +29,7 @@ export class AuthServiceImpl implements AuthService {
       const credentials = await this.credentialsDao.getCredentialsByEmail(
         userEmail
       );
-      
+      console.log(`Credentials found ${credentials}`)
       //if no credentials found return an error
       if (credentials === null) {
         throw new InvalidCredentials("Please enter valid credentials!");
@@ -38,7 +38,7 @@ export class AuthServiceImpl implements AuthService {
       //compare the 2 passwords
       const passwordMatch = await bcrypt.compare(
         plainPassword,
-        credentials.hashedPassword
+        credentials.hashed_password
       );
 
       //check the passwords
@@ -48,7 +48,8 @@ export class AuthServiceImpl implements AuthService {
 
       //return the result
       return {
-        userUid: credentials.userUid,
+        userUid: credentials.user_uid,
+        userRole : credentials.user_role,
         lastLogin: new Date().toDateString(),
       };
 
@@ -89,7 +90,8 @@ export class AuthServiceImpl implements AuthService {
 
       //issue an uid and return the result
       return{
-        userUid: randomUUIDv7(),
+        userRole : "client",
+        userUid  : randomUUIDv7(),
         lastLogin: new Date().toDateString(),
       };
     } catch (error: any) {

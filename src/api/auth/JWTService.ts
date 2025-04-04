@@ -31,10 +31,10 @@ interface TokenPayLoad{
 abstract class JWTService{
 
     //Method to generate a new Access token
-    abstract issueAccessToken(payload  : TokenPayLoad) : Promise<String>
+    abstract issueAccessToken(payload  : TokenPayLoad) : Promise<string>
 
     //Method to generate new Refresh Token
-    abstract issueRefreshToken(payload : TokenPayLoad) : Promise<String>
+    abstract issueRefreshToken(payload : TokenPayLoad) : Promise<string>
 
     //Returns the active duration in seconds of a Access Token
     abstract getAccessTokenDurationInSeconds() : Number

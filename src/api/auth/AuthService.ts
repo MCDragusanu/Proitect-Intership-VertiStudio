@@ -1,29 +1,44 @@
 
-//Interface designated to handle auth actions of users
+/** 
+*Interface designated to handle auth actions of users
+*/
 interface  AuthService{
     
-    //used to login the user
-    //returns an AuthResult with the userUid on SUCCESS
-    //returns Invalid Credentials if no account is found that matches the credentials
+    /**
+     * used to login the user
+     * @returns AuthResult if the action is SUCCESS
+     *@returns  AuthResult with the userUid on SUCCESS
+    * @returns  Invalid Credentials if no account is found that matches the credentials
+    */
     loginUser(userEmail : string , plainPassword : string) : Promise<AuthResult | AuthError>
 
-    //Used to register the user.
-    //returns UserCollision if the email is already in use
-    //returns WeakCredentials if the password is to weak
+    /**
+     * used to Register the user
+     * @returns AuthResult if the action is SUCCESS
+     * @returns  UserCollision if the email is already in use
+    *  @returns  WeakCredentials if the password is to weak
+    */
+    
     registerUser(userEmail : string , plainPassword : string) : Promise<AuthResult | AuthError>
 
-
-    //Returns the current password requirements needed for the registration
+    /**
+     * Returns the password strenght requirements needed for registration(i.e minimum number of Digits , UpperCase and Special Characters  ,)
+     * @return PasswordRequirements instance with the required properties of the password
+     */
     getPasswordRequirements() : PasswordRequirements
     
     
 }
+/**
+ * Enum containg all the flags for the password requirments
+ */
 enum PasswordFlags{
     DigitCount,
     SpecialCharacterCount,
     MinimumLength,
     UpperCaseCharactersCount
 }
+
 interface PasswordRequirements{
     digitCount : number,
     specialCharacterCount : number,
@@ -31,10 +46,15 @@ interface PasswordRequirements{
     upperCaseCharactersCount : number,
 }
 
-//Interface designated to standardized the return result of the Auth Service
+/** 
+*Interface designated to standardized the return result of the Auth Service
+*@field userUid : the UUID of the account that has been logged In
+*@field lastLogin : the timestamp of the login 
+*/
 interface AuthResult{
     userUid   : string,
     lastLogin : string,
+    userRole : "admin" | "client"
 }
 
 //Base class for all AuthErrors
