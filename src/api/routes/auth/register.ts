@@ -1,73 +1,27 @@
 import { getModule } from "@/api/module";
-import { AuthError, AuthResult, WeakCredentials } from "@/api/auth/AuthService";
+import {
+  AuthError,
+  AuthResult,
+  UserCollision,
+  WeakCredentials,
+} from "@/api/auth/AuthService";
 import { TokenPayLoad } from "@/api/auth/JWTService";
-
+import {
+  checkPasswordStrength,
+  validateEmail,
+  validatePhoneNumber,
+  isAuthResult,
+  isWeakCredentials,
+  buildRefreshTokenCookie,
+  validateUserProfile,
+  makeErrorResponse,
+  makeSuccessResponse,
+} from "./utils";
 import UserCredentials from "@/shared/user_credentials";
 import bcrypt from "bcrypt";
 import UserProfile from "@/shared/user_profile";
 
-const validateEmail = (email: string): boolean => {
-  const emailValid = /^[A-Za-z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  return emailValid;
-};
-
-const validatePassword = (password: string): boolean => {
-  const requirements = getModule().authService.getPasswordRequirements();
-  const digitCount =
-    [...password.matchAll(RegExp(/\d/g))].length === requirements.digitCount;
-  const specialCharacters =
-    [...password.matchAll(RegExp(/\W/g))].length ===
-    requirements.specialCharacterCount;
-  const upperCaseCharactersCount =
-    [...password.matchAll(RegExp(/[A-Z]/g))].length ===
-    requirements.upperCaseCharactersCount;
-  const length = password.length >= requirements.minimumLength;
-
-  return digitCount && specialCharacters && upperCaseCharactersCount && length;
-};
-function isAuthResult(result: AuthResult | AuthError): result is AuthResult {
-  return (result as AuthResult).userUid !== undefined;
-}
-
-function isWeakCredentials(
-  result: AuthResult | AuthError
-): result is WeakCredentials {
-  return (result as AuthResult).userUid !== undefined;
-}
-// Function to validate user profile fields (first name, last name, country, city, and phone number)
-export const validateUserProfile = (
-  firstName: string,
-  lastName: string,
-  country: string,
-  adress: string,
-  city: string,
-  phoneNumber: string
-): boolean => {
-  const isFirstNameValid = /^[A-Za-z]+$/.test(firstName); // Only letters
-  const isLastNameValid = /^[A-Za-z]+$/.test(lastName); // Only letters
-  const isCountryValid = country.length > 0;
-  const isCityValid = city.length > 0;
-  const adressIsValid = adress.length > 0;
-  const isPhoneNumberValid = validatePhoneNumber(phoneNumber);
-
-  return (
-    isFirstNameValid &&
-    isLastNameValid &&
-    adressIsValid &&
-    isCountryValid &&
-    isCityValid &&
-    isPhoneNumberValid
-  );
-};
-
-// Phone number validation using a regex (example for international format)
-export const validatePhoneNumber = (phoneNumber: string | null): boolean => {
-  if (!phoneNumber) return false;
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/; // International format
-  return phoneRegex.test(phoneNumber);
-};
-
-// Register function for Bun (with Response)
+// Main register handler
 export const register = async (req: Request): Promise<Response> => {
   const {
     userEmail,
@@ -78,30 +32,19 @@ export const register = async (req: Request): Promise<Response> => {
     country,
     city,
     phone_number,
-  } = await req.json(); // Parse JSON body
+  } = await req.json();
 
-  // Validate email and password
+  // Validate email
   if (!validateEmail(userEmail)) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "Invalid email format.",
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return makeErrorResponse(400, "Invalid email format.");
   }
 
-  if (!validatePassword(password)) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "Password is too weak",
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+  // Validate password
+  if (!checkPasswordStrength(password)) {
+    return makeErrorResponse(400, "Password is too weak.");
   }
 
-  //validate the profile fields
+  // Validate profile fields
   if (
     !validateUserProfile(
       first_name,
@@ -112,32 +55,25 @@ export const register = async (req: Request): Promise<Response> => {
       phone_number
     )
   ) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "Invalid user profile data.",
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
+    return makeErrorResponse(
+      400,
+      "The user profile does not contain all required fields."
     );
   }
 
-  let registerResult;
+  let registerResult: AuthResult | AuthError;
+
   try {
     registerResult = await getModule().authService.registerUser(
       userEmail,
       password
     );
   } catch (error) {
-    console.error("Register error:", error);
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "An error occurred during registration.",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    console.error("❌ Registration Error:", error);
+    return makeErrorResponse(500, "An error occurred during registration.");
   }
 
+  // Handle successful registration
   if (isAuthResult(registerResult)) {
     const tokenPayload: TokenPayLoad = {
       userUid: registerResult.userUid,
@@ -150,6 +86,7 @@ export const register = async (req: Request): Promise<Response> => {
     const refreshToken = await getModule().jwtService.issueRefreshToken(
       tokenPayload
     );
+    const now = new Date().toDateString();
 
     const credentials: UserCredentials = {
       user_uid: tokenPayload.userUid,
@@ -157,53 +94,43 @@ export const register = async (req: Request): Promise<Response> => {
       user_email: userEmail,
       hashed_password: await bcrypt.hash(password, 10),
       refresh_token: refreshToken,
-      phone_number: phone_number,
-      last_login: new Date().toDateString(),
+      phone_number,
+      last_login: now,
     };
 
     const profile: UserProfile = {
       user_uid: tokenPayload.userUid,
-      first_name: first_name,
-      last_name: last_name,
-      country: country,
-      adress: address,
-      city: city,
-      account_creation_date: credentials.last_login
-        ? credentials.last_login
-        : new Date().toDateString(),
+      first_name,
+      last_name,
+      country,
+      address,
+      city,
+      account_creation_date: now,
     };
 
     await getModule().userRepository.insertCredentials(credentials);
     await getModule().userRepository.insertProfile(profile);
 
-    return new Response(
-      JSON.stringify({
-        userUid: registerResult.userUid,
-        lastLogin: registerResult.lastLogin,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    const refreshCookie = buildRefreshTokenCookie(refreshToken);
+
+    return makeSuccessResponse(
+      tokenPayload.userUid,
+      profile.account_creation_date,
+      accessToken,
+      refreshCookie
     );
   }
 
-  // Handle AuthError
-  if (registerResult instanceof WeakCredentials) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: registerResult.message || "Registration failed.",
-      }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+  // Handle weak password case
+  if (registerResult instanceof UserCollision) {
+    return makeErrorResponse(401, "Email is already in use!");
+  } else if (registerResult instanceof WeakCredentials) {
+    return makeErrorResponse(401, "Password is too weak!");
   }
 
-  // If none of the above, return a generic error (although this shouldn't happen)
-  return new Response(
-    JSON.stringify({
-      type: "Error",
-      message: "Unexpected error occurred.",
-    }),
-    { status: 500, headers: { "Content-Type": "application/json" } }
+  // Catch-all fallback
+  return makeErrorResponse(
+    500,
+    "Unexpected error occurred while registering user."
   );
 };

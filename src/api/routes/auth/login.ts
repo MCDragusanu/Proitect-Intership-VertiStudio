@@ -1,56 +1,34 @@
 import { getModule } from "@/api/module";
 import { AuthError, AuthResult } from "@/api/auth/AuthService";
 import { TokenPayLoad } from "@/api/auth/JWTService";
-
-const validateCredentials = (email: string, password: string): boolean => {
-  const emailValid = /^[A-Za-z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  const passwordValid = password.length > 0;
-  return emailValid && passwordValid;
-};
-
-function isAuthResult(result: AuthResult | AuthError): result is AuthResult {
-  return (result as AuthResult).userUid !== undefined;
-}
+import {
+  buildRefreshTokenCookie,
+  makeErrorResponse,
+  makeSuccessResponse,
+  validateEmail,
+  isAuthResult,
+} from "./utils";
 
 export const login = async (req: Request): Promise<Response> => {
-  let body;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "Invalid JSON format.",
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
-  }
+  const { userEmail, password } = await req.json();
 
-  const { userEmail, password } = body;
-
-  if (!validateCredentials(userEmail, password)) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "Invalid Credentials Provided",
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+  if (
+    userEmail === null ||
+    password === null ||
+    password.length <= 0 ||
+    !validateEmail(userEmail)
+  ) {
+    return makeErrorResponse(400, "Invalid credentials provided!");
   }
 
   let loginResult;
   try {
     loginResult = await getModule().authService.loginUser(userEmail, password);
   } catch {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: "An error occurred during login.",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return makeErrorResponse(400, "An error occurred during login");
   }
 
+  //check if the result is success
   if (isAuthResult(loginResult)) {
     const tokenPayload: TokenPayLoad = {
       userUid: loginResult.userUid,
@@ -58,21 +36,20 @@ export const login = async (req: Request): Promise<Response> => {
     };
 
     try {
+      //begin updating the credentials
       const credentials =
         await getModule().userRepository.getUserCredentialsByUid(
           tokenPayload.userUid
         );
 
       if (!credentials) {
-        return new Response(
-          JSON.stringify({
-            type: "Error",
-            message: "User credentials not found.",
-          }),
-          { status: 404, headers: { "Content-Type": "application/json" } }
+        return makeErrorResponse(
+          400,
+          "No credentials found! Need to create new account!"
         );
       }
 
+      //create new tokens
       const accessToken = await getModule().jwtService.issueAccessToken(
         tokenPayload
       );
@@ -80,47 +57,38 @@ export const login = async (req: Request): Promise<Response> => {
         tokenPayload
       );
 
+      //update the fields
       credentials.last_login = loginResult.lastLogin;
       credentials.refresh_token = refreshToken;
+
+      //update the token in the db
       await getModule().userRepository.updateCredentials(credentials);
 
-      return new Response(
-        JSON.stringify({
-          userUid: loginResult.userUid,
-          lastLogin: loginResult.lastLogin,
-          accessToken,
-          refreshToken,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+      //make the token cookie
+      const cookie = buildRefreshTokenCookie(refreshToken);
+      //return the new response
+      return makeSuccessResponse(
+        credentials.user_uid,
+        credentials.last_login,
+        accessToken,
+        cookie
       );
-    } catch {
-      return new Response(
-        JSON.stringify({
-          type: "Error",
-          message: "Error retrieving or updating credentials.",
-        }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+    } catch (error: any) {
+      console.log(`Error while logging in ${error}`);
+      return makeErrorResponse(
+        500,
+        "An unexpected error occurred while logging in"
       );
     }
   }
 
   // AuthError
   if (loginResult instanceof AuthError) {
-    return new Response(
-      JSON.stringify({
-        type: "Error",
-        message: loginResult.message || "Authentication failed.",
-      }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+    return makeErrorResponse(400, " Please provide valid credentials!");
   }
 
-  // Unexpected case
-  return new Response(
-    JSON.stringify({
-      type: "Error",
-      message: "Unexpected error occurred.",
-    }),
-    { status: 500, headers: { "Content-Type": "application/json" } }
+  return makeErrorResponse(
+    500,
+    "An unexpected error occurred while logging in"
   );
 };
