@@ -1,4 +1,4 @@
-import UserCredentials from "@/shared/user_credentials";
+import UserCredentials from "@/src/shared/user_credentials";
 
 const ENDPOINT_URL = "http://localhost:3000/api/auth/logout/";
 

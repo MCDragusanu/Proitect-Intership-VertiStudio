@@ -57,13 +57,11 @@ function initializeSchema(db: Database) {
 
     CREATE TABLE IF NOT EXISTS user_profiles (
       user_uid TEXT PRIMARY KEY,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
+      name TEXT NOT NULL,
       account_creation_date TEXT NOT NULL,
       adress TEXT,
       country TEXT,
-      city TEXT,
-      FOREIGN KEY (user_uid) REFERENCES user_credentials(user_uid)
+      city TEXT
     );
 
     CREATE TABLE IF NOT EXISTS coins (
@@ -77,26 +75,39 @@ function initializeSchema(db: Database) {
       FOREIGN KEY (client_id) REFERENCES user_profiles(user_uid)
     );
 
+      CREATE TABLE IF NOT EXISTS bitSlow (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,  
+      coin_id INTEGER NOT NULL,            
+      bit1 INTEGER NOT NULL,
+      bit2 INTEGER NOT NULL,
+      bit3 INTEGER NOT NULL,
+      computed_bit_slow TEXT NOT NULL,
+      FOREIGN KEY (coin_id) REFERENCES coins(coin_id)
+    );
+
     CREATE TABLE IF NOT EXISTS transactions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       coin_id INTEGER NOT NULL,
       seller_id TEXT,
       buyer_id TEXT NOT NULL,
       amount REAL NOT NULL,
+      bit1 INTEGER NOT NULL,
+      bit2 INTEGER NOT NULL,
+      bit3 INTEGER NOT NULL,
       transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (coin_id) REFERENCES coins(coin_id),
       FOREIGN KEY (seller_id) REFERENCES user_profiles(user_uid),
       FOREIGN KEY (buyer_id) REFERENCES user_profiles(user_uid)
-    );
-  `);
+    );`
+  );
 }
 
 async function seedClients(db: Database, count: number): Promise<string[]> {
   console.log(`👤 Creating ${count} clients...`);
 
   const insertProfile = db.prepare(`
-    INSERT INTO user_profiles (user_uid, first_name, last_name, account_creation_date, adress, country, city)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO user_profiles (user_uid, name, account_creation_date, adress, country, city)
+    VALUES (?, ?, ?, ?,  ?, ?)
   `);
   const insertCredentials = db.prepare(`
     INSERT INTO user_credentials (user_uid, user_email, hashed_password, refresh_token, phone_number, last_login, user_role)
@@ -126,8 +137,7 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
 
     insertProfile.run(
       user_uid,
-      faker.person.firstName(),
-      faker.person.lastName(),
+      faker.person.firstName() + " " + faker.person.lastName(),
       new Date().toISOString(),
       faker.location.streetAddress(),
       faker.location.country(),
@@ -136,12 +146,15 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
 
     clientUids.push(user_uid);
   }
- 
- 
+
   return clientUids;
 }
 
-function seedCoins(db: Database, count: number, clientUids: string[]): number[] {
+function seedCoins(
+  db: Database,
+  count: number,
+  clientUids: string[]
+): number[] {
   console.log(`💰 Creating ${count} BitSlows...`);
 
   const insert = db.prepare(`
@@ -154,7 +167,7 @@ function seedCoins(db: Database, count: number, clientUids: string[]): number[] 
   const usedValues = new Set<number>();
 
   for (let i = 0; i < count; i++) {
-    let bit1 : number, bit2 : number, bit3 : number;
+    let bit1: number, bit2: number, bit3: number;
     let combo;
     do {
       [bit1, bit2, bit3] = generateDistinctRandomValues(3, 1, 10);
@@ -169,16 +182,20 @@ function seedCoins(db: Database, count: number, clientUids: string[]): number[] 
     usedValues.add(value);
 
     const clientId = clientUids[Math.floor(Math.random() * clientUids.length)];
-   
+
     const info = insert.run(clientId, bit1, bit2, bit3, value);
-    console.log(`${clientId} -> ${info.lastInsertRowid}`)
+    
     coinIds.push(Number(info.lastInsertRowid));
   }
-  
+
   return coinIds;
 }
 
-function generateDistinctRandomValues(count: number, min: number, max: number): number[] {
+function generateDistinctRandomValues(
+  count: number,
+  min: number,
+  max: number
+): number[] {
   const values = new Set<number>();
   while (values.size < count) {
     values.add(Math.floor(Math.random() * (max - min + 1)) + min);
@@ -195,8 +212,8 @@ function seedTransactions(
   console.log(`💸 Creating ${count} transactions...`);
 
   const insert = db.prepare(`
-    INSERT INTO transactions (coin_id, seller_id, buyer_id, amount, transaction_date)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO transactions (coin_id, seller_id, buyer_id, amount, transaction_date , bit1 , bit2 , bit3)
+    VALUES (?, ?, ?, ?, ?, ? ,? ,?)
   `);
 
   const coinOwners: Record<number, string | null> = {};
@@ -206,24 +223,31 @@ function seedTransactions(
   for (let i = 0; i < count; i++) {
     const coinId = coinIds[Math.floor(Math.random() * coinIds.length)];
     const sellerId = coinOwners[coinId] || null;
-    console.log(`${coinId} -> ${sellerId}`)
+    
 
     let buyerId: string;
     do {
       buyerId = clientUids[Math.floor(Math.random() * clientUids.length)];
     } while (buyerId === sellerId);
 
-    const coin = db.query("SELECT value FROM coins WHERE coin_id = ?").get(coinId);
+    const coin = db
+      .query("SELECT bit1, bit2, bit3, value FROM coins WHERE coin_id = ?")
+      .get(coinId);
     const amount = coin?.value ?? 0;
 
-    transactionDate = new Date(transactionDate.getTime() + (Math.random() * 2 * 24 * 60 * 60 * 1000)); // add 0-2 days
-    console.log(`${coinId} ${sellerId} ${buyerId} ${amount} ${transactionDate}`)
+    transactionDate = new Date(
+      transactionDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000
+    ); // add 0-2 days
+   
     insert.run(
       coinId,
       sellerId,
       buyerId,
       amount,
-      transactionDate.toISOString()
+      transactionDate.toISOString(),
+      coin.bit1,
+      coin.bit2,
+      coin.bit3
     );
 
     coinOwners[coinId] = buyerId;

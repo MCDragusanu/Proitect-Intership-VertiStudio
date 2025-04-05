@@ -5,36 +5,9 @@ import { getModule } from "../module";
 class SQLiteUserCredentialsDao implements UserCredentialsDao {
   constructor() {}
 
-  createSource(): void {
-    getModule().database.exec(`CREATE TABLE IF NOT EXISTS user_credentials (
-            user_uid TEXT PRIMARY KEY,
-            user_email TEXT UNIQUE NOT NULL,
-            hashed_password TEXT NOT NULL,
-            refresh_token TEXT,
-            phone_number TEXT,
-            last_login TEXT,
-            user_role TEXT CHECK(user_role IN ('client', 'admin')) NOT NULL
-        );`);
-  }
-  
-  deleteSource(): void {
-    getModule().database.exec("DROP TABLE IF EXISTS user_credentials");
-  }
+ 
 
-  clearSource(): void {
-    getModule().database.exec("DELETE FROM user_credentials");
-  }
-
-  checkSource(): Boolean {
-    const result = getModule()
-      .database.prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='user_credentials'"
-      )
-      .get();
-    return result !== undefined;
-  }
-
-  async insertUserCredentials(credentials: UserCredentials): Promise<Boolean> {
+  async insertUserCredentials(credentials: UserCredentials): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "INSERT INTO user_credentials (user_uid, user_email, hashed_password, refresh_token, phone_number, last_login, user_role) VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
@@ -52,14 +25,14 @@ class SQLiteUserCredentialsDao implements UserCredentialsDao {
   async updateRefreshToken(
     userUid: string,
     token: string | null
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "UPDATE user_credentials SET  refresh_token = ?,  WHERE user_uid = ?"
     );
     const info = stmt.run(token, userUid);
     return info.changes > 0;
   }
-  async updateUserCredentials(credentials: UserCredentials): Promise<Boolean> {
+  async updateUserCredentials(credentials: UserCredentials): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "UPDATE user_credentials SET user_email = ?, hashed_password = ?, refresh_token = ?, phone_number = ?, last_login = ?, user_role = ? WHERE user_uid = ?"
     );
@@ -103,7 +76,7 @@ class SQLiteUserCredentialsDao implements UserCredentialsDao {
     return result ? this.mapToUserCredentials(result) : null;
   }
 
-  async deleteUserCredentialsByEmail(userEmail: string): Promise<Boolean> {
+  async deleteUserCredentialsByEmail(userEmail: string): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "DELETE FROM user_credentials WHERE user_email = ?"
     );
@@ -111,7 +84,7 @@ class SQLiteUserCredentialsDao implements UserCredentialsDao {
     return info.changes > 0;
   }
 
-  async deleteUserCredentialsByUid(userUid: string): Promise<Boolean> {
+  async deleteUserCredentialsByUid(userUid: string): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "DELETE FROM user_credentials WHERE user_uid = ?"
     );

@@ -112,8 +112,7 @@ export const register = async (req: Request): Promise<Response> => {
 
     const profile: UserProfile = {
       user_uid: tokenPayload.userUid,
-      first_name,
-      last_name,
+      name : (first_name) + " " +(last_name),
       country,
       address,
       city,

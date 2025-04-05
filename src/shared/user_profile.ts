@@ -1,7 +1,6 @@
 interface UserProfile {
   user_uid: string;
-  first_name: string;
-  last_name: string;
+  name : string
   address: string;
   account_creation_date: string;
   country: string;

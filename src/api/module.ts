@@ -8,22 +8,28 @@ import { SQLiteUserCredentialsDao } from "./database_impl/UserCredentialsDaoImpl
 import { SQLiteUserProfileDao } from "./database_impl/UserProfileDaoImpl";
 import { Database } from "bun:sqlite";
 import { seedDatabase } from "./seed";
-
+import BitSlowRepository from "./database/BitSlowRepository";
+import SQLiteCoinDao from "./database_impl/CoinDaoImpl";
+import SQLiteTransactionDao from "./database_impl/TransactionDaoImpl";
+import { SQLiteBitSlowRepository } from "./database_impl/BitSlowRepositoryImpl";
+import SQLBitSlowDao from "./database_impl/BitSlowDaoImpl";
 export abstract class BackendModule {
   public readonly authService: AuthService;
   public readonly jwtService: JWTService;
   public readonly userRepository: UserRepository;
   public readonly database: Database;
-
+  public readonly bitSlowRepo: BitSlowRepository;
   constructor(
     authService: AuthService,
     jwtService: JWTService,
     userRepo: UserRepository,
+    bitSlowRepo : BitSlowRepository,
     database: Database
   ) {
     this.authService = authService;
     this.jwtService = jwtService;
     this.userRepository = userRepo;
+    this.bitSlowRepo = bitSlowRepo
     this.database = database;
   }
 
@@ -38,25 +44,45 @@ export abstract class BackendModule {
   }
 }
 
-// Factory function to create the module
- function createBackendModule(): BackendModule {
+function createInMemoryModule(): BackendModule {
   const db = new Database(":memory:");
+
+  // DAOs for users
   const credentialsDao = new SQLiteUserCredentialsDao();
   const profileDao = new SQLiteUserProfileDao();
-  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
 
+  // DAOs for bitslow-related data
+  const bitSlowDao = new SQLBitSlowDao();
+  const coinDao = new SQLiteCoinDao();
+  const transactionDao = new SQLiteTransactionDao();
+
+  // Repositories
+  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
+  const bitSlowRepository = new SQLiteBitSlowRepository(bitSlowDao, coinDao, transactionDao);
+
+  // Services
   const authService = new AuthServiceImpl(credentialsDao);
   const jwtService = new JWTServiceImpl();
- 
-  seedDatabase(db , {clientCount : 20 , transactionCount : 20 , bitSlowCount : 20 , clearExisting : false})
+
+  // Seed the DB (optional)
+  seedDatabase(db, {
+    clientCount: 20,
+    transactionCount: 20,
+    bitSlowCount: 20,
+    clearExisting: false,
+  });
+
+  // Return BackendModule instance
   const moduleInstance = new (class extends BackendModule {
     constructor() {
-      super(authService, jwtService, repository, db);
+      super(authService, jwtService, repository, bitSlowRepository ,db);
+  
     }
   })();
 
   return moduleInstance;
 }
+
 
 // Singleton holder
 let instance: BackendModule | null = null;
@@ -64,7 +90,7 @@ let instance: BackendModule | null = null;
 // Exported getter
 export function getModule(): BackendModule {
   if (!instance) {
-    instance = createBackendModule();
+    instance = createInMemoryModule();
   }
   return instance;
 }

@@ -1,10 +1,7 @@
-import UserCredentials from "@/shared/user_credentials"
+import UserCredentials from "@/src/shared/user_credentials"
 
 interface UserCredentialsDao{
-    createSource() : void
-    deleteSource() : void
-    clearSource() : void
-    checkSource() : Boolean
+   
     
     insertUserCredentials( credentials : UserCredentials) : Promise<Boolean>
     updateUserCredentials( credentials : UserCredentials) : Promise<Boolean>

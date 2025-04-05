@@ -1,19 +1,18 @@
-import Coin from "@/shared/coin"
+import Coin from "@/src/shared/coin"
 
 interface CoinDao {
 
-    createSource() : void
-    deleteSource() : void
-    clearSource() : void
-    checkSource() : Boolean
+   
 
-    insertCoin(coin : Coin )        : Promise<Boolean>
-    updateCoin(coin : Coin)         : Promise<Boolean>
+    insertCoin(coin : Coin )        : Promise<boolean>
+    updateCoin(coin : Coin)         : Promise<boolean>
 
     getUserCoins(userUid : string)  : Promise<Coin[] | null>
     getFreeCoins()                  : Promise<Coin[] | null>
 
-    bitsAlreadyInUse(bit1 : number , bit2 : number , bit3 : number) : Promise<Boolean>
+    getMonetaryValue(userUid : string) : Promise<number | null>
+
+    bitsAlreadyInUse(bit1 : number , bit2 : number , bit3 : number) : Promise<boolean>
 }
 
 export default CoinDao

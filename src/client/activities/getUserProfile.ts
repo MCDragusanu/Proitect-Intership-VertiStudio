@@ -1,4 +1,4 @@
-import UserProfile from "@/shared/user_profile";
+import UserProfile from "@/src/shared/user_profile";
 
 const ENDPOINT_URL = "http://localhost:3000/api/profile/";
 

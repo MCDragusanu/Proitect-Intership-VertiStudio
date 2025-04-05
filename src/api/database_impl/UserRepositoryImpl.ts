@@ -13,8 +13,8 @@ export class SQLLiteUserRepository implements UserRepository {
         this.userProfileDao = profileDao;
     }
 
-    async insertCredentials(credentials: UserCredentials): Promise<Boolean> {
-        let success : Boolean= false;
+    async insertCredentials(credentials: UserCredentials): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userCredentialsDao.insertUserCredentials(credentials);
             return success;
@@ -25,8 +25,8 @@ export class SQLLiteUserRepository implements UserRepository {
             console.log(`[Credentials] Inserted user with email: ${credentials.user_email} - Success: ${success}`);
         }
     }
-    async updateRefreshToken(userUid: string, token: string | null): Promise<Boolean> {
-        let success : Boolean= false;
+    async updateRefreshToken(userUid: string, token: string | null): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userCredentialsDao.updateRefreshToken(userUid , token);
             return success;
@@ -37,8 +37,8 @@ export class SQLLiteUserRepository implements UserRepository {
             console.log(`[Credentials] Updated refresh token for UID: ${userUid} - Success: ${success}`);
         }
     }
-    async insertProfile(profile: UserProfile): Promise<Boolean> {
-        let success : Boolean= false;
+    async insertProfile(profile: UserProfile): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userProfileDao.insertUserProfile(profile);
             return success;
@@ -50,8 +50,8 @@ export class SQLLiteUserRepository implements UserRepository {
         }
     }
 
-    async updateCredentials(credentials: UserCredentials): Promise<Boolean> {
-        let success : Boolean= false;
+    async updateCredentials(credentials: UserCredentials): Promise<boolean> {
+        let success :boolean= false;
         try {
             success = await this.userCredentialsDao.updateUserCredentials(credentials);
             return success;
@@ -63,8 +63,8 @@ export class SQLLiteUserRepository implements UserRepository {
         }
     }
 
-    async updateProfile(profile: UserProfile): Promise<Boolean> {
-        let success : Boolean= false;
+    async updateProfile(profile: UserProfile): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userProfileDao.updateUserProfile(profile);
             return success;
@@ -76,8 +76,8 @@ export class SQLLiteUserRepository implements UserRepository {
         }
     }
 
-    async deleteCredentialsByEmail(userEmail: string): Promise<Boolean> {
-        let success : Boolean= false;
+    async deleteCredentialsByEmail(userEmail: string): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userCredentialsDao.deleteUserCredentialsByEmail(userEmail);
             return success;
@@ -89,8 +89,8 @@ export class SQLLiteUserRepository implements UserRepository {
         }
     }
 
-    async deleteCredentialsByUid(userUid: string): Promise<Boolean> {
-        let success : Boolean= false;
+    async deleteCredentialsByUid(userUid: string): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userCredentialsDao.deleteUserCredentialsByUid(userUid);
             return success;
@@ -102,8 +102,8 @@ export class SQLLiteUserRepository implements UserRepository {
         }
     }
 
-    async deletProfileByUid(uuid: string): Promise<Boolean> {
-        let success : Boolean= false;
+    async deletProfileByUid(uuid: string): Promise<boolean> {
+        let success : boolean= false;
         try {
             success = await this.userProfileDao.deleteUserProfileByUid(uuid);
             return success;

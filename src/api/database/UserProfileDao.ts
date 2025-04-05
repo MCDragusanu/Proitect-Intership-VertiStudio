@@ -1,16 +1,13 @@
-import UserProfile from "@/shared/user_profile"
+import UserProfile from "@/src/shared/user_profile"
 
 interface UserProfileDao{
-    createSource() : void
-    deleteSource() : void
-    clearSource() : void
-    checkSource() : Boolean
+   
     
-    insertUserProfile(profile : UserProfile)     : Promise<Boolean>
-    updateUserProfile(profile : UserProfile)     : Promise<Boolean>
+    insertUserProfile(profile : UserProfile)     : Promise<boolean>
+    updateUserProfile(profile : UserProfile)     : Promise<boolean>
 
     getUserProfileByUid(uuid : string)           : Promise<UserProfile | null>
-    deleteUserProfileByUid(uuid : string)        : Promise<Boolean>
+    deleteUserProfileByUid(uuid : string)        : Promise<boolean>
     
 }
 

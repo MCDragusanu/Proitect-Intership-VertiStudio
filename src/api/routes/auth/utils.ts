@@ -132,7 +132,7 @@ export const validateUserProfile = (
   if (!phoneNumber) missingFields.push("Phone Number");
 
   // Field validation checks
-  const isFirstNameValid = /^[A-Za-z]+$/.test(firstName); // Only letters
+  const isFirstNameValid = /^[A-Z a-z]+$/.test(firstName); // Only letters
   const isLastNameValid = /^[A-Za-z]+$/.test(lastName); // Only letters
   const isCountryValid = country.length > 0;
   const isCityValid = city.length > 0;

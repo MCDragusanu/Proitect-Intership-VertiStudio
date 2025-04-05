@@ -35,7 +35,7 @@ export default class SQLiteCoinDao implements CoinDao {
     return result !== undefined;
   }
 
-  async insertCoin(coin: Coin): Promise<Boolean> {
+  async insertCoin(coin: Coin): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "INSERT INTO coins (user_uid, bit1, bit2, bit3, value) VALUES (?, ?, ?, ?, ?)"
     );
@@ -49,7 +49,17 @@ export default class SQLiteCoinDao implements CoinDao {
     return info.changes > 0;
   }
 
-  async updateCoin(coin: Coin): Promise<Boolean> {
+  async getMonetaryValue(userUid: string): Promise<number | null> {
+    const stmt = getModule().database.prepare(
+      "SELECT SUM(value) AS monetaryValue FROM coins WHERE user_uid = ?"
+    );
+    
+    const result = stmt.get(userUid) as { monetaryValue: number | null };
+  
+    return result.monetaryValue;
+  }
+
+  async updateCoin(coin: Coin): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "UPDATE coins SET user_uid = ?, bit1 = ?, bit2 = ?, bit3 = ?, value = ? WHERE coin_id = ?"
     );
@@ -84,7 +94,7 @@ export default class SQLiteCoinDao implements CoinDao {
     bit1: number,
     bit2: number,
     bit3: number
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "SELECT COUNT(*) AS count FROM coins WHERE bit1 = ? AND bit2 = ? AND bit3 = ?"
     );

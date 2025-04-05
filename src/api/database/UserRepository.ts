@@ -1,14 +1,14 @@
-import UserProfile from "@/shared/user_profile";
-import UserCredentials from "@/shared/user_credentials";
+import UserProfile from "@/src/shared/user_profile";
+import UserCredentials from "@/src/shared/user_credentials";
 
 export default interface UserRepository {
-  insertProfile(profile: UserProfile): Promise<Boolean>;
-  insertCredentials(credentials: UserCredentials): Promise<Boolean>;
+  insertProfile(profile: UserProfile): Promise<boolean>;
+  insertCredentials(credentials: UserCredentials): Promise<boolean>;
 
-  updateCredentials(credentials: UserCredentials): Promise<Boolean>;
-  updateProfile(profile: UserProfile): Promise<Boolean>;
+  updateCredentials(credentials: UserCredentials): Promise<boolean>;
+  updateProfile(profile: UserProfile): Promise<boolean>;
 
-  updateRefreshToken(userUid: string, token: string | null): Promise<Boolean>;
+  updateRefreshToken(userUid: string, token: string | null): Promise<boolean>;
 
   getUserCredentialsByToken(
     refreshToken: string
@@ -17,7 +17,7 @@ export default interface UserRepository {
   getUserCredentialsByEmail(userEmail: string): Promise<UserCredentials | null>;
   getProfileByUid(uuid: string): Promise<UserProfile | null>;
 
-  deletProfileByUid(uuid: string): Promise<Boolean>;
-  deleteCredentialsByUid(userUid: string): Promise<Boolean>;
-  deleteCredentialsByEmail(userEmail: string): Promise<Boolean>;
+  deletProfileByUid(uuid: string): Promise<boolean>;
+  deleteCredentialsByUid(userUid: string): Promise<boolean>;
+  deleteCredentialsByEmail(userEmail: string): Promise<boolean>;
 }
