@@ -1,16 +1,16 @@
-import { getModule } from "@/api/module";
+import { getModule } from "@/src/api/module";
 import {
   AuthResult,
   AuthError,
   WeakCredentials,
   UserCollision,
-} from "@/api/auth/AuthService";
+} from "@/src/api/auth/AuthService";
 import {
   JWTError,
   JWTExpired,
   JWTInvalid,
   TokenPayLoad,
-} from "@/api/auth/JWTService";
+} from "@/src/api/auth/JWTService";
 
 export const buildRefreshTokenCookie = (token: string): string => {
   return [
@@ -39,7 +39,7 @@ export const checkPasswordStrength = (password: string): boolean => {
 };
 
 export const validateEmail = (email: string): boolean => {
-  const emailValid = /^[A-Za-z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  const emailValid = /^[A-Za-z.0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   return emailValid;
 };
 
@@ -116,31 +116,54 @@ export const validateUserProfile = (
   firstName: string,
   lastName: string,
   country: string,
-  adress: string,
+  address: string,
   city: string,
   phoneNumber: string
-): boolean => {
+): any => {
+  const missingFields: string[] = [];
+  const fieldErrors: string[] = [];
+
+  // Check for missing fields
+  if (!firstName) missingFields.push("First Name");
+  if (!lastName) missingFields.push("Last Name");
+  if (!country) missingFields.push("Country");
+  if (!address) missingFields.push("Address");
+  if (!city) missingFields.push("City");
+  if (!phoneNumber) missingFields.push("Phone Number");
+
+  // Field validation checks
   const isFirstNameValid = /^[A-Za-z]+$/.test(firstName); // Only letters
   const isLastNameValid = /^[A-Za-z]+$/.test(lastName); // Only letters
   const isCountryValid = country.length > 0;
   const isCityValid = city.length > 0;
-  const adressIsValid = adress.length > 0;
+  const addressIsValid = address.length > 0;
   const isPhoneNumberValid = validatePhoneNumber(phoneNumber);
 
-  return (
-    isFirstNameValid &&
+  if (!isFirstNameValid) fieldErrors.push("First Name must only contain letters.");
+  if (!isLastNameValid) fieldErrors.push("Last Name must only contain letters.");
+  if (!isCountryValid) fieldErrors.push("Country cannot be empty.");
+  if (!isCityValid) fieldErrors.push("City cannot be empty.");
+  if (!addressIsValid) fieldErrors.push("Address cannot be empty.");
+  if (!isPhoneNumberValid) fieldErrors.push("Phone Number is invalid.");
+
+  const areValid = isFirstNameValid &&
     isLastNameValid &&
-    adressIsValid &&
+    addressIsValid &&
     isCountryValid &&
     isCityValid &&
-    isPhoneNumberValid
-  );
+    isPhoneNumberValid;
+
+  return {
+    missingFields, 
+    fieldErrors,
+    areValid
+  };
 };
 
 // Phone number validation using a regex (example for international format)
 export const validatePhoneNumber = (phoneNumber: string | null): boolean => {
   if (!phoneNumber) return false;
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/; // International format
+  const phoneRegex = /^\+?[0-9]\d{1,14}$/; // International format
   return phoneRegex.test(phoneNumber);
 };
 

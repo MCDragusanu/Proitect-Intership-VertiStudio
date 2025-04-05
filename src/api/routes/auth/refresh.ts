@@ -1,10 +1,10 @@
-import { getModule } from "@/api/module";
+import { getModule } from "../../module";
 import {
   JWTExpired,
   JWTInvalid,
   JWTError,
   TokenPayLoad,
-} from "@/api/auth/JWTService";
+} from "@/src/api/auth/JWTService";
 import {
   buildRefreshTokenCookie,
   makeErrorResponse,

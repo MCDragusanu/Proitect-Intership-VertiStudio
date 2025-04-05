@@ -34,7 +34,7 @@ export abstract class BackendModule {
       transactionCount: 50,
       clearExisting: true,
     });
-    await this.userRepository.initialise();
+  
   }
 }
 

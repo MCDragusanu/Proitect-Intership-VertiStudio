@@ -1,4 +1,4 @@
-import Transaction from "@/shared/transaction";
+import Transaction from "@/src/shared/transaction";
 import TransactionDao from "../database/TransactionDao";
 import { getModule } from "../module";
 

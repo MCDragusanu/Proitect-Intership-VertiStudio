@@ -1,5 +1,5 @@
-import UserCredentials from "@/shared/user_credentials";
-import UserProfile from "@/shared/user_profile";
+import UserCredentials from "@/src/shared/user_credentials";
+import UserProfile from "@/src/shared/user_profile";
 import UserRepository from "../database/UserRepository";
 import { SQLiteUserCredentialsDao } from "./UserCredentialsDaoImpl";
 import { SQLiteUserProfileDao } from "./UserProfileDaoImpl";
@@ -25,7 +25,18 @@ export class SQLLiteUserRepository implements UserRepository {
             console.log(`[Credentials] Inserted user with email: ${credentials.user_email} - Success: ${success}`);
         }
     }
-
+    async updateRefreshToken(userUid: string, token: string | null): Promise<Boolean> {
+        let success : Boolean= false;
+        try {
+            success = await this.userCredentialsDao.updateRefreshToken(userUid , token);
+            return success;
+        } catch (err: any) {
+            console.error(`Error updating refresh token: ${err}`);
+            return false;
+        } finally {
+            console.log(`[Credentials] Updated refresh token for UID: ${userUid} - Success: ${success}`);
+        }
+    }
     async insertProfile(profile: UserProfile): Promise<Boolean> {
         let success : Boolean= false;
         try {

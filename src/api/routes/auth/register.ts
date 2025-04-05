@@ -1,11 +1,11 @@
-import { getModule } from "@/api/module";
+import { getModule } from "@/src/api/module";
 import {
   AuthError,
   AuthResult,
   UserCollision,
   WeakCredentials,
-} from "@/api/auth/AuthService";
-import { TokenPayLoad } from "@/api/auth/JWTService";
+} from "@/src/api/auth/AuthService";
+import { TokenPayLoad } from "@/src/api/auth/JWTService";
 import {
   checkPasswordStrength,
   validateEmail,
@@ -17,9 +17,9 @@ import {
   makeErrorResponse,
   makeSuccessResponse,
 } from "./utils";
-import UserCredentials from "@/shared/user_credentials";
+import UserCredentials from "@/src/shared/user_credentials";
 import bcrypt from "bcrypt";
-import UserProfile from "@/shared/user_profile";
+import UserProfile from "@/src/shared/user_profile";
 
 // Main register handler
 export const register = async (req: Request): Promise<Response> => {
@@ -44,21 +44,33 @@ export const register = async (req: Request): Promise<Response> => {
     return makeErrorResponse(400, "Password is too weak.");
   }
 
-  // Validate profile fields
-  if (
-    !validateUserProfile(
-      first_name,
-      last_name,
-      country,
-      address,
-      city,
-      phone_number
-    )
-  ) {
-    return makeErrorResponse(
-      400,
-      "The user profile does not contain all required fields."
-    );
+  const profileCheck = validateUserProfile(
+    first_name,
+    last_name,
+    country,
+    address,
+    city,
+    phone_number
+  );
+  
+  // If there are missing fields or invalid fields, build the error message
+  if (profileCheck.missingFields.length > 0 || !profileCheck.areValid) {
+    console.log(profileCheck);
+    
+    // Build error message for missing fields
+    let errorMessage = '';
+    if (profileCheck.missingFields.length > 0) {
+      errorMessage += `The following fields are missing: ${profileCheck.missingFields.join(", ")}. `;
+    }
+    
+    // Build error message for invalid fields
+    if (profileCheck.fieldErrors.length > 0) {
+      errorMessage += `The following fields have errors: ${profileCheck.fieldErrors.join(", ")}.`;
+    }
+    
+    console.log(errorMessage);
+    
+    return makeErrorResponse(400, errorMessage);
   }
 
   let registerResult: AuthResult | AuthError;

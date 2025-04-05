@@ -1,4 +1,4 @@
-import UserProfile from "@/shared/user_profile";
+import UserProfile from "@/src/shared/user_profile";
 import UserProfileDao from "../database/UserProfileDao";
 import { getModule } from "../module";
 

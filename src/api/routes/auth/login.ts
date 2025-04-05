@@ -1,6 +1,6 @@
-import { getModule } from "@/api/module";
-import { AuthError, AuthResult } from "@/api/auth/AuthService";
-import { TokenPayLoad } from "@/api/auth/JWTService";
+import { getModule } from "@/src/api/module";
+import { AuthError, AuthResult } from "@/src/api/auth/AuthService";
+import { TokenPayLoad } from "@/src/api/auth/JWTService";
 import {
   buildRefreshTokenCookie,
   makeErrorResponse,
