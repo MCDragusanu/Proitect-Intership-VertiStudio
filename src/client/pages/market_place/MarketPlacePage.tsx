@@ -8,7 +8,7 @@ import { fetchTransactions, fetchTransactionsCount } from "../../activities/getT
 const ENDPOINT_URL = "http://localhost:3000/"; // NOTE: change this based on your environment.
 
 function loadTransactions(pageSize : number = 100 , pageIndex : number = 1): Promise<any[]> {
-  return fetchTransactions(pageSize , pageIndex)
+  return  fetchTransactions(pageSize , pageIndex)
 }
 
 function useTransactions() {
@@ -17,6 +17,7 @@ function useTransactions() {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    console.log("Invoked")
     loadTransactions()
       .then((data) => {
         setTransactions(data);

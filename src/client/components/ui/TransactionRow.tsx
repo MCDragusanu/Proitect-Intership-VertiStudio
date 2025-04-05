@@ -19,19 +19,19 @@ const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, index }) =
                         Bits: {transaction.bit1}, {transaction.bit2}, {transaction.bit3}
                     </div>
                     <div className="text-xs text-gray-500">
-                        Value: ${transaction.value.toLocaleString()}
+                        Value: ${transaction.amount.toLocaleString()}
                     </div>
                 </div>
             </td>
             <td className="p-4 text-gray-700">
-                {transaction.seller_name ? transaction.seller_name : "Original Issuer"}
+                {transaction.sellerName ? transaction.sellerName : "Original Issuer"}
             </td>
-            <td className="p-4 text-gray-700">{transaction.buyer_name}</td>
+            <td className="p-4 text-gray-700">{transaction.buyerName}</td>
             <td className="p-4 text-right font-semibold text-gray-800">
                 ${transaction.amount.toLocaleString()}
             </td>
             <td className="p-4 text-sm text-gray-600">
-                {new Date(transaction.transaction_date).toLocaleString()}
+                {new Date(transaction.date).toLocaleString()}
             </td>
         </tr>
     );

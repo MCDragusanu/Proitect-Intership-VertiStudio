@@ -15,6 +15,7 @@ const server = serve({
   development: process.env.NODE_ENV !== "production",
 
   routes: {
+    "/" : index,
     // Custom route for /api/transactions
     "/api/transactions/v1": async (req) => {
       console.log(req);

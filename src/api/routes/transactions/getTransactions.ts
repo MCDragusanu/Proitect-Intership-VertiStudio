@@ -260,7 +260,7 @@ export const getTransactionsV2 = async (req: Request): Promise<Response> => {
       result.push({
         id: transaction.id,
         coinId: transaction.coinId,
-        amount: transaction.amount, 
+        amount: transaction.value, 
         date: transaction.date, 
         sellerUid: transaction.sellerUid, 
         sellerName: transaction.sellerName, 

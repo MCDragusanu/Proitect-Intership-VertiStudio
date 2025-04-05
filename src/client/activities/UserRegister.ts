@@ -10,6 +10,14 @@ export const register = async (
   phoneNumber: string,
   address: string
 ) => {
+
+  
+    
+    
+   
+   
+    
+   
   const headers: Headers = new Headers();
   const requestBody = JSON.stringify({
     userEmail: email,
@@ -40,21 +48,6 @@ export const register = async (
       return { userUid, lastLogin, accessToken, errorMessage: null };
     } else {
       const errorData = await result.json();
-
-      // Check if the error data contains specific field errors
-      if (errorData && errorData.errors) {
-        // Assuming the error data contains an array of field errors (e.g., ["Email is invalid", "Phone number is missing"])
-        const fieldErrors = errorData.errors.join(", "); // Join the errors for readability
-
-        return {
-          userUid: null,
-          lastLogin: null,
-          accessToken: null,
-          errorMessage: `The following fields are invalid: ${fieldErrors}`,
-        };
-      }
-
-      // Handle generic error message (e.g., "Internal server error")
       return {
         userUid: null,
         lastLogin: null,
