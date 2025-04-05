@@ -3,6 +3,7 @@ import BitSlow from "@/src/shared/bitslow";
 import Transaction from "@/src/shared/transaction";
 
 import { getModule } from "../../module";
+import { tr } from "@faker-js/faker";
 
 export const getTransactions = async (req: Request): Promise<Response> => {
   try {
@@ -143,65 +144,65 @@ export const getTransactions = async (req: Request): Promise<Response> => {
 };
 
 export const getTransactionsV2 = async (req: Request): Promise<Response> => {
-    try {
-      const requestBody = await req.json();
-  
-      const {
-        pageSize: pageSizeParam = 10,
-        pageNumber: pageNumberParam = 1,
-        sellerName,
-        buyerName,
-        beforeDateTimeStamp,
-        afterDateTimeStamp,
-        bitSlowMinPrice,
-        bitSlowMaxPrice,
-      } = requestBody;
-  
-      const pageSize = parseInt(String(pageSizeParam), 10);
-      const pageNumber = parseInt(String(pageNumberParam), 10);
-      const startIndex = (pageNumber - 1) * pageSize;
-  
-      console.log(
-        `${pageSize} ${pageNumber} ${sellerName} ${buyerName} ${beforeDateTimeStamp} ${afterDateTimeStamp} ${bitSlowMinPrice} ${bitSlowMaxPrice}`
-      );
-  
-      // Build the SQL WHERE conditions dynamically based on the filters provided
-      const conditions: string[] = [];
-      const params: any[] = [];
-  
-      if (sellerName) {
-        conditions.push("seller.name LIKE ?");
-        params.push(`%${sellerName}%`);
-      }
-      if (buyerName) {
-        conditions.push("buyer.name LIKE ?");
-        params.push(`%${buyerName}%`);
-      }
-      if (beforeDateTimeStamp) {
-        conditions.push("t.transaction_date < ?");
-        params.push(beforeDateTimeStamp);
-      }
-      if (afterDateTimeStamp) {
-        conditions.push("t.transaction_date > ?");
-        params.push(afterDateTimeStamp);
-      }
-      
-      // Only add price conditions if they're actually provided (not null or undefined)
-      if (bitSlowMinPrice !== null && bitSlowMinPrice !== undefined) {
-        conditions.push("t.amount >= ?");
-        params.push(bitSlowMinPrice);
-      }
-      if (bitSlowMaxPrice !== null && bitSlowMaxPrice !== undefined) {
-        conditions.push("t.amount <= ?");
-        params.push(bitSlowMaxPrice);
-      }
-      
-      // Construct WHERE clause
-      const whereClause =
-        conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-  
-      // Fetch the transactions and relevant data in a single SQL query
-      const query = `
+  try {
+    const requestBody = await req.json();
+
+    const {
+      pageSize: pageSizeParam = 10,
+      pageNumber: pageNumberParam = 1,
+      sellerName,
+      buyerName,
+      beforeDateTimeStamp,
+      afterDateTimeStamp,
+      bitSlowMinPrice,
+      bitSlowMaxPrice,
+    } = requestBody;
+
+    const pageSize = parseInt(String(pageSizeParam), 10);
+    const pageNumber = parseInt(String(pageNumberParam), 10);
+    const startIndex = (pageNumber - 1) * pageSize;
+
+    console.log(
+      `${pageSize} ${pageNumber} ${sellerName} ${buyerName} ${beforeDateTimeStamp} ${afterDateTimeStamp} ${bitSlowMinPrice} ${bitSlowMaxPrice}`
+    );
+
+    // Build the SQL WHERE conditions dynamically based on the filters provided
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (sellerName) {
+      conditions.push("seller.name LIKE ?");
+      params.push(`%${sellerName}%`);
+    }
+    if (buyerName) {
+      conditions.push("buyer.name LIKE ?");
+      params.push(`%${buyerName}%`);
+    }
+    if (beforeDateTimeStamp) {
+      conditions.push("t.transaction_date < ?");
+      params.push(beforeDateTimeStamp);
+    }
+    if (afterDateTimeStamp) {
+      conditions.push("t.transaction_date > ?");
+      params.push(afterDateTimeStamp);
+    }
+
+    // Only add price conditions if they're actually provided (not null or undefined)
+    if (bitSlowMinPrice !== null && bitSlowMinPrice !== undefined) {
+      conditions.push("t.amount >= ?");
+      params.push(bitSlowMinPrice);
+    }
+    if (bitSlowMaxPrice !== null && bitSlowMaxPrice !== undefined) {
+      conditions.push("t.amount <= ?");
+      params.push(bitSlowMaxPrice);
+    }
+
+    // Construct WHERE clause
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    // Fetch the transactions and relevant data in a single SQL query
+    const query = `
               SELECT 
                   t.id AS id,
                   t.coin_id AS coinId,
@@ -219,40 +220,69 @@ export const getTransactionsV2 = async (req: Request): Promise<Response> => {
               ${whereClause}
               ORDER BY t.transaction_date DESC
               LIMIT ? OFFSET ?`;
-              
-      console.log(query);
-      // Add pagination parameters at the end
-      params.push(pageSize);
-      params.push(startIndex);
-  
-      const transactions = await getModule()
-        .database.prepare(query)
-        .all(params);
-  
-      // Ensure that the bitSlow data is correctly populated
-      const enhancedTransactions = transactions.map((transaction) => {
-        // Compute bitSlow from the coin data
-        const computedBitSlow = computeBitSlow(
+
+    console.log(query);
+    // Add pagination parameters at the end
+    params.push(pageSize);
+    params.push(startIndex);
+
+    const transactions = await getModule().database.prepare(query).all(params);
+    let result: any[] = [];
+
+    for (const transaction of transactions) {
+       
+      let computedBitSlow: string | null = null;
+      //check to see it it has already been computed
+      const preComputedBitSlow =
+        await getModule().bitSlowRepo.getBitSlowByCoinId(transaction.coinId);
+      if (preComputedBitSlow) {
+        //assinging it to the varabile  
+        computedBitSlow = preComputedBitSlow.computedBitSlow;
+      } else { 
+        // it has to be computed for the first time
+        computedBitSlow = computeBitSlow(
           transaction.bit1,
           transaction.bit2,
           transaction.bit3
         );
-  
-        // No need for additional filtering here as SQL has already applied the filters
-        return {
-          ...transaction,
-          computedBitSlow,
-        };
+        //creating a new instance
+        const newBitSlow : BitSlow = {
+            coinId:transaction.coinId,
+            bit1:transaction.bit1,
+            bit2:transaction.bit2,
+            bit3:transaction.bit3,
+            computedBitSlow : computedBitSlow
+        }
+        //saving it to the db
+        await getModule().bitSlowRepo.insertBitSlow(newBitSlow)
+      }
+      //appending it to the result
+      result.push({
+        id: transaction.id,
+        coinId: transaction.coinId,
+        amount: transaction.amount, 
+        date: transaction.date, 
+        sellerUid: transaction.sellerUid, 
+        sellerName: transaction.sellerName, 
+        buyerUid: transaction.buyerUid, 
+        buyerName: transaction.buyerName,
+        bit1: transaction.bit1,
+        bit2: transaction.bit2,
+        bit3: transaction.bit3,
+       
+        computedBitSlow: computedBitSlow, // Keep the computed hash
       });
-  
-      console.log("Final Transactions: ");
-      console.log(enhancedTransactions);
-      return Response.json(enhancedTransactions);
-    } catch (err) {
-      console.error("Transaction error:", err);
-      return new Response(
-        "Failed to fetch transactions. Invalid or empty request body.",
-        { status: 400 }
-      );
     }
-  };
+  
+
+    console.log("Final Transactions: ");
+    console.log(result);
+    return Response.json(result);
+  } catch (err) {
+    console.error("Transaction error:", err);
+    return new Response(
+      "Failed to fetch transactions. Invalid or empty request body.",
+      { status: 400 }
+    );
+  }
+};
