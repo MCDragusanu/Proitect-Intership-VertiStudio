@@ -2,69 +2,32 @@ import { useState, useEffect } from "react";
 import { FaUser, FaStore, FaHistory } from "react-icons/fa"; // Import icons from react-icons
 import TransactionLoader from "../../components/ui/TransactionLoader";
 import TransactionTable from "../../components/ui/TransactionTable";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  fetchTransactions,
-  OnErrorCallback,
-} from "../../activities/getTransactions";
-import {
-  TransactionFilters,
-  TransactionFilter,
-} from "../../components/ui/TransactionFilter";
+import { TransactionFilter } from "../../components/ui/TransactionFilter";
+
 import { useNavigate } from "react-router-dom"; // Correct hook for React Router v6+
-
-function loadTransactions(
-  filters: TransactionFilters,
-  callback: OnErrorCallback
-): Promise<any[]> {
-  return fetchTransactions(filters, callback);
-}
-
-function useTransactions() {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [filters, setFilters] = useState<TransactionFilters>({
-    pageNumber: 1,
-    pageSize: 20,
-    buyerName: null,
-    sellerName: null,
-    afterDateTimeStamp: null,
-    beforeDateTimeStamp: null,
-    bitSlowMinPrice: null,
-    bitSlowMaxPrice: null,
-  });
-
-  const onError = (error: Error) => {
-    setError(error);
-    setLoading(false);
-    toast.error(`Error fetching transactions: ${error.message}`);
-  };
-
-  useEffect(() => {
-    loadTransactions(filters, (message) => {
-      onError(new Error(message));
-    })
-      .then((data) => {
-        setTransactions(data);
-        setLoading(false);
-      })
-      .catch(onError);
-  }, [filters]);
-
-  return { transactions, filters, loading, error, setFilters , setLoading };
-}
+import { Coin } from "../../components/ui/CoinHistory";
+import { useQueriedTransaction } from "../../components/hooks/QueryTransactions";
+import { useCoinHistory } from "../../components/hooks/CoinHistory";
+import CoinHistoryModal from "../../components/ui/CoinHistory";
 
 export function TransactionsPage() {
-  const { transactions, loading, filters, error, setFilters , setLoading } =
-    useTransactions();
+  const { transactions, loading, filters, error, setFilters, setLoading } =
+    useQueriedTransaction();
   const [loadingTime, setLoadingTime] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false); // State for the sidebar toggle
+  const { coinHistory, setCoinUid } = useCoinHistory(
+    (error: string) => toast.error(error),
+    () => setShowHistoryModal(true) // <- open modal *after* history is loaded
+  );
+
+  const [currentCoin, setCoin] = useState<Coin | null>(null);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const navigate = useNavigate();
-  useEffect(()=> {
-    setLoading(true)
-  },[filters])
+  useEffect(() => {
+    setLoading(true);
+  }, [filters]);
   useEffect(() => {
     let timerId: number | undefined;
 
@@ -88,14 +51,14 @@ export function TransactionsPage() {
   }
 
   const goToProfile = () => {
-    const userUid = localStorage.getItem("userUid")
-    if(userUid === null){
-      toast.warning("You are not logged in at the moment!")
-      navigate("/")
-    } else{
+    const userUid = localStorage.getItem("userUid");
+    const accessToken = sessionStorage.getItem("accessToken")
+    if (userUid === null || accessToken === null) {
+      toast.warning("You are not logged in at the moment!");
+      navigate("/");
+    } else {
       navigate(`/profile/${userUid}`);
     }
-    
   };
 
   const goToMarketplace = () => {
@@ -117,10 +80,7 @@ export function TransactionsPage() {
       <header className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 shadow-lg py-6 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Hamburger Button (left) */}
-          <button
-            className="text-white"
-            onClick={toggleSidebar}
-          >
+          <button className="text-white" onClick={toggleSidebar}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -192,7 +152,9 @@ export function TransactionsPage() {
               <FaHistory className="mr-3 text-xl" />
               <div>
                 <h4 className="font-semibold">Transactions</h4>
-                <p className="text-sm text-gray-500">View your transaction history</p>
+                <p className="text-sm text-gray-500">
+                  View your transaction history
+                </p>
               </div>
             </button>
           </div>
@@ -215,7 +177,21 @@ export function TransactionsPage() {
             No transactions found.
           </p>
         ) : (
-          <TransactionTable transactions={transactions} />
+          <TransactionTable
+            transactions={transactions}
+            onRowClick={(transaction) => {
+              const clicked: Coin = {
+                coin_id: transaction.coinId,
+                value: transaction.amount,
+                bit1: transaction.bit1,
+                bit2: transaction.bit2,
+                bit3: transaction.bit3,
+                created_at: transaction.date,
+              };
+              setCoinUid(clicked.coin_id);
+              setCoin(clicked);
+            }}
+          />
         )}
       </main>
 
@@ -223,6 +199,16 @@ export function TransactionsPage() {
       <footer className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 py-4 text-center text-white text-sm">
         © {new Date().getFullYear()} BitSlowShop — All rights reserved.
       </footer>
+      <CoinHistoryModal
+        isOpen={showHistoryModal}
+        onClose={() => {
+          setCoinUid(-1);
+          setShowHistoryModal(false);
+        }}
+        coin={currentCoin}
+        history={coinHistory}
+      />
+      <ToastContainer />
     </div>
   );
 }

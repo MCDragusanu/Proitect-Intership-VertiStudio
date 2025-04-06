@@ -19,19 +19,19 @@ import { JWTExpired, JWTInvalid } from "./api/auth/JWTService";
 import { TokenPayLoad } from "./api/auth/JWTService";
 import { validateTokens } from "./api/routes/middleware/validate_tokens";
 import { getUserInformation } from "./api/routes/users/GetUserProfile";
+import { GetCoinHistory } from "./api/routes/coins/GetCoinHistory";
 
 // Helper function to handle method not allowed response
-const methodNotAllowed = () => new Response("Method Not Allowed", {
-  status: 405,
-  headers: { "Content-Type": "application/json" },
-});
-
-
+const methodNotAllowed = () =>
+  new Response("Method Not Allowed", {
+    status: 405,
+    headers: { "Content-Type": "application/json" },
+  });
 
 const server = serve({
   port: 3000,
   development: process.env.NODE_ENV !== "production",
-  
+
   routes: {
     "/": index,
 
@@ -51,36 +51,44 @@ const server = serve({
     },
     "/api/users/:userUid": async (req) => {
       const routeUserUid = req.url.split("/").pop();
-      
-      if (req.method === "GET" && routeUserUid!==undefined) {
-        console.log(`Retrieving userInformation for ${routeUserUid}`)
-        
+
+      if (req.method === "GET" && routeUserUid !== undefined) {
+        console.log(`Retrieving userInformation for ${routeUserUid}`);
+
         const tokenValidationError = await validateTokens(req, routeUserUid);
-        
+
         if (tokenValidationError) return tokenValidationError;
 
         // You can pass userUid to the handler
-        return await getUserInformation(req , routeUserUid);
+        return await getUserInformation(req, routeUserUid);
       }
-      
+
       return methodNotAllowed();
     },
-    
+
     "/api/transactions/v2/:userUid": async (req) => {
       const routeUserUid = req.url.split("/").pop();
-      
-      if (req.method === "POST" && routeUserUid!==undefined) {
-        console.log(`Retrieving transactions for user ${routeUserUid}`)
+
+      if (req.method === "POST" && routeUserUid !== undefined) {
+        console.log(`Retrieving transactions for user ${routeUserUid}`);
         const tokenValidationError = await validateTokens(req, routeUserUid);
         if (tokenValidationError) return tokenValidationError;
 
         // You can pass userUid to the handler
         return await getTransactionsByUser(req);
       }
-      
+
       return methodNotAllowed();
     },
 
+    "/api/coins/history/:coinId": async (req) => {
+      const routeCoinId = Number(req.url.split("/").pop());
+      if (req.method === "GET" && !Number.isNaN(routeCoinId)) {
+        console.log()
+        return await GetCoinHistory(routeCoinId);
+      }
+      return methodNotAllowed();
+    },
     // Authentication routes
     "/api/auth/register": async (req) => {
       if (req.method === "POST") {

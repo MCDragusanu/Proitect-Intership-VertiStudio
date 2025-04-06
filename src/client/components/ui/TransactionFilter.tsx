@@ -28,7 +28,19 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
+  
+    // Convert value to a number (for the numeric fields)
+    let numericValue = value === "" ? null : Number(value);
+  
+    // Validate that numeric fields have a value greater than 0
+    if (
+      (name === "pageSize" || name === "pageNumber" || name.startsWith("bitSlow")) &&
+      numericValue <= 0
+    ) {
+      return; // Do not update the filter if the value is <= 0
+    }
+  
+    // Update the filters with the new value
     onFilterChange({
       ...filters,
       [name]:
@@ -37,11 +49,11 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
           : name === "pageSize" ||
             name === "pageNumber" ||
             name.startsWith("bitSlow")
-          ? Number(value)
+          ? numericValue
           : value,
     });
   };
-
+  
   return (
     <div className="w-full">
       <button

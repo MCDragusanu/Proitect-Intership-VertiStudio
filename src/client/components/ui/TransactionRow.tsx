@@ -3,9 +3,17 @@ import React from 'react';
 interface TransactionRowProps {
     transaction: any;
     index: number;
+    onBitSlowClick?: (transaction: any) => void; // Optional callback for BitSlow click
 }
 
-const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, index }) => {
+const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, index, onBitSlowClick }) => {
+    // Handle BitSlow field click
+    const handleBitSlowClick = () => {
+        if (onBitSlowClick) {
+            onBitSlowClick(transaction); // Trigger the optional callback if provided
+        }
+    };
+
     return (
         <tr
             key={transaction.id}
@@ -14,7 +22,13 @@ const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, index }) =
             <td className="p-4 text-gray-600">{transaction.id}</td>
             <td className="p-4">
                 <div>
-                    <div className="font-medium text-gray-800">{transaction.computedBitSlow}</div>
+                    {/* Clickable BitSlow field */}
+                    <div
+                        className="font-medium text-gray-800 cursor-pointer"
+                        onClick={handleBitSlowClick}
+                    >
+                        {transaction.computedBitSlow}
+                    </div>
                     <div className="text-xs text-gray-500 mt-1">
                         Bits: {transaction.bit1}, {transaction.bit2}, {transaction.bit3}
                     </div>

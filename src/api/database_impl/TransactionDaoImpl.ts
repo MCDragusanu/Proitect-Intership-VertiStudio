@@ -32,9 +32,9 @@ export default class SQLiteTransactionDao implements TransactionDao {
     return result ? this.mapToTransaction(result) : null;
   }
 
-  async getCoinHistory(coinUid: string): Promise<Transaction[] | null> {
+  async getCoinHistory(coinUid: number): Promise<Transaction[] | null> {
     const stmt = getModule().database.prepare(
-      "SELECT * FROM transactions WHERE bitSlow = ?"
+      "SELECT * FROM transactions WHERE coin_id = ? ORDER by transaction_date ASC"
     );
     const result = stmt.all(coinUid);
     return result.length > 0 ? result.map(this.mapToTransaction) : null;

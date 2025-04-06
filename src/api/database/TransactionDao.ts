@@ -7,7 +7,7 @@ interface TransactionDao{
     insertTransaction(transaction : Transaction) : Promise<boolean>
     updateTransaction(transaction : Transaction) : Promise<boolean>
 
-    getCoinHistory(coinUid : string)             : Promise<Transaction[] | null>
+    getCoinHistory(coinUid : number)             : Promise<Transaction[] | null>
     getTransactionByUid(id : Number)             : Promise<Transaction   | null>
     getUserTransactions(userUid : String)        : Promise<Transaction[] | null>
 

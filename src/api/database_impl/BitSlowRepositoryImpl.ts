@@ -126,7 +126,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
     }
   }
 
-  async getCoinHistory(coinUid: string): Promise<Transaction[] | null> {
+  async getCoinHistory(coinUid: number): Promise<Transaction[] | null> {
     try {
       console.log("Getting coin history for:", coinUid);
       return await this.transactionDao.getCoinHistory(coinUid);
@@ -239,7 +239,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
   async getAllTransactions() : Promise<Transaction[]> {
     return this.transactionDao.getAllTransactions()
   }
-  
+
   async getTransactionsInDateRange(after: Date, before: Date): Promise<Transaction[] | null> {
     try {
       console.log(`Getting transactions from ${after} to ${before}`);

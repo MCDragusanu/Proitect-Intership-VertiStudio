@@ -19,7 +19,7 @@ export const buildRefreshTokenCookie = (token: string): string => {
     `Secure`,
     `SameSite=Strict`,
     `Path=/`,
-    `Max-Age=${60 * 60 * 24 * 7}`, // 7 days
+    `Max-Age=${getModule().jwtService.getRefreshTokenDurationInSeconds()}`, // 7 days
   ].join("; ");
 };
 
@@ -39,7 +39,7 @@ export const checkPasswordStrength = (password: string): boolean => {
 };
 
 export const validateEmail = (email: string): boolean => {
-  const emailValid = /^[A-Za-z.0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  const emailValid = /^[A-Za-z._0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   return emailValid;
 };
 

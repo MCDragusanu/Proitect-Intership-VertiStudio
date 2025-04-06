@@ -27,6 +27,7 @@ const LoginPage: React.FC = () => {
         toast.success("Login successful!"); 
         sessionStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userUid" , userUid)
+        console.log(`Access Token  : ${sessionStorage.getItem("accessToken")}` )
         navigate("/transactions"); 
       }
     } catch (error) {

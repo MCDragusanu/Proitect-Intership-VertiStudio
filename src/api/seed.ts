@@ -29,6 +29,7 @@ export async function seedDatabase(
       DROP TABLE IF EXISTS coins;
       DROP TABLE IF EXISTS user_credentials;
       DROP TABLE IF EXISTS user_profiles;
+      DROP TABLE IF EXISTS bitSlow
     `);
   }
 

@@ -1,41 +1,52 @@
 const ENDPOINT_URL = "http://localhost:3000/api/auth/refresh";
 
-export const RefreshTokens = async (accessToken: string) => {
-  const headers: Headers = new Headers();
+interface RefreshTokenResponse {
+  userUid: string | null;
+  lastLogin: string | null;
+  accessToken: string | null;
+  errorMessage?: string;
+}
 
-  headers.set("Content-Type", "application/json");
-  headers.set("Accept", "application/json");
-  headers.set("Authorization", `Bearer ${accessToken}`);
-  const requestInfo = new Request(ENDPOINT_URL, {
-    method: "POST",
-    headers: headers,
+export const RefreshTokens = async (accessToken: string): Promise<RefreshTokenResponse> => {
+  // Set up the request headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": `Bearer ${accessToken}`,
   });
 
   try {
-    const result = await fetch(requestInfo);
-
-    if (result.ok) {
-      const data = await result.json();
-      const { userUid, lastLogin, accessToken } = data;
-      return { userUid, lastLogin, accessToken, errorMessage: null };
-    } else {
-      const errorData = await result.json();
+    const response = await fetch(ENDPOINT_URL, { method: "POST", headers });
+    console.log("Refresh Result")
+    console.log(response)
+    if (!response.ok) {
+      // If response is not OK, try to extract error message from response body
+      const errorData = await response.json();
       return {
         userUid: null,
         lastLogin: null,
         accessToken: null,
-        errorMessage:
-          errorData.message || "You must login in order to continue",
+        errorMessage: errorData.message || "You must log in to continue.",
       };
     }
-  } catch (error: any) {
-    console.log(`Register Error : ${error}`);
 
+    // If the response is successful, parse the response body and return the required data
+    const data = await response.json();
+    const { userUid, lastLogin, accessToken: newAccessToken } = data;
+
+    return {
+      userUid,
+      lastLogin,
+      accessToken: newAccessToken,
+      errorMessage: "", // No error message if successful
+    };
+  } catch (error: any) {
+    console.error("Error during token refresh:", error);
     return {
       userUid: null,
       lastLogin: null,
       accessToken: null,
-      errorMessage: error.message || "You must login in order to continue",
+      errorMessage: error.message || "An error occurred while refreshing the token.",
     };
   }
 };

@@ -13,6 +13,7 @@ import SQLiteCoinDao from "./database_impl/CoinDaoImpl";
 import SQLiteTransactionDao from "./database_impl/TransactionDaoImpl";
 import { SQLiteBitSlowRepository } from "./database_impl/BitSlowRepositoryImpl";
 import SQLBitSlowDao from "./database_impl/BitSlowDaoImpl";
+
 export abstract class BackendModule {
   public readonly authService: AuthService;
   public readonly jwtService: JWTService;
@@ -100,7 +101,41 @@ function createPersistentModule(): BackendModule {
   const moduleInstance = new (class extends BackendModule {
     constructor() {
       super(authService, jwtService, repository, bitSlowRepository ,db);
-      this.initialize()
+      
+       // Required tables
+    const requiredTables = [
+      "user_credentials",
+      "user_profiles",
+      "bitSlow",
+      "coins",
+      "transactions",
+    ];
+
+    // Query existing tables from sqlite_master
+    const existingTables = db
+      .query(
+        `SELECT name FROM sqlite_master WHERE type='table' AND name IN (${requiredTables
+          .map(() => "?")
+          .join(",")})`
+      )
+      .all(...requiredTables)
+      .map((row: any) => row.name);
+
+    const missingTables = requiredTables.filter(
+      (table) => !existingTables.includes(table)
+    );
+
+    if (missingTables.length > 0) {
+      console.log("🛠 Missing tables detected:", missingTables);
+      console.log("🔄 Seeding database...");
+      this.initialize();
+    } else {
+      console.log("✅ All required tables exist. Skipping seed.");
+
+      const userCreds = db.query(`SELECT * FROM user_credentials`).all();
+      console.log("📋 user_credentials table contents:");
+      console.log(userCreds);
+    }
     }
   })();
 

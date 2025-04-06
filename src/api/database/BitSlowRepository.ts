@@ -22,7 +22,7 @@ export default interface BitSlowRepository {
   insertTransaction(transaction: Transaction): Promise<boolean>;
   updateTransaction(transaction: Transaction): Promise<boolean>;
 
-  getCoinHistory(coinUid: string): Promise<Transaction[] | null>;
+  getCoinHistory(coinUid: number): Promise<Transaction[] | null>;
   getTransactionByUid(id: number): Promise<Transaction | null>;
   getUserTransactions(userUid: string): Promise<Transaction[] | null>;
 
