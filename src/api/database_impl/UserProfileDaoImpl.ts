@@ -14,8 +14,8 @@ class SQLiteUserProfileDao implements UserProfileDao {
     const info = stmt.run(
       profile.user_uid,
       profile.name,
-      profile.address,
       profile.account_creation_date,
+      profile.address,
       profile.country,
       profile.city
     );

@@ -1,6 +1,6 @@
 const ENDPOINT_URL = "http://localhost:3000/api/auth/refresh";
 
-export const register = async (accessToken: string) => {
+export const RefreshTokens = async (accessToken: string) => {
   const headers: Headers = new Headers();
 
   headers.set("Content-Type", "application/json");

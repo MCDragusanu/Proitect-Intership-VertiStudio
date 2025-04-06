@@ -20,9 +20,17 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
                     </tr>
                 </thead>
                 <tbody>
-                    {transactions.map((transaction, index) => (
-                        <TransactionRow key={transaction.id} transaction={transaction} index={index} />
-                    ))}
+                    {transactions.length === 0 ? (
+                        <tr>
+                            <td colSpan={6} className="p-4 text-center text-gray-500">
+                                No available transactions
+                            </td>
+                        </tr>
+                    ) : (
+                        transactions.map((transaction, index) => (
+                            <TransactionRow key={transaction.id} transaction={transaction} index={index} />
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>

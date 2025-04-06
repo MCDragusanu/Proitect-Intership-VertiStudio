@@ -22,7 +22,7 @@ class JWTInvalid extends JWTError{
 }
 
 //Interface to standardise the token payload
-interface TokenPayLoad{
+export interface TokenPayLoad{
     userUid : string,
     userRole : string,
 }
@@ -54,4 +54,4 @@ abstract class JWTService{
     abstract extractPayloadFromRefreshToken(token : string) : Promise<TokenPayLoad | JWTError>
 }
 
-export {JWTError , JWTExpired , JWTInvalid , JWTService , TokenPayLoad}
+export {JWTError , JWTExpired , JWTInvalid , JWTService}

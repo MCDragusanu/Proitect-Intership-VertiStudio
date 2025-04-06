@@ -9,7 +9,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   const handleGoToMarket = () => {
-    navigate("/market");
+    navigate("/transactions");
   };
 
   const handleGoToRegister = () => {

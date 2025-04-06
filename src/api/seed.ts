@@ -2,7 +2,6 @@ import { Database } from "bun:sqlite";
 import { faker } from "@faker-js/faker";
 import { uuid } from "uuidv4";
 import bcrypt from "bcrypt";
-import { TokenPayLoad } from "./auth/JWTService";
 import { getModule } from "./module";
 
 export async function seedDatabase(
@@ -119,6 +118,8 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
   for (let i = 0; i < count; i++) {
     const user_uid = uuid();
     const password = "Testtest123@";
+    const email =  faker.internet.email()
+    console.log(`${user_uid} ${email} ${password}`)
     const hashed_password = await bcrypt.hash(password, 10);
     const refresh_token = await getModule().jwtService.issueRefreshToken({
       userUid: user_uid,
@@ -127,7 +128,7 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
 
     insertCredentials.run(
       user_uid,
-      faker.internet.email(),
+      email,
       hashed_password,
       refresh_token,
       faker.phone.number(),
@@ -143,7 +144,7 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
       faker.location.country(),
       faker.location.city()
     );
-
+    console.log(user_uid)
     clientUids.push(user_uid);
   }
 
@@ -181,11 +182,12 @@ function seedCoins(
     } while (usedValues.has(value));
     usedValues.add(value);
 
-    const clientId = clientUids[Math.floor(Math.random() * clientUids.length)];
-
+    const clientId = clientUids[Math.floor(Math.random() * clientUids.length)]; 
     const info = insert.run(clientId, bit1, bit2, bit3, value);
-    
-    coinIds.push(Number(info.lastInsertRowid));
+    const coinId = Number(info.lastInsertRowid)
+   
+    console.log(`${clientId} -> ${coinId}`)
+    coinIds.push(coinId);
   }
 
   return coinIds;

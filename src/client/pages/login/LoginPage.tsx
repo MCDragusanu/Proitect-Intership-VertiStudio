@@ -22,12 +22,12 @@ const LoginPage: React.FC = () => {
       const { userUid , accessToken, errorMessage } = await login(email, password);
 
       if (errorMessage) {
-        toast.error(errorMessage); // Show error message
+        toast.error(errorMessage);
       } else {
-        toast.success("Login successful!"); // Show success message
+        toast.success("Login successful!"); 
         sessionStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userUid" , userUid)
-        navigate("/market"); // Redirect to the marketplace after successful login
+        navigate("/transactions"); 
       }
     } catch (error) {
       toast.error("An error occurred during login.");
@@ -37,12 +37,12 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGoToRegister = () => {
-    navigate("/register"); // Navigate to the registration page
+    navigate("/register");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-blue-100 to-purple-200 text-gray-900 p-6 flex items-center justify-center">
-      <div className="max-w-lg w-full bg-white p-10 rounded-lg shadow-lg"> {/* Adjusted size and corner radius */}
+      <div className="max-w-lg w-full bg-white p-10 rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Login</h2>
 
         <form onSubmit={handleLoginSubmit}>
@@ -79,8 +79,6 @@ const LoginPage: React.FC = () => {
           </Button>
         </div>
       </div>
-
-      {/* Toast container (this will render the toasts on top of the page) */}
       <ToastContainer />
     </div>
   );

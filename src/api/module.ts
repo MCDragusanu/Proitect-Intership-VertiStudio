@@ -33,11 +33,11 @@ export abstract class BackendModule {
     this.database = database;
   }
 
-  async initialize(): Promise<void> {
+  initialize(){
     seedDatabase(this.database, {
-      clientCount: 30,
-      bitSlowCount: 50,
-      transactionCount: 50,
+      clientCount: 100,
+      bitSlowCount: 125,
+      transactionCount: 500,
       clearExisting: true,
     });
   
@@ -64,14 +64,7 @@ function createInMemoryModule(): BackendModule {
   const authService = new AuthServiceImpl(credentialsDao);
   const jwtService = new JWTServiceImpl();
 
-  // Seed the DB (optional)
-  seedDatabase(db, {
-    clientCount: 20,
-    transactionCount: 20,
-    bitSlowCount: 20,
-    clearExisting: false,
-  });
-
+ 
   // Return BackendModule instance
   const moduleInstance = new (class extends BackendModule {
     constructor() {
@@ -82,7 +75,37 @@ function createInMemoryModule(): BackendModule {
 
   return moduleInstance;
 }
+function createPersistentModule(): BackendModule {
+  const db = new Database("mydb.sqlite");
 
+  // DAOs for users
+  const credentialsDao = new SQLiteUserCredentialsDao();
+  const profileDao = new SQLiteUserProfileDao();
+
+  // DAOs for bitslow-related data
+  const bitSlowDao = new SQLBitSlowDao();
+  const coinDao = new SQLiteCoinDao();
+  const transactionDao = new SQLiteTransactionDao();
+
+  // Repositories
+  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
+  const bitSlowRepository = new SQLiteBitSlowRepository(bitSlowDao, coinDao, transactionDao);
+
+  // Services
+  const authService = new AuthServiceImpl(credentialsDao);
+  const jwtService = new JWTServiceImpl();
+
+ 
+  // Return BackendModule instance
+  const moduleInstance = new (class extends BackendModule {
+    constructor() {
+      super(authService, jwtService, repository, bitSlowRepository ,db);
+      this.initialize()
+    }
+  })();
+
+  return moduleInstance;
+}
 
 // Singleton holder
 let instance: BackendModule | null = null;
@@ -90,7 +113,8 @@ let instance: BackendModule | null = null;
 // Exported getter
 export function getModule(): BackendModule {
   if (!instance) {
-    instance = createInMemoryModule();
+    instance = createPersistentModule();
+    
   }
   return instance;
 }

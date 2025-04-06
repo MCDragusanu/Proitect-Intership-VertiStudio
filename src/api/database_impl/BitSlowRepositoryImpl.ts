@@ -239,6 +239,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
   async getAllTransactions() : Promise<Transaction[]> {
     return this.transactionDao.getAllTransactions()
   }
+  
   async getTransactionsInDateRange(after: Date, before: Date): Promise<Transaction[] | null> {
     try {
       console.log(`Getting transactions from ${after} to ${before}`);

@@ -5,42 +5,14 @@ import { getModule } from "../module";
 export default class SQLiteCoinDao implements CoinDao {
   constructor() {}
 
-  createSource(): void {
-    getModule().database.exec(`CREATE TABLE IF NOT EXISTS coins (
-      coin_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_uid CHAR(256),
-      bit1 INTEGER NOT NULL,
-      bit2 INTEGER NOT NULL,
-      bit3 INTEGER NOT NULL,
-      value REAL NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_uid) REFERENCES users (uid)
-    );`);
-  }
-
-  clearSource(): void {
-    getModule().database.exec("DELETE FROM coins");
-  }
-
-  deleteSource(): void {
-    getModule().database.exec("DROP TABLE IF EXISTS coins");
-  }
-
-  checkSource(): Boolean {
-    const result = getModule()
-      .database.prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='coins'"
-      )
-      .get();
-    return result !== undefined;
-  }
+ 
 
   async insertCoin(coin: Coin): Promise<boolean> {
     const stmt = getModule().database.prepare(
       "INSERT INTO coins (user_uid, bit1, bit2, bit3, value) VALUES (?, ?, ?, ?, ?)"
     );
     const info = stmt.run(
-      coin.user_uid,
+      coin.client_id,
       coin.bit1,
       coin.bit2,
       coin.bit3,
@@ -51,20 +23,21 @@ export default class SQLiteCoinDao implements CoinDao {
 
   async getMonetaryValue(userUid: string): Promise<number | null> {
     const stmt = getModule().database.prepare(
-      "SELECT SUM(value) AS monetaryValue FROM coins WHERE user_uid = ?"
+      "SELECT SUM(value) AS monetaryValue FROM coins WHERE client_id = ?"
     );
     
     const result = stmt.get(userUid) as { monetaryValue: number | null };
-  
-    return result.monetaryValue;
+    console.log(result)
+    console.log(`Retrieved Monetary value of : ${result.monetaryValue} $`)
+    return result.monetaryValue  || 0;
   }
 
   async updateCoin(coin: Coin): Promise<boolean> {
     const stmt = getModule().database.prepare(
-      "UPDATE coins SET user_uid = ?, bit1 = ?, bit2 = ?, bit3 = ?, value = ? WHERE coin_id = ?"
+      "UPDATE coins SET client_id = ?, bit1 = ?, bit2 = ?, bit3 = ?, value = ? WHERE coin_id = ?"
     );
     const info = stmt.run(
-      coin.user_uid,
+      coin.client_id,
       coin.bit1,
       coin.bit2,
       coin.bit3,
@@ -76,7 +49,7 @@ export default class SQLiteCoinDao implements CoinDao {
 
   async getFreeCoins(): Promise<Coin[] | null> {
     const stmt = getModule().database.prepare(
-      "SELECT * FROM coins WHERE user_uid IS FREE"
+      "SELECT * FROM coins WHERE client_id IS FREE"
     );
     const result = stmt.all();
     return result.length > 0 ? result.map(this.mapToCoin) : null;
@@ -84,9 +57,10 @@ export default class SQLiteCoinDao implements CoinDao {
 
   async getUserCoins(userUid: string): Promise<Coin[]> {
     const stmt = getModule().database.prepare(
-      "SELECT * FROM coins WHERE user_uid = ?"
+      "SELECT * FROM coins WHERE client_id = ?"
     );
     const result = stmt.all(userUid);
+    console.log(`Retrieved ${result.length} coins`)
     return result.map(this.mapToCoin);
   }
 
@@ -115,7 +89,7 @@ export default class SQLiteCoinDao implements CoinDao {
   private mapToCoin(row: any): Coin {
     return {
       coin_id: row.coin_id.toString(),
-      user_uid: row.user_uid ?? "",
+      client_id: row.client_id ?? "",
       value: row.value,
       bit1: row.bit1,
       bit2: row.bit2,

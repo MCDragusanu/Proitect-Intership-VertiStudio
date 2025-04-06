@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../activities/UserRegister"; // Assuming the register function is exported from here
+import { register } from "../../activities/UserRegister"; 
 import { Button } from "../../components/ui/button";
 import { Textarea } from "../../components/ui/textarea";
 import { Input } from "../../components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import Spinner from "../../components/ui/spinner";
-import { toast, ToastContainer } from "react-toastify"; // Import the toast function
-import 'react-toastify/dist/ReactToastify.css'; // Don't forget to import the styles for toast notifications
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const RegisterPage: React.FC = () => {
-  const [step, setStep] = useState(1); // To track the current step
+  const [step, setStep] = useState(1); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -44,6 +44,7 @@ const RegisterPage: React.FC = () => {
         phonePrefix + phoneNumber, // Combine the phone prefix and phone number
         address
       );
+      //save the credentials
       sessionStorage.setItem( "accessToken", accessToken)
       localStorage.setItem("userUid" , userUid)
 
@@ -51,10 +52,10 @@ const RegisterPage: React.FC = () => {
         toast.error(errorMessage); // Use toast to show error message
       } else {
         toast.success("Registration successful! Welcome to BitSlowShop."); // Success toast
-        navigate("/market"); // Redirect to the marketplace or another page after successful registration
+        navigate("/transactions"); 
       }
     } catch (error) {
-      toast.error("An error occurred during registration."); // Generic error toast
+      toast.error("An error occurred during registration."); 
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +67,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-blue-100 to-purple-200 text-gray-900 p-6 flex items-center justify-center">
-      <div className="max-w-lg w-full bg-white p-10 rounded-lg shadow-lg"> {/* Adjusted size and corner radius */}
+      <div className="max-w-lg w-full bg-white p-10 rounded-lg shadow-lg"> {}
         {/* Tabs for switching between steps */}
         <div className="relative flex justify-between mb-6 border-b-2 border-gray-300">
           <Button 

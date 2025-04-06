@@ -1,6 +1,6 @@
 interface Coin{
     coin_id : number,
-    user_uid : string | null // if it is not owned by anyone -> Null
+    client_id : string | null // if it is not owned by anyone -> Null
     value : number
     bit1 : number,
     bit2 : number,
