@@ -29,21 +29,19 @@ export const fetchUserInformation = async (
     console.log(result)
     if (result.ok) {
       const data = await result.json();
-     
       const coins = data.ownedCoins
       const profile = data.profile
       const monetaryValue = data.monetaryValue
       return {profile , coins , monetaryValue}
     }else
-     // Unauthorized (e.g., token expired or invalid)
-     if (result.status === 401) {
+     if (result.status === 403) {
       unAuthorizedAccess("Trying to access a Restricted Resource!");
       return null;
     }  
 
     const errorData = await result.json().catch((err) => {
       console.error("Error parsing the response body:", err);
-      return { message: "Unknown error occurred" }; // Provide a fallback message
+      return { message: "Unknown error occurred" }; 
     });
 
     errorCallback(errorData.message || "Unknown error occurred");

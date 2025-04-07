@@ -1,6 +1,6 @@
 import { useState , useEffect} from "react";
 import { CoinHistoryEntry } from "../ui/CoinHistory";
-import { fetchCoinHistory } from "../../activities/CoinGetHistory";
+import { fetchCoinHistory } from "../../requrests/CoinGetHistory";
 
 function loadCoinHistory(coinId: number , errorCallback : (message : string) => {}): Promise<CoinHistoryEntry[]> {
     return fetchCoinHistory(coinId, errorCallback ) || [];
@@ -15,7 +15,7 @@ export const useCoinHistory = (
 
   useEffect(() => {
     if (coinUid === null || coinUid === -1) return;
-
+    
     loadCoinHistory(coinUid , onError)
       .then((data) => {
         setHistory(data);

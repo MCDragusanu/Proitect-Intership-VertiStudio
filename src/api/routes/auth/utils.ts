@@ -181,15 +181,11 @@ export const makeErrorResponse = (
 };
 
 export const makeSuccessResponse = (
-  userUid: string,
-  lastLogin: string,
   accessToken: string,
   refreshCookie: string
 ): Response => {
   return new Response(
     JSON.stringify({
-      userUid: userUid,
-      lastLogin: lastLogin,
       accessToken: accessToken,
     }),
     {

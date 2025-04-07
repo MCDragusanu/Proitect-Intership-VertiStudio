@@ -1,4 +1,4 @@
-import { fetchTransactionsByUser } from "../../activities/getTransactions";
+import { fetchTransactionsByUser } from "../../requrests/getTransactions";
 import { useState , useEffect } from "react";
 import { toast } from "react-toastify";
 

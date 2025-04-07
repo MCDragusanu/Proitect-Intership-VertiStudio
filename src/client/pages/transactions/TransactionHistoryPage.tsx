@@ -52,8 +52,7 @@ export function TransactionsPage() {
 
   const goToProfile = () => {
     const userUid = localStorage.getItem("userUid");
-    const accessToken = sessionStorage.getItem("accessToken")
-    if (userUid === null || accessToken === null) {
+    if (userUid === null || undefined) {
       toast.warning("You are not logged in at the moment!");
       navigate("/");
     } else {
@@ -180,6 +179,7 @@ export function TransactionsPage() {
           <TransactionTable
             transactions={transactions}
             onRowClick={(transaction) => {
+              console.log(transaction)
               const clicked: Coin = {
                 coin_id: transaction.coinId,
                 value: transaction.amount,
@@ -187,6 +187,7 @@ export function TransactionsPage() {
                 bit2: transaction.bit2,
                 bit3: transaction.bit3,
                 created_at: transaction.date,
+                bitSlow :  transaction.bitSlow
               };
               setCoinUid(clicked.coin_id);
               setCoin(clicked);

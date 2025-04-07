@@ -30,7 +30,7 @@ export const logoutUser = async (
     const result = await fetch(requestInfo);
 
     // Unauthorized (e.g., token expired or invalid)
-    if (result.status === 401) {
+    if (result.status === 403) {
       unAuthorizedAccess("Trying to perform a Restricted action!");
       return;
     }
@@ -41,7 +41,7 @@ export const logoutUser = async (
     });
     errorCallback(errorData.message || "Unknown error occurred");
   } catch (error: any) {
-    // Handle any network or unexpected errors
+    
     console.error(`Error during fetch request: ${error}`);
     errorCallback(error.message || "Network or unexpected error occurred");
   }

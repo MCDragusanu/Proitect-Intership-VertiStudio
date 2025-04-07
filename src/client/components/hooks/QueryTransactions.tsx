@@ -1,6 +1,6 @@
 import { TransactionFilters } from "../ui/TransactionFilter";
-import { OnErrorCallback } from "../../activities/getTransactions";
-import { fetchTransactions } from "../../activities/getTransactions";
+import { OnErrorCallback } from "../../requrests/getTransactions";
+import { fetchTransactions } from "../../requrests/getTransactions";
 import { useEffect , useState } from "react";
 import { toast } from "react-toastify";
 

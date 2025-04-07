@@ -1,4 +1,4 @@
-import { fetchUserInformation } from "../../activities/getUserInformation";
+import { fetchUserInformation } from "../../requrests/getUserInformation";
 import { useState , useEffect } from "react";
 import { toast } from "react-toastify";
 

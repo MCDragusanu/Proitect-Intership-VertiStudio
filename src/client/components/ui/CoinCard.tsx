@@ -1,21 +1,63 @@
 import React from "react";
-
+import { SiBit } from "react-icons/si";
 import { Coin } from "./CoinHistory";
+
 type CoinCardProps = {
   coin: Coin;
   onClick?: (coin: Coin) => void;
+  actions?: React.ReactNode; // Optional custom action buttons or components
 };
 
-const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick }) => {
+const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, actions }) => {
+  console.log(coin)
   return (
     <div
-      className="bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-200 cursor-pointer transition"
+      className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between bg-neutral-100 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:bg-gray-50 cursor-pointer transition-all duration-300 max-w-4xl gap-4"
       onClick={() => onClick?.(coin)}
     >
-      <h3 className="font-semibold text-lg">Coin ID: {coin.coin_id}</h3>
-      <p><strong>Value:</strong> ${coin.value}</p>
-      <p><strong>Bits:</strong> {coin.bit1}, {coin.bit2}, {coin.bit3}</p>
-      <p><strong>Created At:</strong> {new Date(coin.created_at).toLocaleDateString()}</p>
+      {/* Coin Icon */}
+      <div className="absolute top-4 left-4 bg-yellow-400 w-14 h-14 rounded-full flex items-center justify-center shadow-md">
+        <SiBit className="text-white text-2xl" />
+      </div>
+
+      {/* Spacer to align with icon */}
+      <div className="w-16" />
+
+      {/* Main Content */}
+      <div className="flex flex-wrap gap-4 ml-2 sm:ml-4">
+        {/* BitSlow - Always first */}
+        <p className={`font-bold px-3 py-1 rounded-md ${
+          coin.bitSlow ? "text-purple-700 bg-purple-100" : "text-gray-400 bg-gray-100 italic"
+        }`}>
+          BitSlow: {coin.bitSlow ?? "Unavailable"}
+        </p>
+
+        <p className="text-gray-800 font-semibold">
+          Coin ID: <span className="text-blue-600 font-bold">{coin.coin_id}</span>
+        </p>
+
+        <p className="text-gray-800 font-semibold">
+          Value: <span className="text-green-600 font-bold">${coin.value}</span>
+        </p>
+
+        <p className="text-gray-800 font-semibold">
+          Bits: <span className="text-gray-600">{coin.bit1}, {coin.bit2}, {coin.bit3}</span>
+        </p>
+
+        <p className="text-gray-800 font-semibold">
+          Created:{" "}
+          <span className="text-gray-500 text-sm">
+            {new Date(coin.created_at).toLocaleDateString()}
+          </span>
+        </p>
+      </div>
+
+      {/* Custom Actions (e.g., buttons) */}
+      {actions && (
+        <div className="mt-4 sm:mt-0 sm:ml-auto">
+          {actions}
+        </div>
+      )}
     </div>
   );
 };

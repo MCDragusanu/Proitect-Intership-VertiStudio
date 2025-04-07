@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { RefreshTokens } from '../../activities/RefreshToken';
+import { RefreshTokens } from '../../requrests/RefreshToken';
 export interface RefreshTokenResponse {
   userUid: string;
   lastLogin: string;

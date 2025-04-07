@@ -1,9 +1,11 @@
 import { TransactionFilters } from "../components/ui/TransactionFilter";
 
 const ENDPOINT_URL = "http://localhost:3000/api/transactions/v2";
+
 export type OnErrorCallback = (errorMessage: string) => void;
+
 const defaultCallback: OnErrorCallback = (errorMessage: string) => {
-  console.log(errorMessage); // or any other error handling logic
+  console.log(errorMessage); 
 };
 
 const handleResponse = async (
@@ -16,15 +18,9 @@ const handleResponse = async (
       const errorBody = await response.json();
       console.log(errorBody);
       errorCallback(errorBody.message);
-      return Promise.resolve([]); // Or handle accordingly
+      return Promise.resolve([]); 
     }
-
-    // Handle the response body only once
     const resultBody = await response.json();
-    console.log("Completed Processing:");
-    console.log(resultBody);
-
-    // Make sure you're returning or using the resultBody properly
     return Promise.resolve(resultBody);
   } catch (error: any) {
     console.log(error);

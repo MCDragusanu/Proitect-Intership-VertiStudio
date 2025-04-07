@@ -17,6 +17,7 @@ export class SQLLiteUserRepository implements UserRepository {
         let success : boolean= false;
         try {
             success = await this.userCredentialsDao.insertUserCredentials(credentials);
+            console.log(`Credentials Inserted : ${credentials}`)
             return success;
         } catch (err: any) {
             console.error(`Error inserting credentials: ${err}`);
@@ -132,6 +133,7 @@ export class SQLLiteUserRepository implements UserRepository {
         let credentials: UserCredentials | null = null;
         try {
             credentials = await this.userCredentialsDao.getCredentialsByToken(refreshToken);
+            console.log(`Credentials found for ${refreshToken} : ${credentials}`)
             return credentials;
         } catch (err: any) {
             console.error(`Error retrieving credentials by token: ${err}`);

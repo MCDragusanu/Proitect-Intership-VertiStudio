@@ -1,14 +1,38 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
 import { Button } from "@/src/client/components/ui/button";
 import { Card, CardContent } from "@/src/client/components/ui/card";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-
+import { useLayoutEffect } from "react";
+import { fetchAccessToken } from "../../requrests/RefreshToken";
+import { parseToken } from "../../requrests/parseJWT";
 export default function LandingPage() {
   const navigate = useNavigate();
+  useLayoutEffect(() => {
+    const token = sessionStorage.getItem("accessToken")
+    const fetchToken = async (token: string) => {
+      fetchAccessToken(
+        token,
+        (newToken: string) => {
+         
+          const decodedToken = parseToken(newToken)
+          sessionStorage.setItem("accessToken", newToken);
+          localStorage.setItem("userUid", decodedToken.userUid);
+          localStorage.setItem("role", decodedToken.userRole);
+          handleGoToTransactions()
+        },
 
-  const handleGoToMarket = () => {
+        () => {},
+        (error: any) => {
+          console.log(error.message || "Error occurred while validating session");
+        }
+      );
+    };
+   
+    fetchToken(token || "Oopsie");
+  });
+  const handleGoToTransactions = () => {
     navigate("/transactions");
   };
 
@@ -39,7 +63,7 @@ export default function LandingPage() {
         >
           <Button
             className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-            onClick={handleGoToMarket}
+            onClick={handleGoToTransactions}
           >
             Buy Bitslow Now
           </Button>

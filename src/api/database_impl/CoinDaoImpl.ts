@@ -57,7 +57,10 @@ export default class SQLiteCoinDao implements CoinDao {
 
   async getUserCoins(userUid: string): Promise<Coin[]> {
     const stmt = getModule().database.prepare(
-      "SELECT * FROM coins WHERE client_id = ?"
+      `SELECT c.*, b.computed_bit_slow AS bitSlow 
+       FROM coins c
+       LEFT JOIN bitSlow b ON c.coin_id = b.coin_id
+       WHERE c.client_id = ?`
     );
     const result = stmt.all(userUid);
     console.log(`Retrieved ${result.length} coins`)
@@ -95,6 +98,7 @@ export default class SQLiteCoinDao implements CoinDao {
       bit2: row.bit2,
       bit3: row.bit3,
       created_at: new Date(row.created_at).getTime(),
+      bitSlow : row.bitSlow,
     };
   }
 }

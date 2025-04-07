@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../activities/UserLogin"; // Assuming the login function is exported from here
+import { login } from "../../requrests/UserLogin"; // Assuming the login function is exported from here
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import Spinner from "../../components/ui/spinner";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; // Import the styles for toast notifications
+import { parseToken } from "../../requrests/parseJWT";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -19,15 +20,17 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const { userUid , accessToken, errorMessage } = await login(email, password);
+      const {  accessToken, errorMessage } = await login(email, password);
 
       if (errorMessage) {
         toast.error(errorMessage);
       } else {
         toast.success("Login successful!"); 
+       const decodedToken = parseToken(accessToken)
+       console.log(decodedToken.userUid)
         sessionStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("userUid" , userUid)
-        console.log(`Access Token  : ${sessionStorage.getItem("accessToken")}` )
+        localStorage.setItem("userUid" , decodedToken.userUid)
+        localStorage.setItem("role" , decodedToken.userRole)
         navigate("/transactions"); 
       }
     } catch (error) {

@@ -19,7 +19,9 @@ export const fetchCoinHistory = async (
       const response = await fetch(request);
       console.log(response)
       if (response.ok) {
+        
         const history = await response.json();
+        console.log(history)
         return history as CoinHistoryEntry[] ;
       }
   

@@ -34,6 +34,7 @@ export const register = async (req: Request): Promise<Response> => {
     phone_number,
   } = await req.json();
 
+  console.log("Beginning registration!")
   // Validate email
   if (!validateEmail(userEmail)) {
     return makeErrorResponse(400, "Invalid email format.");
@@ -72,7 +73,7 @@ export const register = async (req: Request): Promise<Response> => {
     
     return makeErrorResponse(400, errorMessage);
   }
-
+  console.log("Registration request body is good!")
   let registerResult: AuthResult | AuthError;
 
   try {
@@ -87,6 +88,8 @@ export const register = async (req: Request): Promise<Response> => {
 
   // Handle successful registration
   if (isAuthResult(registerResult)) {
+    console.log("Registration success")
+  
     const tokenPayload: TokenPayLoad = {
       userUid: registerResult.userUid,
       userRole: registerResult.userRole,
@@ -119,14 +122,12 @@ export const register = async (req: Request): Promise<Response> => {
       account_creation_date: now,
     };
 
-    await getModule().userRepository.insertCredentials(credentials);
-    await getModule().userRepository.insertProfile(profile);
-
+    const credentialsResult =  await getModule().userRepository.insertCredentials(credentials);
+    const profileResult = await getModule().userRepository.insertProfile(profile);
+    console.log(`Credentials Status : ${credentialsResult} Profile : ${profileResult}`)
     const refreshCookie = buildRefreshTokenCookie(refreshToken);
 
     return makeSuccessResponse(
-      tokenPayload.userUid,
-      profile.account_creation_date,
       accessToken,
       refreshCookie
     );

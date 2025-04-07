@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../activities/UserRegister"; 
+import { register } from "../../requrests/UserRegister"; 
 import { Button } from "../../components/ui/button";
 import { Textarea } from "../../components/ui/textarea";
 import { Input } from "../../components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import Spinner from "../../components/ui/spinner";
 import { toast, ToastContainer } from "react-toastify";
+
 import 'react-toastify/dist/ReactToastify.css'; 
+import { parseToken } from "../../requrests/parseJWT";
 
 const RegisterPage: React.FC = () => {
   const [step, setStep] = useState(1); 
@@ -34,7 +36,7 @@ const RegisterPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const { userUid, lastLogin, accessToken, errorMessage } = await register(
+      const { accessToken, errorMessage } = await register(
         email,
         password,
         firstName,
@@ -44,9 +46,12 @@ const RegisterPage: React.FC = () => {
         phonePrefix + phoneNumber, // Combine the phone prefix and phone number
         address
       );
-      //save the credentials
-      sessionStorage.setItem( "accessToken", accessToken)
-      localStorage.setItem("userUid" , userUid)
+
+     
+      const decodedToken = parseToken(accessToken)
+      sessionStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userUid" , decodedToken.userUid)
+      localStorage.setItem("role" , decodedToken.userRole)
 
       if (errorMessage) {
         toast.error(errorMessage); // Use toast to show error message
@@ -55,6 +60,7 @@ const RegisterPage: React.FC = () => {
         navigate("/transactions"); 
       }
     } catch (error) {
+      console.log(error)
       toast.error("An error occurred during registration."); 
     } finally {
       setIsLoading(false);

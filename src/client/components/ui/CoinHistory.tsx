@@ -8,6 +8,7 @@ export type Coin = {
   bit2: number;
   bit3: number;
   created_at: number;
+  bitSlow : string | null 
 };
 
 export type CoinHistoryEntry = {

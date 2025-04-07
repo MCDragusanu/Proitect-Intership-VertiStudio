@@ -68,8 +68,6 @@ export const login = async (req: Request): Promise<Response> => {
       const cookie = buildRefreshTokenCookie(refreshToken);
       //return the new response
       return makeSuccessResponse(
-        credentials.user_uid,
-        credentials.last_login,
         accessToken,
         cookie
       );

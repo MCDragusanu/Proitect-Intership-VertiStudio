@@ -122,11 +122,13 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
           seller.name AS sellerName,
           buyer.user_uid AS buyerUid,
           buyer.name AS buyerName,
-          c.bit1, c.bit2, c.bit3
+          c.bit1, c.bit2, c.bit3,
+          b.computed_bit_slow as bitSlow
       FROM transactions t
       LEFT JOIN user_profiles seller ON t.seller_id = seller.user_uid
       JOIN user_profiles buyer ON t.buyer_id = buyer.user_uid
       JOIN coins c ON c.coin_id = t.coin_id
+      JOIN bitSlow b on b.coin_id = t.coin_id
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
@@ -174,11 +176,13 @@ export const getTransactionsByUser = async (req: Request): Promise<Response> => 
           seller.name AS sellerName,
           buyer.user_uid AS buyerUid,
           buyer.name AS buyerName,
-          c.bit1, c.bit2, c.bit3
+          c.bit1, c.bit2, c.bit3,
+          b.computed_bit_slow AS bitSlow
       FROM transactions t
       LEFT JOIN user_profiles seller ON t.seller_id = seller.user_uid
       JOIN user_profiles buyer ON t.buyer_id = buyer.user_uid
       JOIN coins c ON c.coin_id = t.coin_id
+      LEFT JOIN bitSlow b ON b.coin_id = t.coin_id
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
