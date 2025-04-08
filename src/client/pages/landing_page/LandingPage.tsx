@@ -9,29 +9,7 @@ import { fetchAccessToken } from "../../requrests/RefreshToken";
 import { parseToken } from "../../requrests/parseJWT";
 export default function LandingPage() {
   const navigate = useNavigate();
-  useLayoutEffect(() => {
-    const token = sessionStorage.getItem("accessToken")
-    const fetchToken = async (token: string) => {
-      fetchAccessToken(
-        token,
-        (newToken: string) => {
-         
-          const decodedToken = parseToken(newToken)
-          sessionStorage.setItem("accessToken", newToken);
-          localStorage.setItem("userUid", decodedToken.userUid);
-          localStorage.setItem("role", decodedToken.userRole);
-          handleGoToTransactions()
-        },
-
-        () => {},
-        (error: any) => {
-          console.log(error.message || "Error occurred while validating session");
-        }
-      );
-    };
-   
-    fetchToken(token || "Oopsie");
-  });
+  
   const handleGoToTransactions = () => {
     navigate("/transactions");
   };

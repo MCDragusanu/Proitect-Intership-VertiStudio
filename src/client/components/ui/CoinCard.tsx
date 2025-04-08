@@ -1,14 +1,14 @@
 import React from "react";
 import { SiBit } from "react-icons/si";
-import { Coin } from "./CoinHistory";
+import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 type CoinCardProps = {
-  coin: Coin;
-  onClick?: (coin: Coin) => void;
-  actions?: React.ReactNode; // Optional custom action buttons or components
+  coin: CoinDTO;
+  onClick?: (coin: CoinDTO) => void;
+  onActionClicked : (coin : CoinDTO) => void,
 };
 
-const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, actions }) => {
+const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, onActionClicked }) => {
   console.log(coin)
   return (
     <div
@@ -43,19 +43,12 @@ const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, actions }) => {
         <p className="text-gray-800 font-semibold">
           Bits: <span className="text-gray-600">{coin.bit1}, {coin.bit2}, {coin.bit3}</span>
         </p>
-
-        <p className="text-gray-800 font-semibold">
-          Created:{" "}
-          <span className="text-gray-500 text-sm">
-            {new Date(coin.created_at).toLocaleDateString()}
-          </span>
-        </p>
       </div>
 
-      {/* Custom Actions (e.g., buttons) */}
-      {actions && (
+      {/* Used for inserting a button for buying later */}
+      {coin.client_id === null && (
         <div className="mt-4 sm:mt-0 sm:ml-auto">
-          {actions}
+          <button> Click to buy</button>
         </div>
       )}
     </div>

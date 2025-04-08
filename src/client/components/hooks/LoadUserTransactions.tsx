@@ -1,19 +1,16 @@
-import { fetchTransactionsByUser } from "../../requrests/getTransactions";
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { fetchTransactionsByUser } from "../../requrests/getTransactions";
+import { fetchAccessToken } from "../../requrests/RefreshToken";
 
-function loadUserTransactions(
-  filters: any,
+export function useTransactions(
   userUid: string,
   accessToken: string,
-  callback: (message: string) => void
-): Promise<any[]> {
-  return fetchTransactionsByUser(filters, userUid, accessToken, callback);
-}
-export function useTransactions(userUid: string, accessToken: string) {
+  errorCallback: (message: string) => void,
+  unAuthorizedAccessCallback: (message: string) => void
+) {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [transactionsAreLoading, setLoading] = useState(true);
-
   const [error, setError] = useState<Error | null>(null);
 
   const [filters, setFilters] = useState<any>({
@@ -27,22 +24,42 @@ export function useTransactions(userUid: string, accessToken: string) {
     bitSlowMaxPrice: null,
   });
 
-  const onError = (error: Error) => {
+  const handleError = (error: Error) => {
     setError(error);
     setLoading(false);
-    toast.error(`Error fetching transactions: ${error.message}`);
+    errorCallback(
+      error.message || "Unknown Error occurred while retrieving transactions"
+    );
   };
 
   useEffect(() => {
-    loadUserTransactions(filters, userUid, accessToken, (message) => {
-      onError(new Error(message));
-    })
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        await fetchAccessToken(
+          userUid,
+          (token) => {
+            sessionStorage.setItem("accessToken", token);
+          },
+          unAuthorizedAccessCallback,
+          handleError
+        );
+
+        const data = await fetchTransactionsByUser(
+          filters,
+          userUid,
+          accessToken,
+          (message) => handleError(new Error(message))
+        );
+
         setTransactions(data);
         setLoading(false);
-      })
-      .catch(onError);
-  }, [filters]);
+      } catch (err) {
+        handleError(err as Error);
+      }
+    };
+
+    fetchData();
+  }, [filters, userUid, accessToken]);
 
   return { transactions, filters, transactionsAreLoading, error, setFilters };
 }

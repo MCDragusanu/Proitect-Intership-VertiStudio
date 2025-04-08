@@ -11,7 +11,7 @@ function loadTransactions(
   return fetchTransactions(filters, callback);
 }
 
-export function useQueriedTransaction() {
+export function useQueriedTransaction(handleError : (message : string) => void) {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -29,7 +29,7 @@ export function useQueriedTransaction() {
   const onError = (error: Error) => {
     setError(error);
     setLoading(false);
-    toast.error(`Error fetching transactions: ${error.message}`);
+    handleError(error.message || "Unknown error occurred while quering transactions")
   };
 
   useEffect(() => {

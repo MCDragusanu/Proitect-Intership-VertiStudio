@@ -10,7 +10,7 @@ interface RefreshTokenResponse {
 export const fetchAccessToken = async (
   accessToken: string,
   onRefresh: (token : string) => void,
-  onExpired: () => void,
+  onExpired: (message : string) => void,
   onError: (error: any) => void
 ) => {
   // Set up the request headers
@@ -39,7 +39,7 @@ export const fetchAccessToken = async (
         } //error code for expired or invalid
         else if (result.status === 403) {
           console.log("Action Forbidden");
-          onExpired();
+          onExpired("Failed to refresh access token!");
         } else onError("Failed to refresh the access token");
       }
     });

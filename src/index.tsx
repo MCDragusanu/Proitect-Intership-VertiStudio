@@ -20,6 +20,8 @@ import { TokenPayLoad } from "./api/auth/JWTService";
 import { validateTokens } from "./api/routes/middleware/validate_tokens";
 import { getUserInformation } from "./api/routes/users/GetUserProfile";
 import { GetCoinHistory } from "./api/routes/coins/GetCoinHistory";
+import { logout } from "./api/routes/auth/logout";
+import { GetAllCoins } from "./api/routes/coins/GetAllCoins";
 
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
@@ -59,7 +61,6 @@ const server = serve({
 
         if (tokenValidationError) return tokenValidationError;
 
-        // You can pass userUid to the handler
         return await getUserInformation(req, routeUserUid);
       }
 
@@ -74,7 +75,6 @@ const server = serve({
         const tokenValidationError = await validateTokens(req, routeUserUid);
         if (tokenValidationError) return tokenValidationError;
 
-        // You can pass userUid to the handler
         return await getTransactionsByUser(req);
       }
 
@@ -84,11 +84,55 @@ const server = serve({
     "/api/coins/history/:coinId": async (req) => {
       const routeCoinId = Number(req.url.split("/").pop());
       if (req.method === "GET" && !Number.isNaN(routeCoinId)) {
-        console.log()
+        console.log();
         return await GetCoinHistory(routeCoinId);
       }
       return methodNotAllowed();
     },
+
+    "/api/coins": async (req) => {
+      if (req.method === "GET") {
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        const coinId = url.searchParams.get("coin_id");
+
+        if (coinId) {
+          console.log(`Fetching coin with ID: ${coinId}`);
+          const parsedId = parseInt(coinId, 10);
+          if (isNaN(parsedId)) {
+            return new Response(
+              JSON.stringify({ message: "Invalid coin_id" }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+          }
+
+          const coin = await GetCoinById(parsedId); // You should have this function
+          if (!coin) {
+            return new Response(JSON.stringify({ message: "Coin not found" }), {
+              status: 404,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+
+          return new Response(JSON.stringify(coin), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        console.log("Fetching all coins");
+        const allCoins = await GetAllCoins();
+        return new Response(JSON.stringify(allCoins), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      return methodNotAllowed();
+    },
+
     // Authentication routes
     "/api/auth/register": async (req) => {
       if (req.method === "POST") {
@@ -113,13 +157,10 @@ const server = serve({
 
     "/api/auth/logout": async (req) => {
       if (req.method === "POST") {
-        // Implement logout logic here (clear cookies, tokens, etc.)
-        return new Response("Logged out", { status: 200 });
+        return await logout(req);
       }
       return methodNotAllowed();
     },
-
-    // Add other API routes here...
   },
 });
 

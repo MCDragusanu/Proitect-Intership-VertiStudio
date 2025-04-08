@@ -1,9 +1,10 @@
 import React from "react";
 import TransactionRow from "./TransactionRow";
+import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
 
 interface TransactionTableProps {
-  transactions: any[];
-  onRowClick?: (transaction: any) => void; // Optional callback function when a row is clicked
+  transactions: TransactionDTO[];
+  onRowClick?: (transaction: TransactionDTO) => void; // Optional callback function when a row is clicked
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({

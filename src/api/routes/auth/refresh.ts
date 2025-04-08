@@ -37,8 +37,7 @@ export const refreshAccessToken = async (req: Request): Promise<Response> => {
   // Handle expired refresh token
   else if (refreshTokenResult instanceof JWTExpired) {
     console.log("Refresh Token Expired");
-    const credentials =
-      await getModule().userRepository.getUserCredentialsByToken(refreshToken);
+    const credentials = await getModule().userRepository.getUserCredentialsByToken(refreshToken);
     if (credentials != null) {
       credentials.refresh_token = null;
       getModule().userRepository.updateCredentials(credentials);

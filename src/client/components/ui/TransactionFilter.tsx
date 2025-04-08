@@ -46,7 +46,7 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
     onFilterChange(updatedFilters);
   };
 
-  // Handle page navigation (Previous/Next)
+  // Handle page navigation
   const handlePreviousPage = () => {
     if (localFilters.pageNumber > 0) {
       const updatedFilters = {
@@ -59,7 +59,7 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
   };
 
   const handleNextPage = () => {
-    // Only allow next page if there are likely more items
+   
     const updatedFilters = {
       ...localFilters,
       pageNumber: localFilters.pageNumber + 1,

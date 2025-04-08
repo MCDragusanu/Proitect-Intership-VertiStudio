@@ -12,7 +12,8 @@ import {
   TokenPayLoad,
 } from "@/src/api/auth/JWTService";
 
-export const buildRefreshTokenCookie = (token: string): string => {
+export const buildRefreshTokenCookie = (token: string|null): string => {
+  if(token !== null)
   return [
     `refreshToken=${token}`,
     `HttpOnly`,
@@ -21,6 +22,7 @@ export const buildRefreshTokenCookie = (token: string): string => {
     `Path=/`,
     `Max-Age=${getModule().jwtService.getRefreshTokenDurationInSeconds()}`, // 7 days
   ].join("; ");
+  else return ""
 };
 
 export const checkPasswordStrength = (password: string): boolean => {

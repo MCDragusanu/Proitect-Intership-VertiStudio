@@ -1,3 +1,4 @@
+import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import UserProfile from "@/src/shared/user_profile";
 
 const ENDPOINT_URL = "http://localhost:3000/api/users";
@@ -29,7 +30,7 @@ export const fetchUserInformation = async (
     console.log(result)
     if (result.ok) {
       const data = await result.json();
-      const coins = data.ownedCoins
+      const coins = data.ownedCoins as CoinDTO[] ?? []
       const profile = data.profile
       const monetaryValue = data.monetaryValue
       return {profile , coins , monetaryValue}

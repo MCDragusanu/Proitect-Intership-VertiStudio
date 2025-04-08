@@ -66,6 +66,20 @@ export default class SQLiteCoinDao implements CoinDao {
     console.log(`Retrieved ${result.length} coins`)
     return result.map(this.mapToCoin);
   }
+  async getCoinById(coinId : number) : Promise<Coin | null>{
+    const stmt = getModule().database.prepare(
+      "SELECT * FROM coins WHERE coin_id = ?"
+    );
+    const result = stmt.all(coinId);
+    return result.length === 1 ? this.mapToCoin(result) : null;
+  }
+  async getAllCoins(): Promise<Coin[] | null> {
+    const stmt = getModule().database.prepare(
+      "SELECT * FROM coins"
+    );
+    const result = stmt.all();
+    return result.length > 0 ? result.map(this.mapToCoin) : null;
+  }
 
   async bitsAlreadyInUse(
     bit1: number,

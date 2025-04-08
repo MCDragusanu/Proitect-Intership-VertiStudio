@@ -10,14 +10,6 @@ export const register = async (
   phoneNumber: string,
   address: string
 ) => {
-
-  
-    
-    
-   
-   
-    
-   
   const headers: Headers = new Headers();
   const requestBody = JSON.stringify({
     userEmail: email,

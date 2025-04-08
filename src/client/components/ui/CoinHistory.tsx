@@ -1,15 +1,6 @@
 import React from "react";
 import { X, ArrowRight, ArrowLeft } from "lucide-react";
-
-export type Coin = {
-  coin_id: number;
-  value: number;
-  bit1: number;
-  bit2: number;
-  bit3: number;
-  created_at: number;
-  bitSlow : string | null 
-};
+import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 export type CoinHistoryEntry = {
   sellerName: string;
@@ -19,7 +10,7 @@ export type CoinHistoryEntry = {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  coin: Coin | null;
+  coin: CoinDTO | null;
   history: CoinHistoryEntry[];
 };
 
@@ -42,9 +33,6 @@ const CoinHistoryModal: React.FC<Props> = ({ isOpen, onClose, coin, history }) =
           <h2 className="text-2xl font-bold">Coin History - ID #{coin.coin_id}</h2>
           <p className="text-sm text-gray-500">
             Value: <span className="font-medium">{coin.value} $</span> • Created:{" "}
-            <span className="font-medium">
-              {new Date(coin.created_at).toLocaleDateString()}
-            </span>
           </p>
         </div>
 

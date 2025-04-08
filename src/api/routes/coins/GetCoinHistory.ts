@@ -27,7 +27,7 @@ export const GetCoinHistory = async (coin_id: number): Promise<any> => {
     for(const entry of coinHistory){
          const sellerName = (await getModule().userRepository.getProfileByUid(entry.seller_id || "Stranger"))?.name || "Stranger"
          const buyerName = (await getModule().userRepository.getProfileByUid(entry.buyer_id || "Stranger"))?.name || "Stranger"
-        result.push({sellerName : sellerName , buyerName : buyerName})
+         result.push({sellerName : sellerName , buyerName : buyerName})
     }
     
 

@@ -12,7 +12,8 @@ export default interface BitSlowRepository {
 
   insertCoin(coin: Coin): Promise<boolean>;
   updateCoin(coin: Coin): Promise<boolean>;
-
+  getCoinById(coinId : number) : Promise<Coin | null>
+  getAllCoins() : Promise<Coin[]>
   getUserCoins(userUid: string): Promise<Coin[] | null>;
   getFreeCoins(): Promise<Coin[] | null>;
   getMonetaryValue(userUid: string): Promise<number | null>;
@@ -26,16 +27,5 @@ export default interface BitSlowRepository {
   getTransactionByUid(id: number): Promise<Transaction | null>;
   getUserTransactions(userUid: string): Promise<Transaction[] | null>;
 
-  getTransactionsLessThanBitSlow(bitSlow: number): Promise<Transaction[] | null>;
-  getTransactionsMoreThanBitSlow(bitSlow: number): Promise<Transaction[] | null>;
-  getTransactionsInBitSlowRange(lowerBound: number, upperBoundInclusive: number): Promise<Transaction[] | null>;
-
-  getTransactionsByBuyerName(name: string): Promise<Transaction[] | null>;
-  getTransactionsBySellerName(name: string): Promise<Transaction[] | null>;
-  getTransactionsByBuyerAndSellerName(buyerName: string, sellerName: string): Promise<Transaction[] | null>;
-
-   getAllTransactions(): Promise<Transaction[]> 
-  getTransactionsBeforeDate(date: Date): Promise<Transaction[] | null>;
-  getTransactionsAfterDate(date: Date): Promise<Transaction[] | null>;
-  getTransactionsInDateRange(after: Date, before: Date): Promise<Transaction[] | null>;
+  
 }

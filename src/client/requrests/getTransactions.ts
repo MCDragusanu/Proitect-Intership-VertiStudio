@@ -1,3 +1,4 @@
+import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
 import { TransactionFilters } from "../components/ui/TransactionFilter";
 
 const ENDPOINT_URL = "http://localhost:3000/api/transactions/v2";
@@ -10,21 +11,21 @@ const defaultCallback: OnErrorCallback = (errorMessage: string) => {
 
 const handleResponse = async (
   response: Response,
-  errorCallback: OnErrorCallback
-): Promise<any[]> => {
+  onError : (message : string) => void
+): Promise<TransactionDTO[]> => {
   try {
     if (!response.ok) {
       console.log("Failed Response:");
       const errorBody = await response.json();
       console.log(errorBody);
-      errorCallback(errorBody.message);
+      onError(errorBody.message);
       return Promise.resolve([]); 
     }
-    const resultBody = await response.json();
+    const resultBody = await response.json() as TransactionDTO[] ?? [];
     return Promise.resolve(resultBody);
   } catch (error: any) {
     console.log(error);
-    errorCallback(
+    onError(
       error.messae || "Unknown Error occurred while retrieving transactions"
     );
     return [];
@@ -33,7 +34,7 @@ const handleResponse = async (
 
 export async function fetchTransactions(
   filters: TransactionFilters,
-  onErrorCallback: OnErrorCallback = defaultCallback
+ onError : (message : string) => void
 ): Promise<any[]> {
   console.log("Preparing to retrieve transactions!");
   const headers: Headers = new Headers();
@@ -58,10 +59,10 @@ export async function fetchTransactions(
   });
   try {
     const result = await fetch(requestInfo);
-    return handleResponse(result, onErrorCallback);
+    return handleResponse(result, onError);
   } catch (error: any) {
     console.error("Error fetching transactions:", error);
-    onErrorCallback(error.message); // Or display a generic message
+    onError(error.message); // Or display a generic message
     return Promise.resolve([]); // Return empty data if there's an error
   }
 }
@@ -70,8 +71,8 @@ export async function fetchTransactionsByUser(
   filters: TransactionFilters,
   userUid: string,
   accessToken: string,
-  onErrorCallback: OnErrorCallback = defaultCallback
-): Promise<any[]> {
+  onError : (message : string) => void,
+): Promise<TransactionDTO[]> {
 
   const requestBody = JSON.stringify({
     pageSize: filters.pageSize,
@@ -95,12 +96,12 @@ export async function fetchTransactionsByUser(
   });
   try {
     const result = await fetch(requestInfo);
-    return handleResponse(result, onErrorCallback);
+    return handleResponse(result, onError);
   } catch (error: any) {
     console.error(
       `Error fetching transactions for user '${userUid}' : ${error}`
     );
-    onErrorCallback(error.message);
+    onError(error.message);
     return Promise.resolve([]);
   }
 }

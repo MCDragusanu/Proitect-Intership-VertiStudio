@@ -87,18 +87,20 @@ Example: the combination of `(6, 3, 2)` generate the hash `231e537a879422fa8e11e
 
 Alberto has outlined the following clear requirements to modernize and enhance the usability of the BitSlow application:
 
-### **1. User Registration (Sign-Up Page)**
+**------------- DONE --------------**
+### **1. User Registration (Sign-Up Page)** 
 
 **Goal:** Create a secure and intuitive **sign-up page** for new users.
 
 **Features to Implement:**
 
-- A simple registration form.
-- Secure password support (hashed & stored securely).
-- Basic validation for input fields.
+- A simple registration form. **CHECK**
+- Secure password support (hashed & stored securely). **CHECK**
+- Basic validation for input fields. **CHECK**
 
----
 
+
+**------------- DONE --------------**
 ### **2. User Authentication (Login Page)**
 
 **Goal:** Implement a seamless login system with a user dashboard.
@@ -107,9 +109,9 @@ Alberto has outlined the following clear requirements to modernize and enhance t
 
 - Secure login authentication.
 - After logging in, the user should access a **profile page** displaying:
-  - **Total transactions** they have made.
-  - **Total BitSlow currency** they own.
-  - **Total monetary value** of their holdings.
+  - **Total transactions** they have made. **CHECK**
+  - **Total BitSlow currency** they own.**CHECK**
+  - **Total monetary value** of their holdings. **CHECK**
 
 ---
 
@@ -119,15 +121,15 @@ Alberto has outlined the following clear requirements to modernize and enhance t
 
 **Features to Implement:**
 
-- **Pagination:** Allow users to view **15, 30, or 50 transactions per page**.
-- **Smooth navigation:** Users should easily browse pages (**1, 2, …, 50**).
+- **Pagination:** Allow users to view **15, 30, or 50 transactions per page**. **CHECK**
+- **Smooth navigation:** Users should easily browse pages (**1, 2, …, 50**).d **CHECK**
 - **Filtering Options:**
-  - By **Date Range** (Start & End Dates).
-  - By **BitSlow Value Range**.
-  - By **Buyer Name**.
-  - By **Seller Name**.
+  - By **Date Range** (Start & End Dates). **CHECK**
+  - By **BitSlow Value Range**. **CHECK**
+  - By **Buyer Name**. **CHECK**
+  - By **Seller Name**.**CHECK**
 
-Bonus Challenge: New transactions should appear without requiring a manual refresh.
+Bonus Challenge: New transactions should appear without requiring a manual refresh. **WIP**
 
 ---
 
@@ -137,9 +139,9 @@ Bonus Challenge: New transactions should appear without requiring a manual refre
 
 **Features to Implement:**
 
-- Minimize page load time.
-- Provide **clear error messages** when issues occur.
-- Implement **visual indicators** (e.g., loading spinners, success/error messages).
+- Minimize page load time. **CHECK**
+- Provide **clear error messages** when issues occur. **CHECK**
+- Implement **visual indicators** (e.g., loading spinners, success/error messages). **CHECK**
 
 ---
 

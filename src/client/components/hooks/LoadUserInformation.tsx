@@ -1,56 +1,68 @@
-import { fetchUserInformation } from "../../requrests/getUserInformation";
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { fetchUserInformation } from "../../requrests/getUserInformation";
+import { fetchAccessToken } from "../../requrests/RefreshToken";
+import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
-function loadUserInformation(
-    userUid: string,
-    accessToken: string,
-    errorCallback: (message: string) => void,
-    unAuthorizedAccessCallback: (message: string) => void
-  ) {
-    return fetchUserInformation(
-      userUid,
-      accessToken,
-      errorCallback,
-      unAuthorizedAccessCallback
+interface UserProfileData {
+  coins: CoinDTO[];
+  profile: any;
+  monetaryValue: number;
+}
+
+export function useProfileInformation(
+  userUid: string,
+  accessToken: string,
+  onErrorCallback: (message: string) => void,
+  unAuthorizedAccessCallback: (message: string) => void
+) {
+  const [coins, setCoins] = useState<CoinDTO[]>([]);
+  const [profile, setProfile] = useState<any>({});
+  const [monetaryValue, setMonetaryValue] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const handleError = (error: Error) => {
+    setError(error);
+    setLoading(false);
+    onErrorCallback(
+      error.message || "Unknown error occurred while getting user information"
     );
-  }
-  
-  
-export   function useProfileInformation(
-    userUid: string,
-    accessToken: string,
-    unAuthorizedAccessCallback: (message: string) => void
-  ) {
-    const [coins, setCoins] = useState<any[]>([]);
-    const [profile, setProfile] = useState<any>({});
-    const [monetaryValue, setMonetaryValue] = useState<number>(0);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
-  
-    const onError = (error: Error) => {
-      setError(error);
-      setLoading(false);
-      toast.error(`Error fetching data: ${error.message}`);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchAccessToken(
+          userUid,
+          (token) => {
+            sessionStorage.setItem("accessToken", token);
+          },
+          () => {
+            unAuthorizedAccessCallback("You must login in order to continue!");
+          },
+
+          handleError
+        );
+
+        const data: UserProfileData = await fetchUserInformation(
+          userUid,
+          accessToken,
+          (message) => handleError(new Error(message)),
+          unAuthorizedAccessCallback
+        );
+
+        setCoins(data.coins);
+        setMonetaryValue(data.monetaryValue);
+        setProfile(data.profile);
+        setLoading(false);
+      } catch (err) {
+        handleError(err as Error);
+      }
     };
-  
-    useEffect(() => {
-      loadUserInformation(
-        userUid,
-        accessToken,
-        (message) => {
-          onError(new Error(message));
-        },
-        unAuthorizedAccessCallback
-      )
-        .then((data) => {
-          setCoins(data.coins);
-          setMonetaryValue(data.monetaryValue);
-          setProfile(data.profile);
-          setLoading(false);
-        })
-        .catch(onError);
-    }, []);
-  
-    return { coins, profile, monetaryValue, loading, error };
-  }
+
+    fetchData();
+  }, [userUid, accessToken, unAuthorizedAccessCallback]);
+
+  return { coins, profile, monetaryValue, loading, error };
+}

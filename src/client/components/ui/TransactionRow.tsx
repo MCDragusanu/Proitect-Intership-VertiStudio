@@ -1,13 +1,14 @@
 import React from "react";
-import { FaArrowRight } from "react-icons/fa"; // Arrow icon for seller to buyer
-import { HiCurrencyDollar } from "react-icons/hi"; // Dollar icon for value
-import { BiTime } from "react-icons/bi"; // Time icon for date
-import { AiOutlineTransaction } from "react-icons/ai"; // Transaction icon
+import { FaArrowRight } from "react-icons/fa"; 
+import { HiCurrencyDollar } from "react-icons/hi";
+import { BiTime } from "react-icons/bi";
+import { AiOutlineTransaction } from "react-icons/ai"; 
+import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
 
 interface TransactionRowProps {
-  transaction: any;
+  transaction: TransactionDTO;
   index: number;
-  onBitSlowClick?: (transaction: any) => void; // Optional callback for BitSlow click
+  onBitSlowClick?: (transaction: TransactionDTO) => void; 
 }
 
 const TransactionRow: React.FC<TransactionRowProps> = ({
@@ -15,19 +16,17 @@ const TransactionRow: React.FC<TransactionRowProps> = ({
   index,
   onBitSlowClick,
 }) => {
-  // Handle BitSlow field click
+ 
   const handleBitSlowClick = () => {
     if (onBitSlowClick) {
-      onBitSlowClick(transaction); // Trigger the optional callback if provided
+      onBitSlowClick(transaction);
     }
   };
 
   return (
     <tr
       key={transaction.id}
-      className={`hover:bg-gray-50 transition-colors ${
-        index === transaction.length - 1 ? "" : "border-b border-gray-200"
-      }`}
+      className={`hover:bg-gray-50 transition-colors`}
     >
       <td className="p-4 text-gray-600">
         <div className="flex items-center">

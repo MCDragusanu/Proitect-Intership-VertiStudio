@@ -23,7 +23,24 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
       return false;
     }
   }
-
+  async getAllCoins(): Promise<Coin[]> {
+    try {
+      console.log("Getting All Coin Recors");
+      return (await this.coinDao.getAllCoins()) || [];
+    } catch (error) {
+      console.error("Error getting BitSlow by Coin ID:", error);
+      return [];
+    }
+  }
+  async getCoinById(coinId : number): Promise<Coin | null> {
+    try {
+      console.log("Getting All Coin Recors");
+      return (await this.coinDao.getCoinById(coinId)) || null;
+    } catch (error) {
+      console.error("Error getting BitSlow by Coin ID:", error);
+      return null;
+    }
+  }
   async getBitSlowByCoinId(coinId: number): Promise<BitSlow | null> {
     try {
       console.log("Getting BitSlow by Coin ID:", coinId);
@@ -156,36 +173,9 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
     }
   }
 
-  async getTransactionsLessThanBitSlow(bitSlow: number): Promise<Transaction[] | null> {
-    try {
-      console.log("Getting transactions less than BitSlow:", bitSlow);
-      return await this.transactionDao.getTransactionsLessThanBitSlow(bitSlow);
-    } catch (error) {
-      console.error("Error getting transactions < BitSlow:", error);
-      return null;
-    }
-  }
+ 
 
-  async getTransactionsMoreThanBitSlow(bitSlow: number): Promise<Transaction[] | null> {
-    try {
-      console.log("Getting transactions more than BitSlow:", bitSlow);
-      return await this.transactionDao.getTransactionsMoreThanBitSlow(bitSlow);
-    } catch (error) {
-      console.error("Error getting transactions > BitSlow:", error);
-      return null;
-    }
-  }
-
-  async getTransactionsInBitSlowRange(lower: number, upper: number): Promise<Transaction[] | null> {
-    try {
-      console.log(`Getting transactions in BitSlow range: ${lower} to ${upper}`);
-      return await this.transactionDao.getTransactionsInBitSlowRange(lower, upper);
-    } catch (error) {
-      console.error("Error getting transactions in range:", error);
-      return null;
-    }
-  }
-
+  
   async getTransactionsByBuyerName(name: string): Promise<Transaction[] | null> {
     try {
       console.log("Getting transactions by buyer name:", name);
@@ -206,47 +196,4 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
     }
   }
 
-  async getTransactionsByBuyerAndSellerName(buyer: string, seller: string): Promise<Transaction[] | null> {
-    try {
-      console.log("Getting transactions by buyer and seller:", buyer, seller);
-      return await this.transactionDao.getTransactionsByBuyerAndSellerName(buyer, seller);
-    } catch (error) {
-      console.error("Error getting transactions by buyer and seller:", error);
-      return null;
-    }
-  }
-
-  async getTransactionsBeforeDate(date: Date): Promise<Transaction[] | null> {
-    try {
-      console.log("Getting transactions before date:", date);
-      return await this.transactionDao.getTransactionsBeforeDate(date);
-    } catch (error) {
-      console.error("Error getting transactions before date:", error);
-      return null;
-    }
-  }
-
-  async getTransactionsAfterDate(date: Date): Promise<Transaction[] | null> {
-    try {
-      console.log("Getting transactions after date:", date);
-      return await this.transactionDao.getTransactionsAfterDate(date);
-    } catch (error) {
-      console.error("Error getting transactions after date:", error);
-      return null;
-    }
-  }
-
-  async getAllTransactions() : Promise<Transaction[]> {
-    return this.transactionDao.getAllTransactions()
-  }
-
-  async getTransactionsInDateRange(after: Date, before: Date): Promise<Transaction[] | null> {
-    try {
-      console.log(`Getting transactions from ${after} to ${before}`);
-      return await this.transactionDao.getTransactionsInDateRange(after, before);
-    } catch (error) {
-      console.error("Error getting transactions in date range:", error);
-      return null;
-    }
-  }
 }
