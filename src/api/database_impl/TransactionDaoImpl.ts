@@ -10,7 +10,7 @@ export default class SQLiteTransactionDao implements TransactionDao {
 
   async insertTransaction(transaction: Transaction): Promise<boolean> {
     const stmt = getModule().database.prepare(
-      "INSERT INTO transactions (coin_id, amount, seller_id, buyer_id, bit1, bit2, bit3,) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO transactions (coin_id, amount, seller_id, buyer_id, bit1, bit2, bit3, transaction_date ) VALUES (?, ?, ?, ?, ?, ?, ?,?)"
     );
     const info = stmt.run(
       transaction.coin_id,
@@ -20,6 +20,7 @@ export default class SQLiteTransactionDao implements TransactionDao {
       transaction.bit1,
       transaction.bit2,
       transaction.bit3,
+      transaction.transaction_date
     );
     return info.changes > 0;
   }

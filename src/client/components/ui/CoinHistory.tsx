@@ -14,9 +14,14 @@ type Props = {
   history: CoinHistoryEntry[];
 };
 
-const CoinHistoryModal: React.FC<Props> = ({ isOpen, onClose, coin, history }) => {
+const CoinHistoryModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  coin,
+  history,
+}) => {
   if (!isOpen) return null;
-  if(!coin) return null;
+  if (!coin) return null;
   return (
     <div className="fixed inset-0 z-50  flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative">
@@ -30,9 +35,12 @@ const CoinHistoryModal: React.FC<Props> = ({ isOpen, onClose, coin, history }) =
 
         {/* Modal Header */}
         <div className="mb-4">
-          <h2 className="text-2xl font-bold">Coin History - ID #{coin.coin_id}</h2>
+          <h2 className="text-2xl font-bold">
+            Coin History - ID #{coin.coin_id}
+          </h2>
           <p className="text-sm text-gray-500">
-            Value: <span className="font-medium">{coin.value} $</span> • Created: { new Date(coin.created_at).toLocaleDateString()}
+            Value: <span className="font-medium">{coin.value} $</span> •
+            Created: {new Date(coin.created_at).toLocaleDateString()}
           </p>
         </div>
 
@@ -46,19 +54,18 @@ const CoinHistoryModal: React.FC<Props> = ({ isOpen, onClose, coin, history }) =
         {/* Transaction History */}
         <div className="space-y-4 max-h-[400px] overflow-y-auto">
           {history.map((entry, index) => {
-           
             return (
               <div
                 key={index}
-                className={`flex items-center justify-between gap-4 ${
-                 "flex-row" 
-                }`}
+                className={`flex items-center justify-between gap-4 ${"flex-row"}`}
               >
-                <div className="text-sm font-medium text-blue-600">{entry.sellerName}</div>
-                <div className="text-gray-400">
-                  { <ArrowRight size={20} />}
+                <div className="text-sm font-medium text-blue-600">
+                  {entry.sellerName}
                 </div>
-                <div className="text-sm font-medium text-green-600">{entry.buyerName}</div>
+                <div className="text-gray-400">{<ArrowRight size={20} />}</div>
+                <div className="text-sm font-medium text-green-600">
+                  {entry.buyerName}
+                </div>
               </div>
             );
           })}

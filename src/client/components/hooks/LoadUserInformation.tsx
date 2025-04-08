@@ -33,25 +33,18 @@ export function useProfileInformation(
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchAccessToken(
-          userUid,
-          (token) => {
-            sessionStorage.setItem("accessToken", token);
-          },
-          () => {
-            unAuthorizedAccessCallback("You must login in order to continue!");
-          },
-
-          handleError
-        );
-
+        console.log("Fetch User Info invoked")
         const data: UserProfileData = await fetchUserInformation(
           userUid,
           accessToken,
           (message) => handleError(new Error(message)),
           unAuthorizedAccessCallback
         );
-
+        if(data === null){
+          return
+        }
+        console.log("useUserInfo : ")
+        console.log(data)
         setCoins(data.coins);
         setMonetaryValue(data.monetaryValue);
         setProfile(data.profile);
@@ -62,7 +55,7 @@ export function useProfileInformation(
     };
 
     fetchData();
-  }, [userUid, accessToken, unAuthorizedAccessCallback]);
+  }, [userUid , accessToken]);
 
   return { coins, profile, monetaryValue, loading, error };
 }

@@ -20,7 +20,7 @@ export const refreshAccessToken = async (req: Request): Promise<Response> => {
   if (!refreshToken) {
     return makeErrorResponse(400, "Invalid Request. No refresh token found.");
   }
-  console.log("*********************\nRefresh Token : " + refreshToken);
+  
   // Extract the payload from the refresh token
   const refreshTokenResult =
     await getModule().jwtService.extractPayloadFromRefreshToken(refreshToken);

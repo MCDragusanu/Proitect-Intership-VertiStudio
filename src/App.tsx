@@ -6,13 +6,14 @@ import RegisterPage from "./client/pages/register/RegisterPage";
 import LoginPage from "./client/pages/login/LoginPage";
 import ProfilePage from "./client/pages/profile/ProfilePage";
 import ErrorPage from "./client/pages/error_page/ErrorPage";
+import MarketDashboard from "./client/pages/market/MarketPage";
 export function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
-        <Route path="/market" element={<TransactionsPage />} />
+        <Route path="/marketplace" element={<MarketDashboard />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile/:userUid" element = {<ProfilePage/>}/>
         <Route path = "/error" element = {<ErrorPage/>}/>

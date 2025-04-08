@@ -4,12 +4,13 @@ import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 type CoinCardProps = {
   coin: CoinDTO;
+  buyButtonEnabled : boolean ;
   onClick?: (coin: CoinDTO) => void;
   onActionClicked : (coin : CoinDTO) => void,
 };
 
-const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, onActionClicked }) => {
-  console.log(coin)
+const CoinCard: React.FC<CoinCardProps> = ({ coin, buyButtonEnabled ,onClick, onActionClicked }) => {
+ 
   return (
     <div
       className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between bg-neutral-100 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:bg-gray-50 cursor-pointer transition-all duration-300 max-w-4xl gap-4"
@@ -46,15 +47,18 @@ const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, onActionClicked }) =
         <p className="text-gray-800 font-semibold">
           Created: <span className="text-gray-600"> {new Date(coin.created_at ).toLocaleDateString()}</span>
         </p> 
-        
+       {(coin.client_id !== null) &&
+        (<p className="text-gray-800 font-semibold">
+          Owner: <span className="text-gray-600"> {coin.client_id }</span>
+        </p> )}
       </div>
 
       {/* Used for inserting a button for buying later */}
-      {coin.client_id === null && (
+      {(coin.client_id === null) && (
         <div className="mt-4 sm:mt-0 sm:ml-auto">
           <button> Click to buy</button>
         </div>
-      )}
+      ) }
     </div>
   );
 };

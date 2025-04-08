@@ -33,8 +33,7 @@ export const GetCoinById = async (coinId: number): Promise<any> => {
         ...rawCoin,
         bitSlow: bitSlow,
       };
-      console.log("Final Result : ")
-      console.log(coin)
+      
       // Return the coin data
       return new Response(JSON.stringify(coin), {
         status: 200,

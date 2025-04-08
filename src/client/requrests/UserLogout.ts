@@ -1,6 +1,5 @@
-import UserCredentials from "@/src/shared/user_credentials";
 
-const ENDPOINT_URL = "http://localhost:3000/api/auth/logout/";
+const ENDPOINT_URL = "http://localhost:3000/api/auth/logout";
 
 /**
  * It logges out the user, requiring re-auth. Access token required , it is a protected action.
@@ -21,7 +20,7 @@ export const logoutUser = async (
   headers.set("Accept", "application/json");
   headers.set("Authorization", `Bearer ${accessToken}`);
 
-  const requestInfo = new Request(`${ENDPOINT_URL}${userUid}`, {
+  const requestInfo = new Request(`${ENDPOINT_URL}`, {
     method: "POST",
     headers: headers,
   });

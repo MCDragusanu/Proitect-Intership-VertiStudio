@@ -14,13 +14,13 @@ export async function fetchAllCoins(
       },
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
       onError(`Failed to fetch: ${response.status} ${response.statusText}`);
       return [];
     }
-
-    const data: CoinDTO[] = await response.json();
-    return data ?? [];
   } catch (error: any) {
     console.error("Fetch error:", error);
     onError(error?.message || "An unexpected error occurred.");

@@ -34,7 +34,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
   }
   async getCoinById(coinId : number): Promise<Coin | null> {
     try {
-      console.log("Getting All Coin Recors");
+     
       return (await this.coinDao.getCoinById(coinId)) || null;
     } catch (error) {
       console.error("Error getting BitSlow by Coin ID:", error);
@@ -43,7 +43,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
   }
   async getBitSlowByCoinId(coinId: number): Promise<BitSlow | null> {
     try {
-      console.log("Getting BitSlow by Coin ID:", coinId);
+     
       return await this.bitSlowDao.getBitSlowByCoinId(coinId);
     } catch (error) {
       console.error("Error getting BitSlow by Coin ID:", error);
@@ -53,7 +53,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 
   async getBitSlowByBits(bit1: number, bit2: number, bit3: number): Promise<BitSlow | null> {
     try {
-      console.log("Getting BitSlow by bits:", bit1, bit2, bit3);
+    
       return await this.bitSlowDao.getBitSlowByBits(bit1, bit2, bit3);
     } catch (error) {
       console.error("Error getting BitSlow by bits:", error);

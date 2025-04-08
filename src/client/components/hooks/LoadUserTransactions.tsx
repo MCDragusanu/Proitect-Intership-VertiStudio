@@ -35,14 +35,7 @@ export function useTransactions(
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchAccessToken(
-          userUid,
-          (token) => {
-            sessionStorage.setItem("accessToken", token);
-          },
-          unAuthorizedAccessCallback,
-          handleError
-        );
+      
 
         const data = await fetchTransactionsByUser(
           filters,
@@ -50,7 +43,6 @@ export function useTransactions(
           accessToken,
           (message) => handleError(new Error(message))
         );
-
         setTransactions(data);
         setLoading(false);
       } catch (err) {
@@ -59,7 +51,7 @@ export function useTransactions(
     };
 
     fetchData();
-  }, [filters, userUid, accessToken]);
+  }, [filters]);
 
   return { transactions, filters, transactionsAreLoading, error, setFilters };
 }

@@ -279,7 +279,9 @@ export const TransactionFilter: React.FC<TransactionFilterProps> = ({
               <div className="flex flex-col justify-center mt-4">
                 <button
                   onClick={applyFilters}
-                  className="min-w-full justify-center items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                  className="min-w-full justify-center text-white bg-sky-500 px-6 py-2.5 rounded-xl 
+                    text-base font-medium transition-all shadow-lg flex items-center gap-2
+                    hover:scale-105 active:scale-95 duration-200"
                 >
                   Apply Filters
                 </button>

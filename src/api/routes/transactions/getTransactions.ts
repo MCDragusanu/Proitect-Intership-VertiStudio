@@ -5,10 +5,18 @@ import { getModule } from "../../module";
 
 /**
  * Helper functions that builds the WHERE statements required by the query
- * 
+ *
  */
 const buildWhereClause = (filters: any) => {
-  const { sellerName, buyerName, beforeDateTimeStamp, afterDateTimeStamp, bitSlowMinPrice, bitSlowMaxPrice, userUid } = filters;
+  const {
+    sellerName,
+    buyerName,
+    beforeDateTimeStamp,
+    afterDateTimeStamp,
+    bitSlowMinPrice,
+    bitSlowMaxPrice,
+    userUid,
+  } = filters;
   const conditions: string[] = [];
   const params: any[] = [];
 
@@ -41,37 +49,43 @@ const buildWhereClause = (filters: any) => {
     params.push(userUid, userUid); // Note: userUid is used twice here
   }
 
-  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
   return { whereClause, params };
 };
 
-
-/** 
-*Helper function to process transactions and compute BitSlow.
-*Checks to see if the BitSlow has already been computed to optimize the processing time
-*/
+/**
+ *Helper function to process transactions and compute BitSlow.
+ *Checks to see if the BitSlow has already been computed to optimize the processing time
+ */
 const processTransactions = async (transactions: any[]): Promise<any[]> => {
   const result: any[] = [];
 
   for (const transaction of transactions) {
     let computedBitSlow: string | null = null;
     //check to see if it already in the database
-    const preComputedBitSlow = await getModule().bitSlowRepo.getBitSlowByCoinId(transaction.coinId);
-    
+    const preComputedBitSlow = await getModule().bitSlowRepo.getBitSlowByCoinId(
+      transaction.coinId
+    );
+
     //if it has been chached already
     if (preComputedBitSlow) {
       computedBitSlow = preComputedBitSlow.computedBitSlow;
-    } 
-    else { // compute it for the first time
-      computedBitSlow = computeBitSlow(transaction.bit1, transaction.bit2, transaction.bit3);
+    } else {
+      // compute it for the first time
+      computedBitSlow = computeBitSlow(
+        transaction.bit1,
+        transaction.bit2,
+        transaction.bit3
+      );
       //create a new record
       const newBitSlow: BitSlow = {
         coinId: transaction.coinId,
         bit1: transaction.bit1,
         bit2: transaction.bit2,
         bit3: transaction.bit3,
-        computedBitSlow: computedBitSlow
+        computedBitSlow: computedBitSlow,
       };
       //save it for later
       await getModule().bitSlowRepo.insertBitSlow(newBitSlow);
@@ -103,7 +117,8 @@ const processTransactions = async (transactions: any[]): Promise<any[]> => {
 export const queryTransactions = async (req: Request): Promise<Response> => {
   try {
     const requestBody = await req.json();
-    const { pageSize: pageSizeParam = 10, pageNumber: pageNumberParam = 1 } = requestBody;
+    const { pageSize: pageSizeParam = 10, pageNumber: pageNumberParam = 1 } =
+      requestBody;
 
     const pageSize = parseInt(String(pageSizeParam), 10);
     const pageNumber = parseInt(String(pageNumberParam), 10);
@@ -142,7 +157,10 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
     return Response.json(result);
   } catch (err) {
     console.error("Transaction error:", err);
-    return new Response("Failed to fetch transactions. Invalid or empty request body.", { status: 400 });
+    return new Response(
+      "Failed to fetch transactions. Invalid or empty request body.",
+      { status: 400 }
+    );
   }
 };
 
@@ -150,13 +168,19 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
  * Retrieves all the Transactions of a given user while matching the filters provided
  * Also cached the bitSlows to avoid recalculations
  */
-export const getTransactionsByUser = async (req: Request): Promise<Response> => {
+export const getTransactionsByUser = async (
+  req: Request
+): Promise<Response> => {
   try {
     const requestBody = await req.json();
-    const { userUid, pageSize: pageSizeParam = 10, pageNumber: pageNumberParam = 1 } = requestBody;
+    const {
+      userUid,
+      pageSize: pageSizeParam = 10,
+      pageNumber: pageNumberParam = 1,
+    } = requestBody;
 
     if (!userUid) {
-    throw new Error("User Uid not provided!");
+      throw new Error("User Uid not provided!");
     }
 
     const pageSize = parseInt(String(pageSizeParam), 10);
@@ -164,7 +188,11 @@ export const getTransactionsByUser = async (req: Request): Promise<Response> => 
     const startIndex = (pageNumber - 1) * pageSize;
 
     // Build the WHERE clause and parameters dynamically based on filters
-    const { whereClause, params } = buildWhereClause({ ...requestBody, userUid  , userUid });
+    const { whereClause, params } = buildWhereClause({
+      ...requestBody,
+      userUid,
+      userUid,
+    });
 
     const query = `
       SELECT 
@@ -186,7 +214,7 @@ export const getTransactionsByUser = async (req: Request): Promise<Response> => 
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
-    console.log(params)
+
     // Add pagination parameters at the end
     params.push(pageSize, startIndex);
 
@@ -196,6 +224,9 @@ export const getTransactionsByUser = async (req: Request): Promise<Response> => 
     return Response.json(result);
   } catch (err) {
     console.error("Transaction error:", err);
-    return new Response("Failed to fetch transactions. Invalid or empty request body.", { status: 400 });
+    return new Response(
+      "Failed to fetch transactions. Invalid or empty request body.",
+      { status: 400 }
+    );
   }
 };

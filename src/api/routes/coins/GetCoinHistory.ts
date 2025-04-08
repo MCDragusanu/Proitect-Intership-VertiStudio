@@ -15,21 +15,30 @@ export const GetCoinHistory = async (coin_id: number): Promise<any> => {
         }
       );
     }
-    if(coinHistory.length === 0){
-        return new Response(JSON.stringify([]), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
+    if (coinHistory.length === 0) {
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
-    const result : any[] = []
-   
+    const result: any[] = [];
+
     // Map the coin history to a list of { sellerName, buyerName } pairs
-    for(const entry of coinHistory){
-         const sellerName = (await getModule().userRepository.getProfileByUid(entry.seller_id || "Stranger"))?.name || "Stranger"
-         const buyerName = (await getModule().userRepository.getProfileByUid(entry.buyer_id || "Stranger"))?.name || "Stranger"
-         result.push({sellerName : sellerName , buyerName : buyerName})
+    for (const entry of coinHistory) {
+      const sellerName =
+        (
+          await getModule().userRepository.getProfileByUid(
+            entry.seller_id || "Stranger"
+          )
+        )?.name || "Stranger";
+      const buyerName =
+        (
+          await getModule().userRepository.getProfileByUid(
+            entry.buyer_id || "Stranger"
+          )
+        )?.name || "Stranger";
+      result.push({ sellerName: sellerName, buyerName: buyerName });
     }
-    
 
     // Return the list of seller-buyer pairs
     return new Response(JSON.stringify(result), {

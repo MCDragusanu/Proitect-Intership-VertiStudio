@@ -33,58 +33,22 @@ import { useCoin } from "../../components/hooks/GetCoin";
 const Dashboard = () => {
   const navigate = useNavigate();
   const userUid = localStorage.getItem("userUid");
-  const [currentToken, setAccessToken] = useState(
-    sessionStorage.getItem("accessToken")
-  );
-   
-  const [loadingTime, setLoadingTime] = useState(0);
-
+  const currentToken = sessionStorage.getItem("accessToken");
   const handleFailedRefresh = async (error: string) => {
     console.log(error);
     toast.error(
       "A valid session has not be found!You must login or register in order to continue "
     );
-
-    //wait 2 secs and redirect to root page
-    delay(() => {
-      navigate("/");
-    }, 2000);
+    navigate("/");
   };
+  
+
+  const [loadingTime, setLoadingTime] = useState(0);
+
   const handleError = async (error: string, actionName: string) => {
     console.log(error);
     toast.error(`Something went wrong while ${actionName}`);
   };
-
-  useLayoutEffect(() => {
-    const fetchToken = async (token: string) => {
-      fetchAccessToken(
-        token,
-        (newToken: string) => {
-          setAccessToken(newToken);
-          const decodedToken = parseToken(newToken);
-          sessionStorage.setItem("accessToken", newToken);
-          localStorage.setItem("userUid", decodedToken.userUid);
-          localStorage.setItem("role", decodedToken.userRole);
-        },
-        () => {
-          console.log("Session Expired!");
-          navigate("/");
-          toast.warn("Session is expired");
-        },
-        (error: any) => {
-          console.log(
-            error.message || "Error occurred while validating session"
-          );
-          toast.error(
-            error.message || "Error occurred while validating session"
-          );
-          navigate("/");
-        }
-      );
-    };
-
-    fetchToken(currentToken || "Oopsie");
-  }, [currentToken, navigate]);
 
   const { transactions, filters, transactionsAreLoading, error, setFilters } =
     useLoadUserTransactions(
@@ -116,21 +80,19 @@ const Dashboard = () => {
     () => setShowHistoryModal(true)
   );
 
-  const {coin ,setCoinId} = useCoin((message : string) => {
+  const { coin, setCoinId } = useCoin((message: string) => {
     handleError(message, "retrieving coin information!");
-  })
- 
+  });
+
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   useEffect(() => {
     let timerId: number | undefined;
-
     if (transactionsAreLoading) {
       timerId = window.setInterval(() => {
         setLoadingTime((prevTime) => prevTime + 1);
       }, 1000);
     }
-
     return () => {
       if (timerId) clearInterval(timerId);
     };
@@ -153,15 +115,11 @@ const Dashboard = () => {
 
     navigate("/");
   };
- 
+
   // Handle back navigation
   const handleBackNavigation = () => {
     navigate(-1); // Go back to previous page
   };
-
-  if (!userUid || !currentToken) {
-    handleFailedRefresh("You must be signed in order to continue")
-  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -340,8 +298,8 @@ const Dashboard = () => {
                 onRowClick={(transaction) => {
                   console.log(transaction);
                   setCoinId(transaction.coinId);
-                  setCoinUid(transaction.coinId)
-                  setShowHistoryModal(true)
+                  setCoinUid(transaction.coinId);
+                  setShowHistoryModal(true);
                 }}
               />
             )}
@@ -357,9 +315,15 @@ const Dashboard = () => {
           <p className="text-gray-600 mb-6">
             Your coin collection and portfolio
           </p>
-          <CoinList coins = {coins} onClick={(coin) => {
-            setCoinId(coin.coin_id)
-            setShowHistoryModal(true)}} onClickToBuy={()=>{}}/>
+          <CoinList
+            coins={coins}
+            buyButtonEnables = {false}
+            onClick={(coin) => {
+              setCoinId(coin.coin_id);
+              setShowHistoryModal(true);
+            }}
+            onClickToBuy={() => {}}
+          />
         </section>
       </div>
 

@@ -1,10 +1,14 @@
 import { useEffect } from "react";
-export default function useIntervalEffect(callback: () => void, delayInSeconds: number) {
-    useEffect(() => {
-      const interval = setInterval(() => {
-        callback();
-      }, delayInSeconds * 1000); // convert seconds to ms
-  
-      return () => clearInterval(interval); // cleanup on unmount
-    }, [callback, delayInSeconds]);
-  }
+// Fixed useIntervalEffect hook
+export const useIntervalEffect = (callback : ()=>void, delayInMilliseconds : number) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      callback();
+      console.log("New Call")
+    }, delayInMilliseconds);
+    
+    return () => clearInterval(interval); // cleanup on unmount
+  }, [callback, delayInMilliseconds]);
+};
+
+

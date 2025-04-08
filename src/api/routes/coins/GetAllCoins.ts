@@ -26,11 +26,10 @@ export const GetAllCoins = async (): Promise<any> => {
             ...rawCoin,
             bitSlow :  bitSlow
         }
-        console.log(`Processed Coin : `)
-        console.log(coin)
+       
         result.push(coin)
     }
-    
+  
     // Return the list of seller-buyer pairs
     return new Response(JSON.stringify(result), {
       status: 200,

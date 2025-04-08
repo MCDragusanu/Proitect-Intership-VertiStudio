@@ -8,7 +8,6 @@ interface RefreshTokenResponse {
 }
 
 export const fetchAccessToken = async (
-  accessToken: string,
   onRefresh: (token : string) => void,
   onExpired: (message : string) => void,
   onError: (error: any) => void
@@ -17,7 +16,6 @@ export const fetchAccessToken = async (
   const headers = new Headers({
     "Content-Type": "application/json",
     Accept: "application/json",
-    Authorization: `Bearer ${accessToken}`,
   });
   const requestInfo = new Request(ENDPOINT_URL, {
     method: "POST",
@@ -33,8 +31,9 @@ export const fetchAccessToken = async (
       if (result instanceof Response) {
         //check to see if it has been refreshed
         if (result.ok) {
-          const responseBody = await result.json();
+          const responseBody = await result.json().catch((reason)=>{console.log(reason);onError(reason)});
           const accessToken = responseBody.accessToken;
+          console.log(responseBody)
           onRefresh(accessToken);
         } //error code for expired or invalid
         else if (result.status === 403) {

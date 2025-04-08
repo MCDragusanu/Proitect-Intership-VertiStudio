@@ -11,9 +11,7 @@ export const getUserInformation = async (req: Request, userUid: string): Promise
         // Fetch user profile details based on the userUid
         const userProfile = await getModule().userRepository.getProfileByUid(userUid);
 
-        console.log("User Profile:", userProfile);
-        console.log("Coins:", coins);
-        console.log("Monetary Value:", getMonetaryValue);
+        
 
         // Check if any of the fetched data is empty or invalid
         if (
@@ -35,8 +33,8 @@ export const getUserInformation = async (req: Request, userUid: string): Promise
             monetaryValue: getMonetaryValue,
         };
 
-        console.log("Completed collecting userInfo:");
-        console.log(userInformation);
+      
+    
 
         // Return the combined user information
         return new Response(JSON.stringify(userInformation), {

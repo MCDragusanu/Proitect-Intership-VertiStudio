@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaStore, FaHistory } from "react-icons/fa"; // Import icons from react-icons
+import { FaUser, FaStore, FaHistory, FaUserAlt } from "react-icons/fa"; // Import icons from react-icons
 import TransactionLoader from "../../components/ui/TransactionLoader";
 import TransactionTable from "../../components/ui/TransactionTable";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,6 +12,8 @@ import { useCoinHistory } from "../../components/hooks/CoinHistory";
 import CoinHistoryModal from "../../components/ui/CoinHistory";
 import { delay } from "framer-motion";
 import { useCoin } from "../../components/hooks/GetCoin";
+import { fetchAccessToken } from "../../requrests/RefreshToken";
+import { parseToken } from "../../requrests/parseJWT";
 
 const handleError = (message: string, actionName: string) => {
   console.log(message);
@@ -64,16 +66,14 @@ export function TransactionsPage() {
     return <TransactionLoader loadingTime={loadingTime} />;
   }
 
-  /*useEffect(()=>{
-    console.log("New Coin Clicked")
-    setShowHistoryModal(true)
-  } , [coin])*/
-
   const goToProfile = () => {
     const userUid = localStorage.getItem("userUid");
-    if (userUid === null || undefined) {
-      toast.warning("You are not logged in at the moment!");
-      delay(goToRoot, 1000);
+    const accessToken = sessionStorage.getItem("accessToken");
+    if (userUid === null || undefined || accessToken === null || undefined) {
+      toast.warning(
+        "You are not logged in at the moment! You must login in order to continue"
+      );
+      
     } else {
       navigate(`/profile/${userUid}`);
     }
@@ -85,8 +85,8 @@ export function TransactionsPage() {
     navigate("/marketplace");
   };
 
-  const goToTransactions = () => {
-    navigate("/transactions");
+  const goToSignUp = () => {
+    navigate("/register");
   };
 
   // Toggle the sidebar open and close
@@ -163,17 +163,17 @@ export function TransactionsPage() {
             </button>
           </div>
 
-          {/* Transactions Button */}
+          {/* SignUp Button */}
           <div className="mb-6">
             <button
-              onClick={goToTransactions}
+              onClick={goToSignUp}
               className="flex items-center w-full text-left py-2 px-4 text-gray-700 hover:bg-gray-200"
             >
-              <FaHistory className="mr-3 text-xl" />
+              <FaUserAlt className="mr-3 text-xl" />
               <div>
-                <h4 className="font-semibold">Transactions</h4>
+                <h4 className="font-semibold">Sign-Up</h4>
                 <p className="text-sm text-gray-500">
-                  View your transaction history
+                  Create or login into your account
                 </p>
               </div>
             </button>
@@ -202,8 +202,8 @@ export function TransactionsPage() {
             onRowClick={(transaction) => {
               console.log(transaction);
               setCoinId(transaction.coinId);
-              setCoinUid(transaction.coinId)
-              setShowHistoryModal(true)
+              setCoinUid(transaction.coinId);
+              setShowHistoryModal(true);
             }}
           />
         )}

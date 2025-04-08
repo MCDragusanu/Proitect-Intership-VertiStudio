@@ -23,6 +23,7 @@ import { GetCoinHistory } from "./api/routes/coins/GetCoinHistory";
 import { logout } from "./api/routes/auth/logout";
 import { GetAllCoins } from "./api/routes/coins/GetAllCoins";
 import { GetCoinById } from "./api/routes/coins/GetCoinById";
+import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
@@ -85,13 +86,13 @@ const server = serve({
     "/api/coins/history/:coinId": async (req) => {
       const routeCoinId = Number(req.url.split("/").pop());
       if (req.method === "GET" && !Number.isNaN(routeCoinId)) {
-        console.log();
+        
         return await GetCoinHistory(routeCoinId);
       }
       return methodNotAllowed();
     },
-    "/api/coins/:coinId" : async (req) =>  {
-       const routeCoinId = Number(req.url.split("/").pop());
+    "/api/coins/:coinId": async (req) => {
+      const routeCoinId = Number(req.url.split("/").pop());
       if (req.method === "GET" && !Number.isNaN(routeCoinId)) {
         console.log("Fetching coin by uid : " + routeCoinId);
         return await GetCoinById(routeCoinId);
@@ -102,16 +103,28 @@ const server = serve({
     "/api/coins": async (req) => {
       if (req.method === "GET") {
         console.log("Fetching all coins");
-        const allCoins = await GetAllCoins();
-        return new Response(JSON.stringify(allCoins), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        return await GetAllCoins();
       }
 
       return methodNotAllowed();
     },
+    "/api/coins/generate/:userUid": async (req) => {
+      const routeUserUid = req.url.split("/").pop();
+      console.log("UserUid in url : ")
+      console.log(routeUserUid)
+      if (req.method === "POST" && routeUserUid !== undefined) {
+        console.log("Preparing to validate genearation ")
+        const tokenValidationError = await validateTokens(req, routeUserUid);
+        if (tokenValidationError) {
+          console.log("Validation failed ")
+          return tokenValidationError
+        };
+        console.log("Geneating new coins");
+        return await CreateNewCoins(req , routeUserUid);
+      }
 
+      return methodNotAllowed();
+    },
     // Authentication routes
     "/api/auth/register": async (req) => {
       if (req.method === "POST") {
