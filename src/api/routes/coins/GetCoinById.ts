@@ -3,6 +3,7 @@ import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { computeBitSlow } from "@/src/bitslow";
 export const GetCoinById = async (coinId: number): Promise<any> => {
     try {
+      console.log("Begin Retriving coin")
       // Fetch the coin by coin_id from the repository
       const rawCoin = await getModule().bitSlowRepo.getCoinById(coinId);
       
@@ -32,7 +33,8 @@ export const GetCoinById = async (coinId: number): Promise<any> => {
         ...rawCoin,
         bitSlow: bitSlow,
       };
-  
+      console.log("Final Result : ")
+      console.log(coin)
       // Return the coin data
       return new Response(JSON.stringify(coin), {
         status: 200,

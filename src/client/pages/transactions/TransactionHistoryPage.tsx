@@ -13,39 +13,31 @@ import CoinHistoryModal from "../../components/ui/CoinHistory";
 import { delay } from "framer-motion";
 import { useCoin } from "../../components/hooks/GetCoin";
 
-
-
-
-const handleError = (message : string , actionName : string) => {
+const handleError = (message: string, actionName: string) => {
   console.log(message);
   toast.error(`Something went wrong ${actionName}!`);
-}
-
-
-
+};
 
 export function TransactionsPage() {
   const { transactions, loading, filters, error, setFilters, setLoading } =
-    useQueriedTransaction((message:string) => {
-      handleError(message , "while loading the transactions")
+    useQueriedTransaction((message: string) => {
+      handleError(message, "while loading the transactions");
     });
-     const [coinId , setCoinId] = useState(-1)
-        const {coin , loading : _} = useCoin(coinId , (message : string) => {
-          handleError(message, "retrieving coin information!");
-        })
+
+  const { coin, setCoinId } = useCoin((message: string) => {
+    handleError(message, "retrieving coin information");
+  });
   const [loadingTime, setLoadingTime] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false); // State for the sidebar toggle
   const { coinHistory, setCoinUid } = useCoinHistory(
     (error: string) => {
-      handleError(error , "while loading the coin history")
+      handleError(error, "while loading the coin history");
     },
     () => setShowHistoryModal(true) // <- open modal *after* history is loaded
   );
 
- 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const navigate = useNavigate();
- 
 
   useEffect(() => {
     setLoading(true);
@@ -65,25 +57,30 @@ export function TransactionsPage() {
   }, [loading]);
 
   useEffect(() => {
-    if (error) handleError(error.message ,"" );
+    if (error) handleError(error.message, "");
   }, [error]);
 
   if (loading) {
     return <TransactionLoader loadingTime={loadingTime} />;
   }
 
+  /*useEffect(()=>{
+    console.log("New Coin Clicked")
+    setShowHistoryModal(true)
+  } , [coin])*/
+
   const goToProfile = () => {
     const userUid = localStorage.getItem("userUid");
     if (userUid === null || undefined) {
       toast.warning("You are not logged in at the moment!");
-      delay( goToRoot, 1000)
+      delay(goToRoot, 1000);
     } else {
       navigate(`/profile/${userUid}`);
     }
   };
   const goToRoot = () => {
-    navigate("/")
-  }
+    navigate("/");
+  };
   const goToMarketplace = () => {
     navigate("/marketplace");
   };
@@ -203,10 +200,10 @@ export function TransactionsPage() {
           <TransactionTable
             transactions={transactions}
             onRowClick={(transaction) => {
-              console.log(transaction)
-              
+              console.log(transaction);
               setCoinId(transaction.coinId);
-              
+              setCoinUid(transaction.coinId)
+              setShowHistoryModal(true)
             }}
           />
         )}

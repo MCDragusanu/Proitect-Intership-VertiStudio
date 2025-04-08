@@ -29,8 +29,8 @@ const MarketDashboard: React.FC = () => {
     () => setShowHistoryModal(true)
   );
 
-  const [coinId , setCoinId] = useState(-1)
-    const {coin , loading : _} = useCoin(coinId , (message : string) => {
+  
+    const {coin , setCoinId} = useCoin((message : string) => {
       handleError(message, "retrieving coin information!");
     })
 

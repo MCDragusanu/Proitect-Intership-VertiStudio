@@ -7,13 +7,16 @@ function loadCoin(coinId: number, errorCallback: (message: string) => void): Pro
   }
   
   export const useCoin = (
-    coinId: number,
     errorCallback: (error: string) => void,
     onLoaded?: () => void
   ) => {
+    const [coinId, setCoinId] = useState<number>(-1)
     const [coin, setCoin] = useState<CoinDTO | null>(null); // Coin state
     const [loading, setLoading] = useState<boolean>(true); // Loading state
-  
+    useEffect(()=>{
+      console.log("Coin received from api in useCoin: ")
+      console.log(coin)
+    } , [coin])
     useEffect(() => {
       if (coinId <= 0) return; // Ensure a valid coinId is provided
   
@@ -22,15 +25,15 @@ function loadCoin(coinId: number, errorCallback: (message: string) => void): Pro
       loadCoin(coinId, errorCallback)
         .then((data) => {
           setCoin(data);
-          setLoading(false); // Set loading to false after loading completes
+          setLoading(false); 
           if (onLoaded) onLoaded(); // Call onLoaded callback after loading completes
         })
         .catch((err: any) => {
           const message = err?.message || "Failed to load coin data";
-          errorCallback(message); // Handle error
-          setLoading(false); // Set loading to false if there's an error
+          errorCallback(message);
+          setLoading(false); 
         });
-    }, [coinId, errorCallback, onLoaded]); // Dependencies: when coinId changes, rerun the effect
+    }, [coinId]); // Dependencies: when coinId changes, rerun the effect
   
-    return { coin, loading };
+    return { coin, setCoinId };
   };

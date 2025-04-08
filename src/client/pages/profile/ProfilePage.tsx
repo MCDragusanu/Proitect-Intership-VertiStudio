@@ -115,8 +115,8 @@ const Dashboard = () => {
     (error: string) => handleError(error, "retrieving coin history"),
     () => setShowHistoryModal(true)
   );
-  const [coinId , setCoinId] = useState(-1)
-  const {coin ,loading} = useCoin(coinId , (message : string) => {
+
+  const {coin ,setCoinId} = useCoin((message : string) => {
     handleError(message, "retrieving coin information!");
   })
  
@@ -153,7 +153,7 @@ const Dashboard = () => {
 
     navigate("/");
   };
-
+ 
   // Handle back navigation
   const handleBackNavigation = () => {
     navigate(-1); // Go back to previous page
@@ -340,6 +340,8 @@ const Dashboard = () => {
                 onRowClick={(transaction) => {
                   console.log(transaction);
                   setCoinId(transaction.coinId);
+                  setCoinUid(transaction.coinId)
+                  setShowHistoryModal(true)
                 }}
               />
             )}
@@ -358,8 +360,6 @@ const Dashboard = () => {
           <CoinList coins = {coins} onClick={(coin) => {
             setCoinId(coin.coin_id)
             setShowHistoryModal(true)}} onClickToBuy={()=>{}}/>
-           
-          
         </section>
       </div>
 

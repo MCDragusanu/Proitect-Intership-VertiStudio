@@ -31,7 +31,7 @@ const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, onActionClicked }) =
         }`}>
           BitSlow: {coin.bitSlow ?? "Unavailable"}
         </p>
-
+       
         <p className="text-gray-800 font-semibold">
           Coin ID: <span className="text-blue-600 font-bold">{coin.coin_id}</span>
         </p>
@@ -42,7 +42,11 @@ const CoinCard: React.FC<CoinCardProps> = ({ coin, onClick, onActionClicked }) =
 
         <p className="text-gray-800 font-semibold">
           Bits: <span className="text-gray-600">{coin.bit1}, {coin.bit2}, {coin.bit3}</span>
-        </p>
+        </p> 
+        <p className="text-gray-800 font-semibold">
+          Created: <span className="text-gray-600"> {new Date(coin.created_at ).toLocaleDateString()}</span>
+        </p> 
+        
       </div>
 
       {/* Used for inserting a button for buying later */}

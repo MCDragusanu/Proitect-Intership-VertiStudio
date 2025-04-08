@@ -71,7 +71,9 @@ export default class SQLiteCoinDao implements CoinDao {
       "SELECT * FROM coins WHERE coin_id = ?"
     );
     const result = stmt.all(coinId);
-    return result.length === 1 ? this.mapToCoin(result) : null;
+    console.log("GetCoinById result : ")
+    console.log(result)
+    return result.length === 1 ? this.mapToCoin(result[0]) : null;
   }
   async getAllCoins(): Promise<Coin[] | null> {
     const stmt = getModule().database.prepare(

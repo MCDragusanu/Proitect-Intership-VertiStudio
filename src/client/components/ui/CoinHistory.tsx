@@ -32,7 +32,7 @@ const CoinHistoryModal: React.FC<Props> = ({ isOpen, onClose, coin, history }) =
         <div className="mb-4">
           <h2 className="text-2xl font-bold">Coin History - ID #{coin.coin_id}</h2>
           <p className="text-sm text-gray-500">
-            Value: <span className="font-medium">{coin.value} $</span> • Created:{" "}
+            Value: <span className="font-medium">{coin.value} $</span> • Created: { new Date(coin.created_at).toLocaleDateString()}
           </p>
         </div>
 

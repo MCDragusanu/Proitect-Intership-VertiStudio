@@ -22,6 +22,7 @@ import { getUserInformation } from "./api/routes/users/GetUserProfile";
 import { GetCoinHistory } from "./api/routes/coins/GetCoinHistory";
 import { logout } from "./api/routes/auth/logout";
 import { GetAllCoins } from "./api/routes/coins/GetAllCoins";
+import { GetCoinById } from "./api/routes/coins/GetCoinById";
 
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
@@ -89,39 +90,17 @@ const server = serve({
       }
       return methodNotAllowed();
     },
+    "/api/coins/:coinId" : async (req) =>  {
+       const routeCoinId = Number(req.url.split("/").pop());
+      if (req.method === "GET" && !Number.isNaN(routeCoinId)) {
+        console.log("Fetching coin by uid : " + routeCoinId);
+        return await GetCoinById(routeCoinId);
+      }
+      return methodNotAllowed();
+    },
 
     "/api/coins": async (req) => {
       if (req.method === "GET") {
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        const coinId = url.searchParams.get("coin_id");
-
-        if (coinId) {
-          console.log(`Fetching coin with ID: ${coinId}`);
-          const parsedId = parseInt(coinId, 10);
-          if (isNaN(parsedId)) {
-            return new Response(
-              JSON.stringify({ message: "Invalid coin_id" }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              }
-            );
-          }
-
-          const coin = await GetCoinById(parsedId); // You should have this function
-          if (!coin) {
-            return new Response(JSON.stringify({ message: "Coin not found" }), {
-              status: 404,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
-
-          return new Response(JSON.stringify(coin), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
         console.log("Fetching all coins");
         const allCoins = await GetAllCoins();
         return new Response(JSON.stringify(allCoins), {
