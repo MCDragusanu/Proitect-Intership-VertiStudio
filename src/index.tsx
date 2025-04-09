@@ -27,12 +27,12 @@ import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
 import { GetCoinSupply } from "./api/routes/coins/GetRemainingCoins";
 import { CreateTransaction } from "./api/routes/transactions/CreateTransaction";
-/*seedDatabase(getModule().database, {
+seedDatabase(getModule().database, {
 	transactionCount: 500,
 	clientCount: 250,
 	bitSlowCount: 375,
 	clearExisting: true,
-});*/
+});
 
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
@@ -134,7 +134,7 @@ const server = serve({
 			}
 			return methodNotAllowed();
 		},
-		"/api/coins/buy/:{userUid}": async (req) => {
+    "/api/coins/buy/:{userUid}" : async (req) => {
 			const routeUserUid = req.url.split("/").pop();
 			console.log("UserUid in url : ");
 			console.log(routeUserUid);
@@ -162,7 +162,7 @@ const server = serve({
 					console.log("Validation failed ");
 					return tokenValidationError;
 				}
-				console.log("Processing Transaction");
+				console.log("Processing");
 				return await CreateNewCoins(req, routeUserUid);
 			}
 
