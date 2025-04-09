@@ -25,6 +25,7 @@ import { GetAllCoins } from "./api/routes/coins/GetAllCoins";
 import { GetCoinById } from "./api/routes/coins/GetCoinById";
 import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
+import { GetCoinSupply } from "./api/routes/coins/GetRemainingCoins";
 
 seedDatabase(getModule().database , {
   clientCount: 50,
@@ -113,6 +114,13 @@ const server = serve({
         return await GetAllCoins();
       }
 
+      return methodNotAllowed();
+    },
+    "/api/coins/supply": async (req) => {
+      if (req.method === "GET") {
+        console.log("Fetching coin supply");
+        return await GetCoinSupply();
+      }
       return methodNotAllowed();
     },
     "/api/coins/generate/:userUid": async (req) => {

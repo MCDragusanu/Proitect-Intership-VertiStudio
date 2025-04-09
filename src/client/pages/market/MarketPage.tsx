@@ -20,6 +20,7 @@ import { useGeneratedCoins } from "../../components/hooks/GenerateCoins";
 import BuyCoinModal from "../../components/ui/GenerateCoinDialogue";
 import { useNavigate } from "react-router-dom";
 import TransactionLoader from "../../components/ui/TransactionLoader";
+import { useCoinSupply } from "../../components/hooks/CoinSupply";
 
 const handleError = async (error: string, actionName: string) => {
   console.log(error);
@@ -35,11 +36,14 @@ const MarketDashboard = () => {
   const userUid = localStorage.getItem("userUid");
   const accessToken = sessionStorage.getItem("accessToken");
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  
   const { transactions, loading: transactionsLoading, filters, error, setFilters, setLoading: setTransactionsLoading } =
     useQueriedTransaction((message) => {
       handleError(message, "loading the most recent transactions!");
     });
-
+    const {amount , setRefreshSupply} = useCoinSupply((error : string) => {
+      handleError(error, "retrieving coin supply!")
+    } ,()=>{} )
   const { coinHistory, setCoinUid } = useCoinHistory(
     (message) => {
       handleError(message, "loading the coin history!");
@@ -65,6 +69,7 @@ const MarketDashboard = () => {
       toast.success("You successfully generated new BitSlows");
       setGenerateDialogeVisibility(false);
       setRefresh((prev) => !prev);
+      setRefreshSupply((prev) => !prev)
     }
   );
 
@@ -144,7 +149,7 @@ const MarketDashboard = () => {
       {/* Top Row - Two Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CreateCoinCard
-          remainingItem={1000 - 110 - coins.length}
+          remainingItem={amount}
           createNewCoin={() => {
             setGenerateDialogeVisibility(true);
           }}
@@ -225,7 +230,7 @@ const MarketDashboard = () => {
         onClose={() => {
           setGenerateDialogeVisibility(false);
         }}
-        maxAmount={1000 -110 - coins.length}
+        maxAmount={amount}
         onBuy={(value: number) => {
           setAmount(value);
         }}

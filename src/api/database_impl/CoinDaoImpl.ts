@@ -91,7 +91,7 @@ export default class SQLiteCoinDao implements CoinDao {
     bit3: number
   ): Promise<boolean> {
     const stmt = getModule().database.prepare(
-      "SELECT COUNT(*) AS count FROM coins WHERE bit1 = ? AND bit2 = ? AND bit3 = ?"
+      "SELECT COUNT(*) AS count FROM coins WHERE bit1 = ? AND bit2 = ? AND bit3 = ? AND client_id = NULL"
     );
 
     // Explicitly cast the result to an expected type
