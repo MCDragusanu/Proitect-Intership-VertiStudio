@@ -1,34 +1,36 @@
-# dependencies (bun install)
-node_modules
+# Node Modules
+/node_modules/
 
-# output
-out
-dist
-*.tgz
+# Bun specific
+/.bun/
+#sqlite database
+*.sqlite
+# Build output
+/dist/
+/build/
 
-# code coverage
-coverage
-*.lcov
+# Bun lockfile (you may want to keep it, but it's optional)
+# Bun generates a lockfile, usually called bun.lockb
+bun.lockb
 
-# logs
-logs
-_.log
-report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# caches
-.eslintcache
-.cache
+# TypeScript/JavaScript build output (if you're using TypeScript or Babel)
 *.tsbuildinfo
+*.js.map
 
-# IntelliJ based IDEs
-.idea
+# Logs
+*.log
 
-# Finder (MacOS) folder config
+# MacOS system files
 .DS_Store
+
+# Windows system files
+Thumbs.db
+
+# IDE configuration files (for example, VS Code)
+.vscode/
+
+# OS-specific files
+.idea/
+
+# Temporary files from text editors
+*~

@@ -10,7 +10,7 @@ type CoinCardProps = {
 };
 
 const CoinCard: React.FC<CoinCardProps> = ({ coin, buyButtonEnabled ,onClick, onActionClicked }) => {
- 
+  console.log(coin)
   return (
     <div
       className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between bg-neutral-100 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:bg-gray-50 cursor-pointer transition-all duration-300 max-w-4xl gap-4"

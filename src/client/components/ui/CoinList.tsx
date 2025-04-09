@@ -53,7 +53,7 @@ export const CoinList: React.FC<CoinListProps> = ({ coins, buyButtonEnables , on
               <CoinCard
                 key={coin.coin_id}
                 coin={coin}
-               // buyButtonEnabled = {buyButtonEnables}
+                buyButtonEnabled = {buyButtonEnables}
                 onClick={onClick}
                 onActionClicked={onClickToBuy}
               />

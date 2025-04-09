@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 import { uuid } from "uuidv4";
 import bcrypt from "bcrypt";
 import { getModule } from "./module";
+import { randomUUIDv7 } from "bun";
 
 export async function seedDatabase(
   db: Database,
@@ -117,7 +118,7 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
   const clientUids: string[] = [];
 
   for (let i = 0; i < count; i++) {
-    const user_uid = uuid();
+    const user_uid = randomUUIDv7();
     const password = "Testtest123@";
     const email =  faker.internet.email()
     console.log(`${user_uid} ${email} ${password}`)
@@ -145,7 +146,7 @@ async function seedClients(db: Database, count: number): Promise<string[]> {
       faker.location.country(),
       faker.location.city()
     );
-    console.log(user_uid)
+  
     clientUids.push(user_uid);
   }
 

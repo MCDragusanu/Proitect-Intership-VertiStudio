@@ -24,7 +24,14 @@ import { logout } from "./api/routes/auth/logout";
 import { GetAllCoins } from "./api/routes/coins/GetAllCoins";
 import { GetCoinById } from "./api/routes/coins/GetCoinById";
 import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
+import { seedDatabase } from "./api/seed";
 
+seedDatabase(getModule().database , {
+  clientCount: 20,
+  bitSlowCount: 25,
+  transactionCount: 20,
+  clearExisting: true,
+});
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
   new Response("Method Not Allowed", {

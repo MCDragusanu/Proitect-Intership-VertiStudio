@@ -126,35 +126,41 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
 
     // Build the WHERE clause and parameters dynamically based on filters
     const { whereClause, params } = buildWhereClause(requestBody);
+    const coins = await getModule().bitSlowRepo.getAllCoins()
+    console.log(coins)
 
+    const transactions2 = await getModule().bitSlowRepo.getAllTransactions()
+    console.log(transactions2)
     const query = `
       SELECT 
           t.id AS id,
           t.coin_id AS coinId,
           t.amount AS value,
           t.transaction_date AS date,
-          seller.user_uid AS sellerUid,
-          seller.name AS sellerName,
-          buyer.user_uid AS buyerUid,
-          buyer.name AS buyerName,
-          c.bit1, c.bit2, c.bit3,
-          b.computed_bit_slow as bitSlow
+         seller.user_uid AS sellerUid,
+         seller.name AS sellerName,
+         buyer.user_uid AS buyerUid,
+         buyer.name AS buyerName,
+        c.bit1, c.bit2, c.bit3,
+        b.computed_bit_slow as bitSlow
       FROM transactions t
       LEFT JOIN user_profiles seller ON t.seller_id = seller.user_uid
       JOIN user_profiles buyer ON t.buyer_id = buyer.user_uid
       JOIN coins c ON c.coin_id = t.coin_id
-      JOIN bitSlow b on b.coin_id = t.coin_id
+      LEFT JOIN bitSlow b on b.coin_id = t.coin_id
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
-
+    console.log(query)
     // Add pagination parameters at the end
     params.push(pageSize, startIndex);
 
-    const transactions = await getModule().database.prepare(query).all(params);
-    const result = await processTransactions(transactions);
-
-    return Response.json(result);
+    const transactions = await getModule().database.prepare(query)
+    
+    const result = transactions.all(params);
+    const final = await processTransactions(result);
+    
+    return Response.json(final);
   } catch (err) {
     console.error("Transaction error:", err);
     return new Response(
@@ -193,7 +199,11 @@ export const getTransactionsByUser = async (
       userUid,
       userUid,
     });
+    const coins = await getModule().bitSlowRepo.getAllCoins()
+    console.log(coins)
 
+    const transactions2 = await getModule().bitSlowRepo.getAllTransactions()
+    console.log(transactions2)
     const query = `
       SELECT 
           t.id AS id,
@@ -214,14 +224,16 @@ export const getTransactionsByUser = async (
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
-
+      console.log(query)
     // Add pagination parameters at the end
     params.push(pageSize, startIndex);
 
-    const transactions = await getModule().database.prepare(query).all(params);
-    const result = await processTransactions(transactions);
-
-    return Response.json(result);
+    const transactions = await getModule().database.prepare(query)
+    
+    const result = transactions.all(params);
+    const final = await processTransactions(result);
+    
+    return Response.json(final);
   } catch (err) {
     console.error("Transaction error:", err);
     return new Response(

@@ -17,7 +17,7 @@ export class SQLLiteUserRepository implements UserRepository {
         let success : boolean= false;
         try {
             success = await this.userCredentialsDao.insertUserCredentials(credentials);
-            console.log(`Credentials Inserted : ${credentials}`)
+           // console.log(`Credentials Inserted : ${credentials}`)
             return success;
         } catch (err: any) {
             console.error(`Error inserting credentials: ${err}`);
@@ -35,7 +35,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error updating refresh token: ${err}`);
             return false;
         } finally {
-            console.log(`[Credentials] Updated refresh token for UID: ${userUid} - Success: ${success}`);
+           // console.log(`[Credentials] Updated refresh token for UID: ${userUid} - Success: ${success}`);
         }
     }
     async insertProfile(profile: UserProfile): Promise<boolean> {
@@ -47,7 +47,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error inserting user profile: ${err}`);
             return false;
         } finally {
-            console.log(`[Profile] Inserted user with UID: ${profile.user_uid} - Success: ${success}`);
+            //console.log(`[Profile] Inserted user with UID: ${profile.user_uid} - Success: ${success}`);
         }
     }
 
@@ -73,7 +73,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error updating user profile: ${err}`);
             return false;
         } finally {
-            console.log(`[Profile] Updated user with UID: ${profile.user_uid} - Success: ${success}`);
+           // console.log(`[Profile] Updated user with UID: ${profile.user_uid} - Success: ${success}`);
         }
     }
 
@@ -86,7 +86,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error deleting user credentials by email: ${err}`);
             return false;
         } finally {
-            console.log(`[Credentials] Deleted user with email: ${userEmail} - Success: ${success}`);
+            //console.log(`[Credentials] Deleted user with email: ${userEmail} - Success: ${success}`);
         }
     }
 
@@ -99,7 +99,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error deleting user credentials by UID: ${err}`);
             return false;
         } finally {
-            console.log(`[Credentials] Deleted user with UID: ${userUid} - Success: ${success}`);
+            //console.log(`[Credentials] Deleted user with UID: ${userUid} - Success: ${success}`);
         }
     }
 
@@ -112,7 +112,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error deleting user profile by UID: ${err}`);
             return false;
         } finally {
-            console.log(`[Profile] Deleted user with UID: ${uuid} - Success: ${success}`);
+            //console.log(`[Profile] Deleted user with UID: ${uuid} - Success: ${success}`);
         }
     }
 
@@ -125,7 +125,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error retrieving credentials by email: ${err}`);
             return null;
         } finally {
-            console.log(`[Credentials] Retrieved user with email: ${userEmail} - Found: ${credentials !== null}`);
+            //console.log(`[Credentials] Retrieved user with email: ${userEmail} - Found: ${credentials !== null}`);
         }
     }
 
@@ -133,13 +133,13 @@ export class SQLLiteUserRepository implements UserRepository {
         let credentials: UserCredentials | null = null;
         try {
             credentials = await this.userCredentialsDao.getCredentialsByToken(refreshToken);
-            console.log(`Credentials found for ${refreshToken} : ${credentials}`)
+           // console.log(`Credentials found for ${refreshToken} : ${credentials}`)
             return credentials;
         } catch (err: any) {
             console.error(`Error retrieving credentials by token: ${err}`);
             return null;
         } finally {
-            console.log(`[Credentials] Retrieved user with token: ${refreshToken.substring(0, 5)}... - Found: ${credentials !== null}`);
+           // console.log(`[Credentials] Retrieved user with token: ${refreshToken.substring(0, 5)}... - Found: ${credentials !== null}`);
         }
     }
 
@@ -152,7 +152,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error retrieving credentials by UID: ${err}`);
             return null;
         } finally {
-            console.log(`[Credentials] Retrieved user with UID: ${userUid} - Found: ${credentials !== null}`);
+            //console.log(`[Credentials] Retrieved user with UID: ${userUid} - Found: ${credentials !== null}`);
         }
     }
 
@@ -165,7 +165,7 @@ export class SQLLiteUserRepository implements UserRepository {
             console.error(`Error retrieving user profile by UID: ${err}`);
             return null;
         } finally {
-            console.log(`[Profile] Retrieved user with UID: ${uuid} - Found: ${profile !== null}`);
+            //console.log(`[Profile] Retrieved user with UID: ${uuid} - Found: ${profile !== null}`);
         }
     }
 }

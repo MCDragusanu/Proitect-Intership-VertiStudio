@@ -46,7 +46,7 @@ export const CreateNewCoins = async (
             await getModule().bitSlowRepo.insertCoin(coin);
             await getModule().bitSlowRepo.insertTransaction(transaction);
             await getModule().bitSlowRepo.insertBitSlow(bitSlow);
-
+            
             const coinDto: CoinDTO = {
               coin_id: coin.coin_id,
               client_id: coin.client_id,
@@ -57,7 +57,8 @@ export const CreateNewCoins = async (
               created_at: coin.created_at,
               bitSlow: bitSlow.computedBitSlow,
             };
-
+            console.log("Coin created : ")
+            console.log(coinDto)
             coins.push(coinDto);
             coinAmount--;
           }
@@ -123,6 +124,7 @@ const createNewTransaction = (coin: Coin): Transaction => {
 };
 const createNewBitSlowInstance = (coin: Coin): BitSlow => {
   const bitSlow: BitSlow = {
+    id : Date.now(),
     coinId:coin.coin_id,
     bit1: coin.bit1,
     bit2: coin.bit2,

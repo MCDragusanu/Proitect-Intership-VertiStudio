@@ -175,7 +175,15 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 
  
 
-  
+  async getAllTransactions(): Promise<Transaction[]> {
+    try {
+      console.log("Getting all transactions");
+      return await this.transactionDao.getAllTransactions();
+    } catch (error) {
+      console.error("Error getting transactions by buyer name:", error);
+      return [];
+    }
+  }
   async getTransactionsByBuyerName(name: string): Promise<Transaction[] | null> {
     try {
       console.log("Getting transactions by buyer name:", name);

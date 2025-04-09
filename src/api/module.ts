@@ -34,15 +34,7 @@ export abstract class BackendModule {
     this.database = database;
   }
 
-  initialize(){
-    seedDatabase(this.database, {
-      clientCount: 100,
-      bitSlowCount: 125,
-      transactionCount: 500,
-      clearExisting: true,
-    });
-  
-  }
+ 
 }
 
 function createInMemoryModule(): BackendModule {
@@ -76,6 +68,7 @@ function createInMemoryModule(): BackendModule {
 
   return moduleInstance;
 }
+
 function createPersistentModule(): BackendModule {
   const db = new Database("mydb.sqlite");
 
@@ -100,42 +93,7 @@ function createPersistentModule(): BackendModule {
   // Return BackendModule instance
   const moduleInstance = new (class extends BackendModule {
     constructor() {
-      super(authService, jwtService, repository, bitSlowRepository ,db);
-      
-       // Required tables
-    const requiredTables = [
-      "user_credentials",
-      "user_profiles",
-      "bitSlow",
-      "coins",
-      "transactions",
-    ];
-
-    // Query existing tables from sqlite_master
-    const existingTables = db
-      .query(
-        `SELECT name FROM sqlite_master WHERE type='table' AND name IN (${requiredTables
-          .map(() => "?")
-          .join(",")})`
-      )
-      .all(...requiredTables)
-      .map((row: any) => row.name);
-
-    const missingTables = requiredTables.filter(
-      (table) => !existingTables.includes(table)
-    );
-
-    if (missingTables.length > 0) {
-      console.log("🛠 Missing tables detected:", missingTables);
-      console.log("🔄 Seeding database...");
-      this.initialize();
-    } else {
-      console.log("✅ All required tables exist. Skipping seed.");
-
-      const userCreds = db.query(`SELECT * FROM user_credentials`).all();
-      console.log("📋 user_credentials table contents:");
-      console.log(userCreds);
-    }
+      super(authService, jwtService, repository, bitSlowRepository ,db); 
     }
   })();
 

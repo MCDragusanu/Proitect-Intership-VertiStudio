@@ -22,10 +22,12 @@ export const useGeneratedCoins = (
   userUid: string | null,
   accessToken: string | null,
   onError: (error: string) => void,
-  onMissingCredentials: () => void
+  onMissingCredentials: () => void,
+  onComplete : () => void,
 ) => {
   const [newCoins, setCoins] = useState<CoinDTO[]>([]);
   const [amount, setAmount] = useState<number>(0);
+  const [newCoinsLoading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     if (amount <= 0) {
       return;
@@ -33,23 +35,26 @@ export const useGeneratedCoins = (
     if (!userUid || !accessToken) {
       onMissingCredentials();
       return;
-    } else
-
-    loadNewCoins(
-      amount,
-      userUid || "Oopsie",
-      accessToken || "Ooopsie",
-      onError,
-      onMissingCredentials
-    )
-      .then((data) => {
-        setCoins(data);
-      })
-      .catch((err: any) => {
-        const message = err?.message || "Failed to generate new coins";
-        onError(message);
-      });
+    } else {
+      setLoading(true);
+      loadNewCoins(
+        amount,
+        userUid || "Oopsie",
+        accessToken || "Ooopsie",
+        onError,
+        onMissingCredentials
+      )
+        .then((data) => {
+          setLoading(false);
+          setCoins(data);
+          onComplete()
+        })
+        .catch((err: any) => {
+          const message = err?.message || "Failed to generate new coins";
+          onError(message);
+        });
+    }
   }, [amount]);
 
-  return { newCoins, setAmount };
+  return { newCoins, setAmount , newCoinsLoading };
 };

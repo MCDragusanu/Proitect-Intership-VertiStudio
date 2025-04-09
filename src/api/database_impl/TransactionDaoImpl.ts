@@ -6,13 +6,12 @@ import { tr } from "@faker-js/faker";
 export default class SQLiteTransactionDao implements TransactionDao {
   constructor() {}
 
-  
-
   async insertTransaction(transaction: Transaction): Promise<boolean> {
     const stmt = getModule().database.prepare(
-      "INSERT INTO transactions (coin_id, amount, seller_id, buyer_id, bit1, bit2, bit3, transaction_date ) VALUES (?, ?, ?, ?, ?, ?, ?,?)"
+      "INSERT INTO transactions (id, coin_id, amount, seller_id, buyer_id, bit1, bit2, bit3, transaction_date ) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)"
     );
     const info = stmt.run(
+      transaction.id,
       transaction.coin_id,
       transaction.amount,
       transaction.seller_id,
@@ -32,7 +31,14 @@ export default class SQLiteTransactionDao implements TransactionDao {
     const result = stmt.get(id);
     return result ? this.mapToTransaction(result) : null;
   }
-
+ async getAllTransactions(): Promise<Transaction[]> {
+  const stmt = getModule().database.prepare(
+    "SELECT * FROM transactions"
+  );
+  const result = stmt.all();
+  return result.length > 0 ? result.map(this.mapToTransaction) : [];
+}
+ 
   async getCoinHistory(coinUid: number): Promise<Transaction[] | null> {
     const stmt = getModule().database.prepare(
       "SELECT * FROM transactions WHERE coin_id = ? ORDER by transaction_date ASC"
@@ -77,7 +83,6 @@ export default class SQLiteTransactionDao implements TransactionDao {
       bit1: row.bit1,
       bit2: row.bit2,
       bit3: row.bit3,
-    
     };
   }
 
@@ -106,5 +111,4 @@ export default class SQLiteTransactionDao implements TransactionDao {
     const result = stmt.all(name);
     return result.length > 0 ? result.map(this.mapToTransaction) : null;
   }
- 
 }

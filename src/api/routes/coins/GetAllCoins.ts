@@ -24,12 +24,15 @@ export const GetAllCoins = async (): Promise<any> => {
         }else bitSlow = bitSlowEntity.computedBitSlow
         const coin : CoinDTO = {
             ...rawCoin,
-            bitSlow :  bitSlow
+            bitSlow :  bitSlow,
+            coin_id : Number(rawCoin.coin_id)
         }
        
         result.push(coin)
     }
   
+    console.log("All Coins : ")
+    console.log(result)
     // Return the list of seller-buyer pairs
     return new Response(JSON.stringify(result), {
       status: 200,

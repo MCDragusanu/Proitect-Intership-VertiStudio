@@ -10,6 +10,6 @@ interface TransactionDao{
     getCoinHistory(coinUid : number)             : Promise<Transaction[] | null>
     getTransactionByUid(id : Number)             : Promise<Transaction   | null>
     getUserTransactions(userUid : String)        : Promise<Transaction[] | null>
-
+    getAllTransactions() : Promise<Transaction[]>
 }
 export default TransactionDao

@@ -9,9 +9,10 @@ export default class SQLiteCoinDao implements CoinDao {
 
   async insertCoin(coin: Coin): Promise<boolean> {
     const stmt = getModule().database.prepare(
-      "INSERT INTO coins (client_id, bit1, bit2, bit3, value , created_at) VALUES (?, ?, ?, ?, ?, ?)"
+      "INSERT INTO coins (coin_id, client_id, bit1, bit2, bit3, value , created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
     const info = stmt.run(
+      coin.coin_id,
       coin.client_id,
       coin.bit1,
       coin.bit2,
@@ -108,7 +109,7 @@ export default class SQLiteCoinDao implements CoinDao {
 
   private mapToCoin(row: any): Coin {
     return {
-      coin_id: row.coin_id.toString(),
+      coin_id: row.coin_id,
       client_id: row.client_id ?? "",
       value: row.value,
       bit1: row.bit1,

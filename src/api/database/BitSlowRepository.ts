@@ -18,7 +18,7 @@ export default interface BitSlowRepository {
   getFreeCoins(): Promise<Coin[] | null>;
   getMonetaryValue(userUid: string): Promise<number | null>;
   bitsAlreadyInUse(bit1: number, bit2: number, bit3: number): Promise<boolean>;
-
+  getAllTransactions() : Promise<Transaction[]>
  
   insertTransaction(transaction: Transaction): Promise<boolean>;
   updateTransaction(transaction: Transaction): Promise<boolean>;

@@ -6,9 +6,10 @@ export default class SQLBitSlowDao implements BitSlowDao {
     // Insert a new BitSlow record
     async insertBitSlow(bitslow: BitSlow): Promise<boolean> {
         const stmt = getModule().database.prepare(
-            "INSERT INTO bitSlow (coin_id, bit1, bit2, bit3, computed_bit_slow) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO bitSlow (id, coin_id, bit1, bit2, bit3, computed_bit_slow) VALUES (?, ?, ?, ?, ?, ?)"
         );
         const info = stmt.run(
+            bitslow.id,
             bitslow.coinId,
             bitslow.bit1,
             bitslow.bit2,
@@ -39,6 +40,7 @@ export default class SQLBitSlowDao implements BitSlowDao {
     // Helper function to map database row to BitSlow object
     private mapToBitSlow(row: any): BitSlow {
         return {
+            id : Date.now(),
             coinId: row.coin_id,
             bit1: row.bit1,
             bit2: row.bit2,

@@ -24,7 +24,7 @@ const handleError = async (error: string, actionName: string) => {
   console.log(error);
   toast.error(`Something went wrong while ${actionName}`);
 };
-const handleMissingCredentials = (action : string) => {
+const handleMissingCredentials = (action: string) => {
   console.log("No credentials found");
   toast.warning(`You must be logged in order to ${action}`);
 };
@@ -49,13 +49,19 @@ const MarketDashboard = () => {
   });
 
   const [showGenerateDialogue, setGenerateDialogeVisibility] = useState(false);
-  const { newCoins, setAmount } = useGeneratedCoins(
+  const { newCoins, setAmount, newCoinsLoading } = useGeneratedCoins(
     userUid,
     accessToken,
     (message) => {
       handleError(message, "loading the coin history!");
     },
-    () => {handleMissingCredentials("generate new BitSlows!")}
+    () => {
+      handleMissingCredentials("generate new BitSlows!");
+    },
+    () => {
+      toast.success("You successfully generated new BitSlows");
+      setGenerateDialogeVisibility(false)
+    }
   );
   const { coins } = useCoinDatabase(
     (message) => {
@@ -66,7 +72,7 @@ const MarketDashboard = () => {
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [lastRefreshMoment, setNewMoment] = useState(new Date());
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // Fixed transaction refresh function
   const transactionRefresh = () => {
     const now = new Date();
@@ -78,12 +84,12 @@ const MarketDashboard = () => {
   };
 
   // Fixed interval - 5 minutes in milliseconds (300000ms)
- // useIntervalEffect(transactionRefresh, 300000); // 5 * 60 * 1000
+  // useIntervalEffect(transactionRefresh, 300000); // 5 * 60 * 1000
 
   const handleGoBack = () => {
     // Implementation for going back - adjust as needed
     toast.info("Navigating back...");
-    navigate(-1)
+    navigate(-1);
     // You might want to use router.push('/previous-page') or similar here
   };
 
@@ -110,7 +116,7 @@ const MarketDashboard = () => {
         <CreateCoinCard
           remainingItem={1000 - coins.length}
           createNewCoin={() => {
-            setGenerateDialogeVisibility(true)
+            setGenerateDialogeVisibility(true);
           }}
         />
 
@@ -181,14 +187,14 @@ const MarketDashboard = () => {
       <BuyCoinModal
         isOpen={showGenerateDialogue}
         onClose={() => {
-          setGenerateDialogeVisibility(false)
+          setGenerateDialogeVisibility(false);
         }}
         maxAmount={1000 - coins.length}
-        onBuy = {(value : number) => {
-          setAmount(value)
+        onBuy={(value: number) => {
+          setAmount(value);
         }}
       />
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
