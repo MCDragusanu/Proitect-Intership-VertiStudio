@@ -10,13 +10,12 @@ export const getUserInformation = async (
 ): Promise<Response> => {
 	try {
 		const maxLimit = 30;
-		const safeLimit = Math.max(limit, 30);
-		const startIndex = (offset - 1) * safeLimit;
-
+		const safeLimit = Math.max(limit, maxLimit);
+	
 		// Fetch coins related to the user
 		const coins = await getModule().bitSlowRepo.getUserCoins(
 			userUid,
-			startIndex,
+			offset,
 			safeLimit,
 		);
 
