@@ -15,89 +15,92 @@ import { SQLiteBitSlowRepository } from "./database_impl/BitSlowRepositoryImpl";
 import SQLBitSlowDao from "./database_impl/BitSlowDaoImpl";
 
 export abstract class BackendModule {
-  public readonly authService: AuthService;
-  public readonly jwtService: JWTService;
-  public readonly userRepository: UserRepository;
-  public readonly database: Database;
-  public readonly bitSlowRepo: BitSlowRepository;
-  constructor(
-    authService: AuthService,
-    jwtService: JWTService,
-    userRepo: UserRepository,
-    bitSlowRepo : BitSlowRepository,
-    database: Database
-  ) {
-    this.authService = authService;
-    this.jwtService = jwtService;
-    this.userRepository = userRepo;
-    this.bitSlowRepo = bitSlowRepo
-    this.database = database;
-  }
-
- 
+	public readonly authService: AuthService;
+	public readonly jwtService: JWTService;
+	public readonly userRepository: UserRepository;
+	public readonly database: Database;
+	public readonly bitSlowRepo: BitSlowRepository;
+	constructor(
+		authService: AuthService,
+		jwtService: JWTService,
+		userRepo: UserRepository,
+		bitSlowRepo: BitSlowRepository,
+		database: Database,
+	) {
+		this.authService = authService;
+		this.jwtService = jwtService;
+		this.userRepository = userRepo;
+		this.bitSlowRepo = bitSlowRepo;
+		this.database = database;
+	}
 }
 
 function createInMemoryModule(): BackendModule {
-  const db = new Database(":memory:");
+	const db = new Database(":memory:");
 
-  // DAOs for users
-  const credentialsDao = new SQLiteUserCredentialsDao();
-  const profileDao = new SQLiteUserProfileDao();
+	// DAOs for users
+	const credentialsDao = new SQLiteUserCredentialsDao();
+	const profileDao = new SQLiteUserProfileDao();
 
-  // DAOs for bitslow-related data
-  const bitSlowDao = new SQLBitSlowDao();
-  const coinDao = new SQLiteCoinDao();
-  const transactionDao = new SQLiteTransactionDao();
+	// DAOs for bitslow-related data
+	const bitSlowDao = new SQLBitSlowDao();
+	const coinDao = new SQLiteCoinDao();
+	const transactionDao = new SQLiteTransactionDao();
 
-  // Repositories
-  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
-  const bitSlowRepository = new SQLiteBitSlowRepository(bitSlowDao, coinDao, transactionDao);
+	// Repositories
+	const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
+	const bitSlowRepository = new SQLiteBitSlowRepository(
+		bitSlowDao,
+		coinDao,
+		transactionDao,
+	);
 
-  // Services
-  const authService = new AuthServiceImpl(credentialsDao);
-  const jwtService = new JWTServiceImpl();
+	// Services
+	const authService = new AuthServiceImpl(credentialsDao);
+	const jwtService = new JWTServiceImpl();
 
- 
-  // Return BackendModule instance
-  const moduleInstance = new (class extends BackendModule {
-    constructor() {
-      super(authService, jwtService, repository, bitSlowRepository ,db);
-  
-    }
-  })();
+	// Return BackendModule instance
+	const moduleInstance = new (class extends BackendModule {
+		constructor() {
+			super(authService, jwtService, repository, bitSlowRepository, db);
+		}
+	})();
 
-  return moduleInstance;
+	return moduleInstance;
 }
 
 function createPersistentModule(): BackendModule {
-  const db = new Database("mydb.sqlite");
+	const db = new Database("mydb.sqlite");
 
-  // DAOs for users
-  const credentialsDao = new SQLiteUserCredentialsDao();
-  const profileDao = new SQLiteUserProfileDao();
+	// DAOs for users
+	const credentialsDao = new SQLiteUserCredentialsDao();
+	const profileDao = new SQLiteUserProfileDao();
 
-  // DAOs for bitslow-related data
-  const bitSlowDao = new SQLBitSlowDao();
-  const coinDao = new SQLiteCoinDao();
-  const transactionDao = new SQLiteTransactionDao();
+	// DAOs for bitslow-related data
+	const bitSlowDao = new SQLBitSlowDao();
+	const coinDao = new SQLiteCoinDao();
+	const transactionDao = new SQLiteTransactionDao();
 
-  // Repositories
-  const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
-  const bitSlowRepository = new SQLiteBitSlowRepository(bitSlowDao, coinDao, transactionDao);
+	// Repositories
+	const repository = new SQLLiteUserRepository(credentialsDao, profileDao);
+	const bitSlowRepository = new SQLiteBitSlowRepository(
+		bitSlowDao,
+		coinDao,
+		transactionDao,
+	);
 
-  // Services
-  const authService = new AuthServiceImpl(credentialsDao);
-  const jwtService = new JWTServiceImpl();
+	// Services
+	const authService = new AuthServiceImpl(credentialsDao);
+	const jwtService = new JWTServiceImpl();
 
- 
-  // Return BackendModule instance
-  const moduleInstance = new (class extends BackendModule {
-    constructor() {
-      super(authService, jwtService, repository, bitSlowRepository ,db); 
-    }
-  })();
+	// Return BackendModule instance
+	const moduleInstance = new (class extends BackendModule {
+		constructor() {
+			super(authService, jwtService, repository, bitSlowRepository, db);
+		}
+	})();
 
-  return moduleInstance;
+	return moduleInstance;
 }
 
 // Singleton holder
@@ -105,9 +108,8 @@ let instance: BackendModule | null = null;
 
 // Exported getter
 export function getModule(): BackendModule {
-  if (!instance) {
-    instance = createPersistentModule();
-    
-  }
-  return instance;
+	if (!instance) {
+		instance = createPersistentModule();
+	}
+	return instance;
 }

@@ -10,49 +10,51 @@ const ENDPOINT_URL = "http://localhost:3000/api/users";
  * @returns the user data if found, or null if an error occurs
  */
 export const fetchUserInformation = async (
-  userUid: string,
-  accessToken: string,
-  errorCallback: (message: string) => void,
-  unAuthorizedAccess: (message: string) => void
+	userUid: string,
+	accessToken: string,
+	errorCallback: (message: string) => void,
+	unAuthorizedAccess: (message: string) => void,
 ): Promise<any> => {
-  const headers: Headers = new Headers();
-  headers.set("Authorization", `Bearer ${accessToken}`);
-  headers.set("Content-Type", "application/json");
-  headers.set("Accept", "application/json");
+	const headers: Headers = new Headers();
+	headers.set("Authorization", `Bearer ${accessToken}`);
+	headers.set("Content-Type", "application/json");
+	headers.set("Accept", "application/json");
 
-  const requestInfo = new Request(`${ENDPOINT_URL}/${userUid}`, {
-    method: "GET",
-    headers: headers,
-  });
+	const requestInfo = new Request(`${ENDPOINT_URL}/${userUid}`, {
+		method: "GET",
+		headers: headers,
+	});
 
-  try {
-    const result = await fetch(requestInfo);
+	try {
+		const result = await fetch(requestInfo);
 
-    if (result.ok) {
-      const data = await result.json().catch((reason) => {console.log(reason)});
-      const coins = Array.isArray(data.ownedCoins) ? data.ownedCoins : [];
-      const profile = data.profile;
-      const monetaryValue = data.monetaryValue;
-      const totalTransactions = data.totalTransactionCount
-      console.log("Success branch")
-      return { profile, coins, monetaryValue , totalTransactions };
-    } else if (result.status === 403) {
-      console.log("Restricted branch")
-      unAuthorizedAccess("Trying to access a Restricted Resource!");
-      return null;
-    } else {
-      console.log("Error branch")
-      const errorData = await result.json().catch((err) => {
-        console.error("Error parsing the response body:", err);
-        return { message: "Unknown error occurred" };
-      });
+		if (result.ok) {
+			const data = await result.json().catch((reason) => {
+				console.log(reason);
+			});
+			const coins = Array.isArray(data.ownedCoins) ? data.ownedCoins : [];
+			const profile = data.profile;
+			const monetaryValue = data.monetaryValue;
+			const totalTransactions = data.totalTransactionCount;
+			console.log("Success branch");
+			return { profile, coins, monetaryValue, totalTransactions };
+		} else if (result.status === 403) {
+			console.log("Restricted branch");
+			unAuthorizedAccess("Trying to access a Restricted Resource!");
+			return null;
+		} else {
+			console.log("Error branch");
+			const errorData = await result.json().catch((err) => {
+				console.error("Error parsing the response body:", err);
+				return { message: "Unknown error occurred" };
+			});
 
-      errorCallback(errorData.message || "Unknown error occurred");
-      return null;
-    }
-  } catch (error: any) {
-    console.error("Error during fetch request:", error);
-    errorCallback(error.message || "Network or unexpected error occurred");
-    return null;
-  }
+			errorCallback(errorData.message || "Unknown error occurred");
+			return null;
+		}
+	} catch (error: any) {
+		console.error("Error during fetch request:", error);
+		errorCallback(error.message || "Network or unexpected error occurred");
+		return null;
+	}
 };

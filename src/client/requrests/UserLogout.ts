@@ -1,4 +1,3 @@
-
 const ENDPOINT_URL = "http://localhost:3000/api/auth/logout";
 
 /**
@@ -9,39 +8,38 @@ const ENDPOINT_URL = "http://localhost:3000/api/auth/logout";
  * @param unAuthorizedAccess invoked if the access is unauthorized (e.g., token expired or invalid)
  */
 export const logoutUser = async (
-  userUid: string,
-  accessToken: string,
-  errorCallback: (message: string) => void,
-  unAuthorizedAccess: (message: string) => void
+	userUid: string,
+	accessToken: string,
+	errorCallback: (message: string) => void,
+	unAuthorizedAccess: (message: string) => void,
 ): Promise<void> => {
-  const headers: Headers = new Headers();
+	const headers: Headers = new Headers();
 
-  headers.set("Content-Type", "application/json");
-  headers.set("Accept", "application/json");
-  headers.set("Authorization", `Bearer ${accessToken}`);
+	headers.set("Content-Type", "application/json");
+	headers.set("Accept", "application/json");
+	headers.set("Authorization", `Bearer ${accessToken}`);
 
-  const requestInfo = new Request(`${ENDPOINT_URL}`, {
-    method: "POST",
-    headers: headers,
-  });
+	const requestInfo = new Request(`${ENDPOINT_URL}`, {
+		method: "POST",
+		headers: headers,
+	});
 
-  try {
-    const result = await fetch(requestInfo);
+	try {
+		const result = await fetch(requestInfo);
 
-    // Unauthorized (e.g., token expired or invalid)
-    if (result.status === 403) {
-      unAuthorizedAccess("Trying to perform a Restricted action!");
-      return;
-    }
+		// Unauthorized (e.g., token expired or invalid)
+		if (result.status === 403) {
+			unAuthorizedAccess("Trying to perform a Restricted action!");
+			return;
+		}
 
-    const errorData = await result.json().catch((err) => {
-      console.error("Error parsing response body:", err);
-      return;
-    });
-    errorCallback(errorData.message || "Unknown error occurred");
-  } catch (error: any) {
-    
-    console.error(`Error during fetch request: ${error}`);
-    errorCallback(error.message || "Network or unexpected error occurred");
-  }
+		const errorData = await result.json().catch((err) => {
+			console.error("Error parsing response body:", err);
+			return;
+		});
+		errorCallback(errorData.message || "Unknown error occurred");
+	} catch (error: any) {
+		console.error(`Error during fetch request: ${error}`);
+		errorCallback(error.message || "Network or unexpected error occurred");
+	}
 };
