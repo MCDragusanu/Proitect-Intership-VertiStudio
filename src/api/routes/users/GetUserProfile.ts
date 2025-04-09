@@ -35,6 +35,8 @@ export const getUserInformation = async (
         headers: { "Content-Type": "application/json" },
       });
     }
+    //console.log("Raw Coins Retrieved : ")
+    //console.log(coins)
     const processedCoins: CoinDTO[] = [];
     for (const rawCoin of coins) {
       let computedBitSlow: string | null = null;
@@ -46,6 +48,7 @@ export const getUserInformation = async (
       if (preComputedBitSlow) {
         computedBitSlow = preComputedBitSlow.computedBitSlow;
       } else {
+        console.log("Will compute bitslow");
         // compute it for the first time
         computedBitSlow = computeBitSlow(
           rawCoin.bit1,
@@ -54,7 +57,7 @@ export const getUserInformation = async (
         );
         //create a new record
         const newBitSlow: BitSlow = {
-            id : Date.now(),
+          id: Date.now(),
           coinId: rawCoin.coin_id,
           bit1: rawCoin.bit1,
           bit2: rawCoin.bit2,
@@ -63,32 +66,29 @@ export const getUserInformation = async (
         };
         //save it for later
         await getModule().bitSlowRepo.insertBitSlow(newBitSlow);
-
-        const processedCoin: CoinDTO = {
-          ...rawCoin,
-          bitSlow: computedBitSlow,
-        };
-        processedCoins.push(processedCoin);
       }
-      // Combining all the fetched data into a single response object
-      
-      console.log(coins);
-
-     
-    }
-    const userInformation = {
-        profile: userProfile,
-        ownedCoins: processedCoins,
-        monetaryValue: getMonetaryValue,
+      const processedCoin: CoinDTO = {
+        ...rawCoin,
+        bitSlow: computedBitSlow,
       };
+      processedCoins.push(processedCoin);
+    }
+    // Combining all the fetched data into a single response object
 
-     // Return the combined user information
-      return new Response(JSON.stringify(userInformation), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const userInformation = {
+      profile: userProfile,
+      ownedCoins: processedCoins,
+      monetaryValue: getMonetaryValue,
+    };
+    console.log("User Coins : ");
+    console.log(userInformation.ownedCoins);
+    // Return the combined user information
+    return new Response(JSON.stringify(userInformation), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (err) {
     console.error("Error fetching user information:", err);
     return new Response(

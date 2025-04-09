@@ -87,8 +87,6 @@ const MarketDashboard = () => {
   );
 
   const [loadingTime, setLoadingTime] = useState(0);
-  const [lastRefreshMoment, setNewMoment] = useState(new Date());
-
   const navigate = useNavigate();
 
  

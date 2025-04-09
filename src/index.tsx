@@ -27,12 +27,7 @@ import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
 import { GetCoinSupply } from "./api/routes/coins/GetRemainingCoins";
 
-seedDatabase(getModule().database , {
-  clientCount: 50,
-  bitSlowCount: 150,
-  transactionCount: 76,
-  clearExisting: true,
-});
+
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
   new Response("Method Not Allowed", {

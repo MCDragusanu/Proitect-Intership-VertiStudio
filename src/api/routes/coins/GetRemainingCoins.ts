@@ -17,10 +17,11 @@ export const GetCoinSupply = async (): Promise<Response> => {
             b2,
             b3
           );
-         if (!isUsed)  remainingCoinCount++
+         if (!isUsed)  {remainingCoinCount++}
+         else {console.log(`${b1} ${b2} ${b3} are in use`)}
         }
     
-
+        console.log("Coin Supply Remaining : " + remainingCoinCount)
     return new Response(
       JSON.stringify({
         coinSupply : remainingCoinCount,
