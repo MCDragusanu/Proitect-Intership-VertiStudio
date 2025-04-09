@@ -61,11 +61,13 @@ const Dashboard = () => {
 
 	const {
 		coins,
+		pageParams,
 		profile,
 		monetaryValue,
 		transactionAmount,
-		loading: profileLoading,
+		loading,
 		error: profileError,
+		setPageParams,
 	} = useProfileInformation(
 		userUid || "Ooopsie",
 		currentToken || "Ooooopsie",
@@ -318,6 +320,10 @@ const Dashboard = () => {
 					<CoinList
 						coins={coins}
 						buyButtonEnables={false}
+						params={pageParams}
+						onPageChange={(pageNumber: number) => {
+							setPageParams({ ...pageParams, pageNumber: pageNumber });
+						}}
 						onClick={(coin) => {
 							setCoinId(coin.coin_id);
 							setShowHistoryModal(true);

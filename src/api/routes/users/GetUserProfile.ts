@@ -5,10 +5,20 @@ import BitSlow from "@/src/shared/bitslow";
 export const getUserInformation = async (
 	req: Request,
 	userUid: string,
+	offset: number,
+	limit: number,
 ): Promise<Response> => {
 	try {
+		const maxLimit = 30;
+		const safeLimit = Math.max(limit, 30);
+		const startIndex = (offset - 1) * safeLimit;
+
 		// Fetch coins related to the user
-		const coins = await getModule().bitSlowRepo.getUserCoins(userUid);
+		const coins = await getModule().bitSlowRepo.getUserCoins(
+			userUid,
+			startIndex,
+			safeLimit,
+		);
 
 		// Fetch monetary value related to the user
 		const monetaryValue =

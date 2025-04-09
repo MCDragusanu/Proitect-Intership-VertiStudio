@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { CoinHistoryEntry } from "../ui/CoinHistory";
 import { fetchCoinHistory } from "../../requrests/CoinGetHistory";
-import { fetchAllCoins } from "../../requrests/GetAllCoins";
+import { getFreeCoins } from "../../requrests/GetAllCoins";
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import { PaginationParams } from "../../requrests/GetAllCoins";
 
 function loadCoins(
+	params: PaginationParams,
 	errorCallback: (message: string) => void,
 ): Promise<CoinDTO[]> {
-	return fetchAllCoins(errorCallback);
+	return getFreeCoins(params, errorCallback);
 }
 
 export const useCoinDatabase = (
@@ -16,9 +18,13 @@ export const useCoinDatabase = (
 ) => {
 	const [coins, setCoins] = useState<CoinDTO[]>([]);
 	const [refresh, setRefresh] = useState(false);
+	const [params, setParams] = useState<PaginationParams>({
+		pageNumber: 1,
+		pageSize: 30,
+	});
 	useEffect(() => {
 		console.log("A new refresh triggered");
-		loadCoins(onError)
+		loadCoins(params, onError)
 			.then((data) => {
 				setCoins(data);
 				if (onLoaded) onLoaded(); // call after loading
@@ -27,7 +33,7 @@ export const useCoinDatabase = (
 				const message = err?.message || "Failed to load coin history";
 				onError(message);
 			});
-	}, [refresh]);
+	}, [refresh, params]);
 
-	return { coins, setCoins, setRefresh };
+	return { coins, params, setCoins, setRefresh, setParams };
 };

@@ -27,12 +27,12 @@ import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
 import { GetCoinSupply } from "./api/routes/coins/GetRemainingCoins";
 
-seedDatabase(getModule().database, {
+/*seedDatabase(getModule().database, {
 	transactionCount: 500,
 	clientCount: 250,
 	bitSlowCount: 375,
 	clearExisting: true,
-});
+});*/
 
 // Helper function to handle method not allowed response
 const methodNotAllowed = () =>
@@ -62,17 +62,23 @@ const server = serve({
 			}
 			return methodNotAllowed();
 		},
-		"/api/users/:userUid": async (req) => {
-			const routeUserUid = req.url.split("/").pop();
+		"/api/users/:userUid": async (req: Request) => {
+			const url = new URL(req.url);
+			const pathnameParts = url.pathname.split("/");
+			const routeUserUid = pathnameParts[pathnameParts.length - 1]; // clean UID, no query
 
-			if (req.method === "GET" && routeUserUid !== undefined) {
-				console.log(`Retrieving userInformation for ${routeUserUid}`);
+			if (req.method === "GET" && routeUserUid) {
+				const offset = Number(url.searchParams.get("offset") ?? "0");
+				const limit = Number(url.searchParams.get("limit") ?? "10");
+
+				console.log(
+					`Retrieving userInformation for ${routeUserUid} ; coins with offset=${offset} and limit=${limit}`,
+				);
 
 				const tokenValidationError = await validateTokens(req, routeUserUid);
-
 				if (tokenValidationError) return tokenValidationError;
 
-				return await getUserInformation(req, routeUserUid);
+				return await getUserInformation(req, routeUserUid, offset, limit);
 			}
 
 			return methodNotAllowed();
@@ -108,10 +114,15 @@ const server = serve({
 			return methodNotAllowed();
 		},
 
-		"/api/coins": async (req) => {
+		"/api/coins": async (req: Request) => {
 			if (req.method === "GET") {
-				console.log("Fetching all coins");
-				return await GetAvailableCoins();
+				const url = new URL(req.url);
+				const offset = Number(url.searchParams.get("offset") ?? "0");
+				const limit = Number(url.searchParams.get("limit") ?? "10");
+
+				console.log(`Fetching coins with offset=${offset} and limit=${limit}`);
+
+				return await GetAvailableCoins(offset, limit);
 			}
 
 			return methodNotAllowed();

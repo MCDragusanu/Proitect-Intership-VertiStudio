@@ -80,18 +80,18 @@ const CoinCard: React.FC<CoinCardProps> = ({
 						<span className="ml-2">{formatDate(coin.created_at)}</span>
 					</div>
 
-					{coin.contract_id !== null && (
+					{coin.client_id !== null && (
 						<div className="flex items-center text-gray-600 col-span-2">
 							<FaUser className="mr-2 text-blue-400" />
 							<span className="font-medium">Owner:</span>
-							<span className="ml-2 truncate">{coin.contract_id}</span>
+							<span className="ml-2 truncate">{coin.client_id}</span>
 						</div>
 					)}
 				</div>
 			</div>
 
 			{/* Card Footer */}
-			{coin.contract_id === "" && buyButtonEnabled && (
+			{coin.client_id === "" && buyButtonEnabled && (
 				<div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
 					<button
 						onClick={(e) => {

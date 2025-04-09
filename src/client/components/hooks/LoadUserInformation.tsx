@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { fetchUserInformation } from "../../requrests/getUserInformation";
 import { fetchAccessToken } from "../../requrests/RefreshToken";
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import { PaginationParams } from "../../requrests/GetAllCoins";
 
 interface UserProfileData {
 	coins: CoinDTO[];
@@ -14,9 +15,14 @@ interface UserProfileData {
 export function useProfileInformation(
 	userUid: string,
 	accessToken: string,
+
 	onErrorCallback: (message: string) => void,
 	unAuthorizedAccessCallback: (message: string) => void,
 ) {
+	const [pageParams, setPageParams] = useState<PaginationParams>({
+		pageNumber: 1,
+		pageSize: 30,
+	});
 	const [coins, setCoins] = useState<CoinDTO[]>([]);
 	const [profile, setProfile] = useState<any>({});
 	const [monetaryValue, setMonetaryValue] = useState<number>(0);
@@ -39,6 +45,7 @@ export function useProfileInformation(
 				const data: UserProfileData = await fetchUserInformation(
 					userUid,
 					accessToken,
+					pageParams,
 					(message) => handleError(new Error(message)),
 					unAuthorizedAccessCallback,
 				);
@@ -58,7 +65,16 @@ export function useProfileInformation(
 		};
 
 		fetchData();
-	}, [userUid, accessToken]);
+	}, [userUid, accessToken, pageParams]);
 
-	return { coins, profile, monetaryValue, transactionAmount, loading, error };
+	return {
+		coins,
+		pageParams,
+		profile,
+		monetaryValue,
+		transactionAmount,
+		loading,
+		error,
+		setPageParams,
+	};
 }

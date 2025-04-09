@@ -2,11 +2,30 @@ import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 const ENDPOINT_URL = "http://localhost:3000/api/coins";
 
-export async function fetchAllCoins(
+export type PaginationParams = {
+	pageNumber: number;
+	pageSize: number;
+};
+
+export function buildPaginationURL(
+	endPoint: string,
+	{ pageNumber, pageSize }: PaginationParams,
+): string {
+	const offset = (pageNumber - 1) * pageSize;
+	const limit = pageSize;
+	const url = new URL(endPoint);
+	url.searchParams.set("offset", offset.toString());
+	url.searchParams.set("limit", limit.toString());
+	return url.toString();
+}
+
+export async function getFreeCoins(
+	params: PaginationParams,
 	onError: (message: string) => void,
 ): Promise<CoinDTO[]> {
 	try {
-		const response = await fetch(ENDPOINT_URL, {
+		const url = buildPaginationURL(ENDPOINT_URL, params);
+		const response = await fetch(url, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

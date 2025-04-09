@@ -23,15 +23,6 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 			return false;
 		}
 	}
-	async getAvailableCoins(): Promise<Coin[]> {
-		try {
-			console.log("Getting All Coin Recors");
-			return (await this.coinDao.getAvailableCoins()) || [];
-		} catch (error) {
-			console.error("Error getting BitSlow by Coin ID:", error);
-			return [];
-		}
-	}
 	async getCoinById(coinId: number): Promise<Coin | null> {
 		try {
 			return (await this.coinDao.getCoinById(coinId)) || null;
@@ -83,20 +74,24 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 		}
 	}
 
-	async getUserCoins(userUid: string): Promise<Coin[] | null> {
+	async getUserCoins(
+		userUid: string,
+		offset: number,
+		limit: number,
+	): Promise<Coin[] | null> {
 		try {
 			console.log("Getting user coins for:", userUid);
-			return await this.coinDao.getUserCoins(userUid);
+			return await this.coinDao.getUserCoins(userUid, offset, limit);
 		} catch (error) {
 			console.error("Error getting user coins:", error);
 			return null;
 		}
 	}
 
-	async getFreeCoins(): Promise<Coin[] | null> {
+	async getFreeCoins(offset: number, limit: number): Promise<Coin[] | null> {
 		try {
 			console.log("Getting free coins");
-			return await this.coinDao.getFreeCoins();
+			return await this.coinDao.getFreeCoins(offset, limit);
 		} catch (error) {
 			console.error("Error getting free coins:", error);
 			return null;

@@ -1,38 +1,48 @@
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { SiBit } from "react-icons/si";
 import CoinCard from "./CoinCard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { PaginationParams } from "../../requrests/GetAllCoins";
 
 type CoinListProps = {
+	params: PaginationParams;
 	coins: CoinDTO[];
 	buyButtonEnables: boolean;
 	onClick?: (coin: CoinDTO) => void;
 	onClickToBuy: (coin: CoinDTO) => void;
+	onPageChange: (newPage: number) => void; // 👈 new callback for pagination
 };
 
 export const CoinList: React.FC<CoinListProps> = ({
+	params,
 	coins,
 	buyButtonEnables,
 	onClick,
 	onClickToBuy,
+	onPageChange,
 }) => {
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-	const totalPages = Math.ceil(coins.length / itemsPerPage);
+	const [currentPage, setCurrentPage] = useState(params.pageNumber);
 
-	// Calculate items for current page
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentCoins = coins.slice(indexOfFirstItem, indexOfLastItem);
+	useEffect(() => {
+		setCurrentPage(params.pageNumber);
+		console.log(params);
+	}, [params.pageNumber]);
 
-	// Page change handlers
 	const goToNextPage = () => {
-		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+		if (coins.length === params.pageSize) {
+			const nextPage = currentPage + 1;
+			setCurrentPage(nextPage);
+			onPageChange(nextPage);
+		}
 	};
 
 	const goToPrevPage = () => {
-		setCurrentPage((prev) => Math.max(prev - 1, 1));
+		if (currentPage > 1) {
+			const prevPage = currentPage - 1;
+			setCurrentPage(prevPage);
+			onPageChange(prevPage);
+		}
 	};
 
 	return (
@@ -49,8 +59,8 @@ export const CoinList: React.FC<CoinListProps> = ({
 						</p>
 					</div>
 				) : (
-					<div className="grid grid-cols-2 gap-4">
-						{currentCoins.map((coin) => (
+					<div className="grid grid-cols-3 gap-4">
+						{coins.map((coin) => (
 							<CoinCard
 								key={coin.coin_id}
 								coin={coin}
@@ -64,43 +74,39 @@ export const CoinList: React.FC<CoinListProps> = ({
 			</div>
 
 			{/* Pagination Controls */}
-			{coins.length > 0 && (
-				<div className="flex items-center justify-between mt-4 border-t pt-3">
-					<div className="text-sm text-gray-500">
-						Showing {indexOfFirstItem + 1}-
-						{Math.min(indexOfLastItem, coins.length)} of {coins.length} coins
-					</div>
-					<div className="flex items-center space-x-2">
-						<button
-							onClick={goToPrevPage}
-							disabled={currentPage === 1}
-							className={`p-1 rounded-md ${
-								currentPage === 1
-									? "text-gray-300 cursor-not-allowed"
-									: "text-gray-600 hover:bg-gray-100"
-							}`}
-						>
-							<ChevronLeft size={20} />
-						</button>
-
-						<div className="text-sm font-medium">
-							Page {currentPage} of {totalPages}
-						</div>
-
-						<button
-							onClick={goToNextPage}
-							disabled={currentPage === totalPages}
-							className={`p-1 rounded-md ${
-								currentPage === totalPages
-									? "text-gray-300 cursor-not-allowed"
-									: "text-gray-600 hover:bg-gray-100"
-							}`}
-						>
-							<ChevronRight size={20} />
-						</button>
-					</div>
+			<div className="flex items-center justify-between mt-4 border-t pt-3">
+				<div className="text-sm text-gray-500">
+					Showing {coins.length} coin{coins.length !== 1 && "s"} on page{" "}
+					{currentPage}
 				</div>
-			)}
+				<div className="flex items-center space-x-2">
+					<button
+						onClick={goToPrevPage}
+						disabled={currentPage === 1}
+						className={`p-1 rounded-md ${
+							currentPage === 1
+								? "text-gray-300 cursor-not-allowed"
+								: "text-gray-600 hover:bg-gray-100"
+						}`}
+					>
+						<ChevronLeft size={20} />
+					</button>
+
+					<div className="text-sm font-medium">Page {currentPage}</div>
+
+					<button
+						onClick={goToNextPage}
+						disabled={coins.length < params.pageSize}
+						className={`p-1 rounded-md ${
+							coins.length < params.pageSize
+								? "text-gray-300 cursor-not-allowed"
+								: "text-gray-600 hover:bg-gray-100"
+						}`}
+					>
+						<ChevronRight size={20} />
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 };

@@ -23,6 +23,7 @@ import TransactionLoader from "../../components/ui/TransactionLoader";
 import { useCoinSupply } from "../../components/hooks/CoinSupply";
 import { FaTimes } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
+import { PaginationParams } from "../../requrests/GetAllCoins";
 const handleError = async (error: string, actionName: string) => {
 	console.log(error);
 	toast.error(`Something went wrong while ${actionName}`);
@@ -88,7 +89,7 @@ const MarketDashboard = () => {
 	// Track coin database loading separately
 	const [coinsLoading, setCoinsLoading] = useState(true);
 
-	const { coins, setCoins, setRefresh } = useCoinDatabase(
+	const { coins, params, setCoins, setRefresh, setParams } = useCoinDatabase(
 		(message) => {
 			handleError(message, "loading the coin database!");
 		},
@@ -196,7 +197,7 @@ const MarketDashboard = () => {
 			</header>
 
 			{/* Top Row - Two Sections */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">
 				<CreateCoinCard
 					remainingItem={amount}
 					createNewCoin={() => {
@@ -209,8 +210,7 @@ const MarketDashboard = () => {
 					<div className="flex flex-col items-center gap-2 mb-4">
 						<CoinsIcon className="text-amber-500 w-5 h-5" />
 						<h2 className="text-lg font-semibold">Coin Database</h2>
-
-						<p> See all the existing coins and spend some moooney</p>
+						<p>See all the existing coins and spend some moooney</p>
 					</div>
 					<div className="overflow-x-auto">
 						{coinsLoading ? (
@@ -218,6 +218,10 @@ const MarketDashboard = () => {
 						) : (
 							<CoinList
 								coins={coins}
+								params={params}
+								onPageChange={(pageNumber: number) => {
+									setParams({ ...params, pageNumber: pageNumber });
+								}}
 								buyButtonEnables={true}
 								onClick={(coin) => {
 									setCoinId(coin.coin_id);

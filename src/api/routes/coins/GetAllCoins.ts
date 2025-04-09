@@ -3,10 +3,32 @@ import { getModule } from "../../module";
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import BitSlow from "@/src/shared/bitslow";
 
-export const GetAvailableCoins = async (): Promise<any> => {
+export const GetAvailableCoins = async (
+	offset: number,
+	limit: number,
+): Promise<any> => {
 	try {
+		const maxLimit = 30;
+		const safeLimit = Math.max(limit, maxLimit);
+		const startIndex = offset;
+
 		// Fetch all coins from the repository
-		const coinDatabase = await getModule().bitSlowRepo.getAvailableCoins();
+		const coinDatabase = await getModule().bitSlowRepo.getFreeCoins(
+			startIndex,
+			safeLimit,
+		);
+
+		if (coinDatabase === null) {
+			return new Response(
+				JSON.stringify({
+					message: "Failed to fetch coins. Please try again later.",
+				}),
+				{
+					status: 500,
+					headers: { "Content-Type": "application/json" },
+				},
+			);
+		}
 
 		if (coinDatabase.length === 0) {
 			return new Response(JSON.stringify([]), {
@@ -47,7 +69,7 @@ export const GetAvailableCoins = async (): Promise<any> => {
 				return {
 					...rawCoin,
 					bitSlow: bitSlow,
-					contract_id: Number(rawCoin.coin_id),
+					coin_id: Number(rawCoin.coin_id),
 				} as CoinDTO;
 			}),
 		);

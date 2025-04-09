@@ -40,18 +40,17 @@ export const CreateNewCoins = async (
 					);
 
 					if (!isUsed) {
-						const contractId = randomUUIDv7()
-						const coin = createNewCoinInstance(b1, b2, b3, contractId);
+						const coin = createNewCoinInstance(b1, b2, b3, userUid);
 						const transaction = createNewTransaction(coin);
 						const bitSlow = createNewBitSlowInstance(coin);
-						
+
 						await getModule().bitSlowRepo.insertCoin(coin);
 						await getModule().bitSlowRepo.insertTransaction(transaction);
 						await getModule().bitSlowRepo.insertBitSlow(bitSlow);
 
 						const coinDto: CoinDTO = {
 							coin_id: coin.coin_id,
-							contract_id: coin.contract_id,
+							client_id: coin.client_id,
 							bit1: coin.bit1,
 							bit2: coin.bit2,
 							bit3: coin.bit3,
@@ -98,7 +97,7 @@ const createNewCoinInstance = (
 ): Coin => {
 	const coin: Coin = {
 		coin_id: Date.now(), // will be set later
-		contract_id: clientId,
+		client_id: clientId,
 		bit1: b1,
 		bit2: b2,
 		bit3: b3,
@@ -112,10 +111,10 @@ const createNewCoinInstance = (
 
 const createNewTransaction = (coin: Coin): Transaction => {
 	const transaction: Transaction = {
-		id: coin.contract_id,
+		id: Date.now(),
 		coin_id: coin.coin_id,
 		transaction_date: new Date().toISOString(),
-		buyer_id: coin.contract_id || "Default UID",
+		buyer_id: coin.client_id || "Default UID",
 		seller_id: "VENDOR",
 		amount: coin.value,
 		bit1: coin.bit1,

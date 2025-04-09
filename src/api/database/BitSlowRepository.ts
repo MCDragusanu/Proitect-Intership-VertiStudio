@@ -15,9 +15,12 @@ export default interface BitSlowRepository {
 	insertCoin(coin: Coin): Promise<boolean>;
 	updateCoin(coin: Coin): Promise<boolean>;
 	getCoinById(coinId: number): Promise<Coin | null>;
-	getAvailableCoins(): Promise<Coin[]>;
-	getUserCoins(userUid: string): Promise<Coin[] | null>;
-	getFreeCoins(): Promise<Coin[] | null>;
+	getUserCoins(
+		userUid: string,
+		offset: number,
+		limit: number,
+	): Promise<Coin[] | null>;
+	getFreeCoins(offset: number, limit: number): Promise<Coin[] | null>;
 	getMonetaryValue(userUid: string): Promise<number | null>;
 	bitsAlreadyInUse(bit1: number, bit2: number, bit3: number): Promise<boolean>;
 	getAllTransactions(): Promise<Transaction[]>;

@@ -11,7 +11,7 @@ export default class SQLiteCoinDao implements CoinDao {
 		);
 		const info = stmt.run(
 			coin.coin_id,
-			coin.contract_id,
+			coin.client_id,
 			coin.bit1,
 			coin.bit2,
 			coin.bit3,
@@ -37,7 +37,7 @@ export default class SQLiteCoinDao implements CoinDao {
 			"UPDATE coins SET client_id = ?, bit1 = ?, bit2 = ?, bit3 = ?, value = ? WHERE coin_id = ?",
 		);
 		const info = stmt.run(
-			coin.contract_id,
+			coin.client_id,
 			coin.bit1,
 			coin.bit2,
 			coin.bit3,
@@ -47,22 +47,45 @@ export default class SQLiteCoinDao implements CoinDao {
 		return info.changes > 0;
 	}
 
-	async getFreeCoins(): Promise<Coin[] | null> {
-		const stmt = getModule().database.prepare(
-			"SELECT * FROM coins WHERE client_id IS FREE",
-		);
-		const result = stmt.all();
-		return result.length > 0 ? result.map(this.mapToCoin) : null;
+	async getFreeCoins(offset: number, limit: number): Promise<Coin[] | null> {
+		try {
+			// In SQLite, the parameter order in the execute function must match the order of ? in the SQL
+			const stmt = getModule().database.prepare(
+				"SELECT * FROM coins WHERE client_id IS NULL OR client_id = '' LIMIT ? OFFSET ?",
+			);
+
+			// SQLite expects parameters in the same order as they appear in the query
+			// LIMIT comes before OFFSET in your query, so limit should be the first parameter
+			const result = stmt.all(limit, offset);
+
+			console.log(
+				`Retrieved ${result.length} free coins with offset ${offset} and limit ${limit}`,
+			);
+
+			return result.length > 0 ? result.map(this.mapToCoin) : [];
+		} catch (error) {
+			console.error("Error fetching free coins:", error);
+			console.error(
+				`Failed with parameters - offset: ${offset}, limit: ${limit}`,
+			);
+			return [];
+		}
 	}
 
-	async getUserCoins(userUid: string): Promise<Coin[]> {
+	async getUserCoins(
+		userUid: string,
+		offset: number,
+		limit: number,
+	): Promise<Coin[]> {
 		const stmt = getModule().database.prepare(
 			`SELECT c.*, b.computed_bit_slow AS bitSlow 
        FROM coins c
        LEFT JOIN bitSlow b ON c.coin_id = b.coin_id
-       WHERE c.client_id = ?`,
+       WHERE c.client_id = ?
+	   LIMIT ? OFFSET ?
+	   `,
 		);
-		const result = stmt.all(userUid);
+		const result = stmt.all(userUid, limit, offset);
 		console.log(`Retrieved ${result.length} coins`);
 		return result.map(this.mapToCoin);
 	}
@@ -106,7 +129,7 @@ export default class SQLiteCoinDao implements CoinDao {
 	private mapToCoin(row: any): Coin {
 		return {
 			coin_id: row.coin_id,
-			contract_id: row.contract_id ?? "",
+			client_id: row.client_id ?? "",
 			value: row.value,
 			bit1: row.bit1,
 			bit2: row.bit2,

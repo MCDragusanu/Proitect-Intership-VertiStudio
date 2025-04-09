@@ -1,5 +1,7 @@
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import UserProfile from "@/src/shared/user_profile";
+import { buildPaginationURL, PaginationParams } from "./GetAllCoins";
+import { use } from "react";
 
 const ENDPOINT_URL = "http://localhost:3000/api/users";
 
@@ -12,15 +14,17 @@ const ENDPOINT_URL = "http://localhost:3000/api/users";
 export const fetchUserInformation = async (
 	userUid: string,
 	accessToken: string,
+	params: PaginationParams,
 	errorCallback: (message: string) => void,
 	unAuthorizedAccess: (message: string) => void,
 ): Promise<any> => {
+	const url = buildPaginationURL(`${ENDPOINT_URL}/${userUid}`, params);
 	const headers: Headers = new Headers();
 	headers.set("Authorization", `Bearer ${accessToken}`);
 	headers.set("Content-Type", "application/json");
 	headers.set("Accept", "application/json");
 
-	const requestInfo = new Request(`${ENDPOINT_URL}/${userUid}`, {
+	const requestInfo = new Request(url, {
 		method: "GET",
 		headers: headers,
 	});

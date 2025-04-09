@@ -81,6 +81,7 @@ const processTransactions = async (transactions: any[]): Promise<any[]> => {
 			);
 			//create a new record
 			const newBitSlow: BitSlow = {
+				id: Date.now(),
 				coinId: transaction.coinId,
 				bit1: transaction.bit1,
 				bit2: transaction.bit2,
@@ -126,11 +127,7 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
 
 		// Build the WHERE clause and parameters dynamically based on filters
 		const { whereClause, params } = buildWhereClause(requestBody);
-		const coins = await getModule().bitSlowRepo.getAvailableCoins();
-		console.log(coins);
 
-		const transactions2 = await getModule().bitSlowRepo.getAllTransactions();
-		console.log(transactions2);
 		const query = `
       SELECT 
           t.id AS id,
@@ -151,7 +148,7 @@ export const queryTransactions = async (req: Request): Promise<Response> => {
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
-		console.log(query);
+
 		// Add pagination parameters at the end
 		params.push(pageSize, startIndex);
 
@@ -199,11 +196,7 @@ export const getTransactionsByUser = async (
 			userUid,
 			userUid,
 		});
-		const coins = await getModule().bitSlowRepo.getAvailableCoins();
-		console.log(coins);
 
-		const transactions2 = await getModule().bitSlowRepo.getAllTransactions();
-		console.log(transactions2);
 		const query = `
       SELECT 
           t.id AS id,
@@ -224,7 +217,7 @@ export const getTransactionsByUser = async (
       ${whereClause}
       ORDER BY t.transaction_date DESC
       LIMIT ? OFFSET ?`;
-		console.log(query);
+
 		// Add pagination parameters at the end
 		params.push(pageSize, startIndex);
 
