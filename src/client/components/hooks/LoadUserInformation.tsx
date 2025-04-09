@@ -8,6 +8,7 @@ interface UserProfileData {
   coins: CoinDTO[];
   profile: any;
   monetaryValue: number;
+  totalTransactions : number
 }
 
 export function useProfileInformation(
@@ -19,6 +20,7 @@ export function useProfileInformation(
   const [coins, setCoins] = useState<CoinDTO[]>([]);
   const [profile, setProfile] = useState<any>({});
   const [monetaryValue, setMonetaryValue] = useState<number>(0);
+  const [transactionAmount , setAmount] = useState(0)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -48,6 +50,7 @@ export function useProfileInformation(
         setCoins(data.coins);
         setMonetaryValue(data.monetaryValue);
         setProfile(data.profile);
+        setAmount(data.totalTransactions)
         setLoading(false);
       } catch (err) {
         handleError(err as Error);
@@ -57,5 +60,5 @@ export function useProfileInformation(
     fetchData();
   }, [userUid , accessToken]);
 
-  return { coins, profile, monetaryValue, loading, error };
+  return { coins, profile, monetaryValue, transactionAmount,loading, error };
 }

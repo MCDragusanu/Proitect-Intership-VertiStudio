@@ -11,5 +11,6 @@ interface TransactionDao{
     getTransactionByUid(id : Number)             : Promise<Transaction   | null>
     getUserTransactions(userUid : String)        : Promise<Transaction[] | null>
     getAllTransactions() : Promise<Transaction[]>
+    getUsersTransactionCount(userUid : string) : Promise<number>
 }
 export default TransactionDao

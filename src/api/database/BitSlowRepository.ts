@@ -26,6 +26,6 @@ export default interface BitSlowRepository {
   getCoinHistory(coinUid: number): Promise<Transaction[] | null>;
   getTransactionByUid(id: number): Promise<Transaction | null>;
   getUserTransactions(userUid: string): Promise<Transaction[] | null>;
-
+  getUsersTransactionCount(userUid : string) : Promise<number>
   
 }

@@ -64,6 +64,7 @@ const Dashboard = () => {
     coins,
     profile,
     monetaryValue,
+    transactionAmount,
     loading: profileLoading,
     error: profileError,
   } = useProfileInformation(
@@ -181,7 +182,7 @@ const Dashboard = () => {
                   Transactions
                 </h3>
                 <p className="text-2xl font-bold text-green-800">
-                  {transactions.length}
+                  {transactionAmount}
                 </p>
               </div>
             </div>

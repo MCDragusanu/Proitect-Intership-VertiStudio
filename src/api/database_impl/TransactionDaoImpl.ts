@@ -31,14 +31,12 @@ export default class SQLiteTransactionDao implements TransactionDao {
     const result = stmt.get(id);
     return result ? this.mapToTransaction(result) : null;
   }
- async getAllTransactions(): Promise<Transaction[]> {
-  const stmt = getModule().database.prepare(
-    "SELECT * FROM transactions"
-  );
-  const result = stmt.all();
-  return result.length > 0 ? result.map(this.mapToTransaction) : [];
-}
- 
+  async getAllTransactions(): Promise<Transaction[]> {
+    const stmt = getModule().database.prepare("SELECT * FROM transactions");
+    const result = stmt.all();
+    return result.length > 0 ? result.map(this.mapToTransaction) : [];
+  }
+
   async getCoinHistory(coinUid: number): Promise<Transaction[] | null> {
     const stmt = getModule().database.prepare(
       "SELECT * FROM transactions WHERE coin_id = ? ORDER by transaction_date ASC"
@@ -110,5 +108,22 @@ export default class SQLiteTransactionDao implements TransactionDao {
             WHERE u.name = ?`);
     const result = stmt.all(name);
     return result.length > 0 ? result.map(this.mapToTransaction) : null;
+  }
+  async getUsersTransactionCount(userUid: string): Promise<number> {
+    const stmt = getModule().database.prepare(
+      "SELECT COUNT(*) AS count FROM transactions WHERE seller_id = ? or buyer_id = ?"
+    );
+
+    // Explicitly cast the result to an expected type
+    const result = stmt.get(userUid, userUid,) as { count: number } | undefined;
+
+    if (result === undefined) {
+      console.log(`Failed query transaction count!`);
+      throw new TypeError(
+        `Failed query transaction count. The result does not contain the count field`
+      );
+    }
+
+    return result?.count || 0;
   }
 }

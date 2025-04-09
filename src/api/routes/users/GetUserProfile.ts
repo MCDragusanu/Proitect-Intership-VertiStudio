@@ -11,7 +11,7 @@ export const getUserInformation = async (
     const coins = await getModule().bitSlowRepo.getUserCoins(userUid);
 
     // Fetch monetary value related to the user
-    const getMonetaryValue = await getModule().bitSlowRepo.getMonetaryValue(
+    const monetaryValue = await getModule().bitSlowRepo.getMonetaryValue(
       userUid
     );
 
@@ -19,15 +19,15 @@ export const getUserInformation = async (
     const userProfile = await getModule().userRepository.getProfileByUid(
       userUid
     );
-
-    // Check if any of the fetched data is empty or invalid
+    const totalTransactions = await getModule().bitSlowRepo.getUsersTransactionCount(userUid)
+   
     if (
       coins === null ||
-      coins === undefined || // If coins is null or undefined
-      getMonetaryValue === null ||
-      getMonetaryValue === undefined || // If monetary value is null or undefined
+      coins === undefined ||
+      monetaryValue === null ||
+      monetaryValue === undefined || 
       userProfile === null ||
-      userProfile === undefined // If userProfile is null or undefined
+      userProfile === undefined 
     ) {
       console.log("Information is incomplete!");
       return new Response("User information not found or incomplete", {
@@ -35,8 +35,7 @@ export const getUserInformation = async (
         headers: { "Content-Type": "application/json" },
       });
     }
-    //console.log("Raw Coins Retrieved : ")
-    //console.log(coins)
+    
     const processedCoins: CoinDTO[] = [];
     for (const rawCoin of coins) {
       let computedBitSlow: string | null = null;
@@ -78,10 +77,11 @@ export const getUserInformation = async (
     const userInformation = {
       profile: userProfile,
       ownedCoins: processedCoins,
-      monetaryValue: getMonetaryValue,
+      monetaryValue: monetaryValue,
+      totalTransactionCount : totalTransactions
     };
-    console.log("User Coins : ");
-    console.log(userInformation.ownedCoins);
+
+   
     // Return the combined user information
     return new Response(JSON.stringify(userInformation), {
       status: 200,

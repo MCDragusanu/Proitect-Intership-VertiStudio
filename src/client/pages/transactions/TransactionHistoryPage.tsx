@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaStore, FaHistory, FaUserAlt } from "react-icons/fa"; // Import icons from react-icons
+import { FaUser, FaStore, FaHistory, FaUserAlt, FaBars, FaTimes } from "react-icons/fa";
 import TransactionLoader from "../../components/ui/TransactionLoader";
 import TransactionTable from "../../components/ui/TransactionTable";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TransactionFilter } from "../../components/ui/TransactionFilter";
-import { useNavigate } from "react-router-dom"; // Correct hook for React Router v6+
+import { useNavigate } from "react-router-dom";
 import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { useQueriedTransaction } from "../../components/hooks/QueryTransactions";
 import { useCoinHistory } from "../../components/hooks/CoinHistory";
 import CoinHistoryModal from "../../components/ui/CoinHistory";
-import { delay } from "framer-motion";
 import { useCoin } from "../../components/hooks/GetCoin";
-import { fetchAccessToken } from "../../requrests/RefreshToken";
-import { parseToken } from "../../requrests/parseJWT";
 
 const handleError = (message: string, actionName: string) => {
   console.log(message);
@@ -29,13 +26,15 @@ export function TransactionsPage() {
   const { coin, setCoinId } = useCoin((message: string) => {
     handleError(message, "retrieving coin information");
   });
+  
   const [loadingTime, setLoadingTime] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // State for the sidebar toggle
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   const { coinHistory, setCoinUid } = useCoinHistory(
     (error: string) => {
       handleError(error, "while loading the coin history");
     },
-    () => setShowHistoryModal(true) // <- open modal *after* history is loaded
+    () => setShowHistoryModal(true)
   );
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -44,6 +43,7 @@ export function TransactionsPage() {
   useEffect(() => {
     setLoading(true);
   }, [filters]);
+  
   useEffect(() => {
     let timerId: number | undefined;
 
@@ -69,150 +69,158 @@ export function TransactionsPage() {
   const goToProfile = () => {
     const userUid = localStorage.getItem("userUid");
     const accessToken = sessionStorage.getItem("accessToken");
-    if (userUid === null || undefined || accessToken === null || undefined) {
-      toast.warning(
-        "You are not logged in at the moment! You must login in order to continue"
-      );
-      
+    
+    if (!userUid || !accessToken) {
+      toast.warning("You are not logged in at the moment! You must login in order to continue");
     } else {
       navigate(`/profile/${userUid}`);
     }
   };
-  const goToRoot = () => {
-    navigate("/");
-  };
-  const goToMarketplace = () => {
-    navigate("/marketplace");
-  };
+  
+  const goToRoot = () => navigate("/");
+  const goToMarketplace = () => navigate("/marketplace");
+  const goToSignUp = () => navigate("/register");
 
-  const goToSignUp = () => {
-    navigate("/register");
-  };
-
-  // Toggle the sidebar open and close
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-black">
+    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
       {/* Header */}
-      <header className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 shadow-lg py-6 px-4">
+      <header className="bg-white shadow-md border-b-2 border-blue-500 py-4 px-4 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Hamburger Button (left) */}
-          <button className="text-white" onClick={toggleSidebar}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Logo and Brand */}
+          <div className="flex items-center">
+            <h1 
+              className="text-2xl md:text-3xl font-bold cursor-pointer bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent"
+              onClick={goToRoot}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              BitSlowShop
+            </h1>
+          </div>
 
-          {/* Shop Name (right) */}
-          <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-lg">
-            BitSlowShop
-          </h1>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <button 
+              onClick={goToMarketplace}
+              className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
+            >
+              Marketplace
+            </button>
+            <button 
+              onClick={goToProfile} 
+              className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
+            >
+              My Profile
+            </button>
+            <button 
+              onClick={goToSignUp}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            >
+              Sign Up / Login
+            </button>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-gray-700 focus:outline-none"
+            onClick={toggleMobileMenu}
+          >
+            {mobileMenuOpen ? (
+              <FaTimes className="h-6 w-6" />
+            ) : (
+              <FaBars className="h-6 w-6" />
+            )}
+          </button>
         </div>
       </header>
 
-      {/* Sidebar for mobile and desktop */}
-      <div
-        className={`fixed inset-0 z-50  transition-all ease-in-out duration-300 ${
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={toggleSidebar}
-      >
-        <div
-          className="w-64 h-full bg-sky-100 p-4 transition-all duration-300 ease-in-out transform"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Profile Button */}
-          <div className="mb-6">
-            <button
-              onClick={goToProfile}
-              className="flex items-center w-full text-left py-2 px-4 text-gray-700 hover:bg-gray-200"
+      {/* Mobile Navigation Menu */}
+      {mobileMenuOpen && (
+        <div className="bg-white border-b border-gray-200 py-4 px-6 md:hidden">
+          <nav className="flex flex-col space-y-4">
+            <button 
+              onClick={() => {
+                goToMarketplace();
+                setMobileMenuOpen(false);
+              }}
+              className="text-gray-700 hover:text-blue-500 font-medium text-left"
             >
-              <FaUser className="mr-3 text-xl" />
-              <div>
-                <h4 className="font-semibold">Profile</h4>
-                <p className="text-sm text-gray-500">Manage your profile</p>
-              </div>
+              Marketplace
             </button>
-          </div>
-
-          {/* Marketplace Button */}
-          <div className="mb-6">
-            <button
-              onClick={goToMarketplace}
-              className="flex items-center w-full text-left py-2 px-4 text-gray-700 hover:bg-gray-200"
+            <button 
+              onClick={() => {
+                goToProfile();
+                setMobileMenuOpen(false);
+              }}
+              className="text-gray-700 hover:text-blue-500 font-medium text-left"
             >
-              <FaStore className="mr-3 text-xl" />
-              <div>
-                <h4 className="font-semibold">Marketplace</h4>
-                <p className="text-sm text-gray-500">Browse available items</p>
-              </div>
+              My Profile
             </button>
-          </div>
-
-          {/* SignUp Button */}
-          <div className="mb-6">
-            <button
-              onClick={goToSignUp}
-              className="flex items-center w-full text-left py-2 px-4 text-gray-700 hover:bg-gray-200"
+            <button 
+              onClick={() => {
+                goToSignUp();
+                setMobileMenuOpen(false);
+              }}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium w-full text-center"
             >
-              <FaUserAlt className="mr-3 text-xl" />
-              <div>
-                <h4 className="font-semibold">Sign-Up</h4>
-                <p className="text-sm text-gray-500">
-                  Create or login into your account
-                </p>
-              </div>
+              Sign Up / Login
             </button>
-          </div>
+          </nav>
         </div>
-      </div>
+      )}
 
       {/* Content */}
       <main className="flex-grow max-w-7xl mx-auto p-4 w-full">
-        <div>
-          <h1>Transaction History</h1>
-          <p>See all the transactions that have taken place</p>
+        <div className="bg-white shadow-md rounded-lg p-6 mb-6 border-l-4 border-blue-500">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Transaction History</h1>
+          <p className="text-gray-600">View all transactions that have taken place on the platform</p>
         </div>
-        <TransactionFilter
-          filters={filters}
-          itemCount={transactions.length}
-          onFilterChange={setFilters}
-        />
-        {transactions.length === 0 ? (
-          <p className="text-gray-400 mt-6 text-center">
-            No transactions found.
-          </p>
-        ) : (
-          <TransactionTable
-            transactions={transactions}
-            onRowClick={(transaction) => {
-              console.log(transaction);
-              setCoinId(transaction.coinId);
-              setCoinUid(transaction.coinId);
-              setShowHistoryModal(true);
-            }}
+        
+        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+          <TransactionFilter
+            filters={filters}
+            itemCount={transactions.length}
+            onFilterChange={setFilters}
           />
-        )}
+        </div>
+        
+        <div className="bg-white shadow-md rounded-lg p-6">
+          {transactions.length === 0 ? (
+            <div className="py-16 text-center">
+              <FaHistory className="mx-auto text-blue-300 text-5xl mb-4" />
+              <p className="text-gray-400 text-lg">No transactions found</p>
+              <p className="text-gray-400">Try adjusting your filters to see more results</p>
+            </div>
+          ) : (
+            <TransactionTable
+              transactions={transactions}
+              onRowClick={(transaction) => {
+                console.log(transaction);
+                setCoinId(transaction.coinId);
+                setCoinUid(transaction.coinId);
+                setShowHistoryModal(true);
+              }}
+            />
+          )}
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 py-4 text-center text-white text-sm">
-        © {new Date().getFullYear()} BitSlowShop — All rights reserved.
+      <footer className="bg-white border-t border-gray-200 py-6 text-center text-gray-600 text-sm mt-auto">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <span className="font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">BitSlowShop</span> © {new Date().getFullYear()} — All rights reserved.
+            </div>
+            <div className="flex space-x-6">
+              <button className="text-gray-600 hover:text-blue-500 transition-colors">Terms</button>
+              <button className="text-gray-600 hover:text-blue-500 transition-colors">Privacy</button>
+              <button className="text-gray-600 hover:text-blue-500 transition-colors">Support</button>
+            </div>
+          </div>
+        </div>
       </footer>
+      
       <CoinHistoryModal
         isOpen={showHistoryModal}
         onClose={() => {
@@ -222,7 +230,19 @@ export function TransactionsPage() {
         coin={coin}
         history={coinHistory}
       />
-      <ToastContainer />
+      
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

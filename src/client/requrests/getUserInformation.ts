@@ -33,8 +33,9 @@ export const fetchUserInformation = async (
       const coins = Array.isArray(data.ownedCoins) ? data.ownedCoins : [];
       const profile = data.profile;
       const monetaryValue = data.monetaryValue;
+      const totalTransactions = data.totalTransactionCount
       console.log("Success branch")
-      return { profile, coins, monetaryValue };
+      return { profile, coins, monetaryValue , totalTransactions };
     } else if (result.status === 403) {
       console.log("Restricted branch")
       unAuthorizedAccess("Trying to access a Restricted Resource!");

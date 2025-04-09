@@ -203,5 +203,14 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
       return null;
     }
   }
+  async getUsersTransactionCount(userUid : string) : Promise<number>{
+    try {
+      console.log("Getting transactions by sellerUid:", userUid);
+      return await this.transactionDao.getUsersTransactionCount(userUid);
+    } catch (error) {
+      console.error("Error getting transactions by seller name:", error);
+      return -1;
+    }
+  }
 
 }

@@ -21,7 +21,8 @@ import BuyCoinModal from "../../components/ui/GenerateCoinDialogue";
 import { useNavigate } from "react-router-dom";
 import TransactionLoader from "../../components/ui/TransactionLoader";
 import { useCoinSupply } from "../../components/hooks/CoinSupply";
-
+import { FaTimes } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 const handleError = async (error: string, actionName: string) => {
   console.log(error);
   toast.error(`Something went wrong while ${actionName}`);
@@ -36,14 +37,23 @@ const MarketDashboard = () => {
   const userUid = localStorage.getItem("userUid");
   const accessToken = sessionStorage.getItem("accessToken");
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  
-  const { transactions, loading: transactionsLoading, filters, error, setFilters, setLoading: setTransactionsLoading } =
-    useQueriedTransaction((message) => {
-      handleError(message, "loading the most recent transactions!");
-    });
-    const {amount , setRefreshSupply} = useCoinSupply((error : string) => {
-      handleError(error, "retrieving coin supply!")
-    } ,()=>{} )
+
+  const {
+    transactions,
+    loading: transactionsLoading,
+    filters,
+    error,
+    setFilters,
+    setLoading: setTransactionsLoading,
+  } = useQueriedTransaction((message) => {
+    handleError(message, "loading the most recent transactions!");
+  });
+  const { amount, setRefreshSupply } = useCoinSupply(
+    (error: string) => {
+      handleError(error, "retrieving coin supply!");
+    },
+    () => {}
+  );
   const { coinHistory, setCoinUid } = useCoinHistory(
     (message) => {
       handleError(message, "loading the coin history!");
@@ -69,27 +79,24 @@ const MarketDashboard = () => {
       toast.success("You successfully generated new BitSlows");
       setGenerateDialogeVisibility(false);
       setRefresh((prev) => !prev);
-      setRefreshSupply((prev) => !prev)
+      setRefreshSupply((prev) => !prev);
     }
   );
 
   // Track coin database loading separately
   const [coinsLoading, setCoinsLoading] = useState(true);
-  
+
   const { coins, setCoins, setRefresh } = useCoinDatabase(
     (message) => {
       handleError(message, "loading the coin database!");
     },
     () => {
       setCoinsLoading(false); // Set coinsLoading to false after coins are loaded
-      
     }
   );
 
   const [loadingTime, setLoadingTime] = useState(0);
   const navigate = useNavigate();
-
- 
 
   useEffect(() => {
     let timerId: number | undefined;
@@ -100,13 +107,10 @@ const MarketDashboard = () => {
       }, 1000);
     }
 
-
     return () => {
       if (timerId) clearInterval(timerId);
     };
   }, [transactionsLoading]);
-
- 
 
   const handleGoBack = () => {
     toast.info("Navigating back...");
@@ -125,6 +129,19 @@ const MarketDashboard = () => {
       <p className="text-gray-600">Loading coin database...</p>
     </div>
   );
+  //const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const goToRoot = () => navigate("/");
+  const goToTransactions = () => navigate("/transactions");
+  const goToSignUp = () => navigate("/register");
+  const goToProfile = () => {
+    if (!accessToken || !userUid) {
+      toast.info("You are not logged in at the moment!")
+    } else {
+      navigate(`/profile/${userUid}`);
+    }
+  };
+  //const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">
@@ -140,9 +157,41 @@ const MarketDashboard = () => {
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Market Dashboard</h1>
-      </div>
+      <header className="bg-white shadow-md border-b-2 border-blue-500 py-4 px-4 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          {/* Logo and Brand */}
+          <div className="flex items-center">
+            <h1
+              className="text-2xl md:text-3xl font-bold cursor-pointer bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent"
+              onClick={goToRoot}
+            >
+              BitSlowShop
+            </h1>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <button
+              onClick={goToTransactions}
+              className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
+            >
+              Transaction
+            </button>
+            <button
+              onClick={goToProfile}
+              className="text-gray-700 hover:text-blue-500 font-medium transition-colors"
+            >
+              My Profile
+            </button>
+            <button
+              onClick={goToSignUp}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            >
+              Sign Up / Login
+            </button>
+          </nav>
+        </div>
+      </header>
 
       {/* Top Row - Two Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,7 +219,7 @@ const MarketDashboard = () => {
                 buyButtonEnables={true}
                 onClick={(coin) => {
                   setCoinId(coin.coin_id);
-                  setCoinUid(coin.coin_id)
+                  setCoinUid(coin.coin_id);
                   setShowHistoryModal(true);
                 }}
                 onClickToBuy={() => {}}
@@ -221,7 +270,7 @@ const MarketDashboard = () => {
         coin={coin}
         history={coinHistory}
       />
-      
+
       {/* Coin Generation Modal */}
       <BuyCoinModal
         isOpen={showGenerateDialogue}

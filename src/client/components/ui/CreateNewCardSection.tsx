@@ -10,6 +10,7 @@ const CreateCoinCard: React.FC<Props> = ({
   createNewCoin,
   remainingItem
 }) => {
+  console.log("Remaining items : " + remainingItem)
   // If there are no remaining coins, show a different UI
   if (remainingItem <= 0) {
     return (
