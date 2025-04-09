@@ -9,5 +9,6 @@ interface TransactionDao {
 	getUserTransactions(userUid: String): Promise<Transaction[] | null>;
 	getAllTransactions(): Promise<Transaction[]>;
 	getUsersTransactionCount(userUid: string): Promise<number>;
+	deleteTransaction(transaction: Transaction): Promise<boolean>;
 }
 export default TransactionDao;

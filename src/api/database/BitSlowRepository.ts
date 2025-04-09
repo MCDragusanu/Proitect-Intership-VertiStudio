@@ -11,7 +11,7 @@ export default interface BitSlowRepository {
 		bit2: number,
 		bit3: number,
 	): Promise<BitSlow | null>;
-
+	deleteTransaction(transaction: Transaction): Promise<boolean>;
 	insertCoin(coin: Coin): Promise<boolean>;
 	updateCoin(coin: Coin): Promise<boolean>;
 	getCoinById(coinId: number): Promise<Coin | null>;

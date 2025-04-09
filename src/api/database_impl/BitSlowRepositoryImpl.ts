@@ -97,7 +97,15 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 			return null;
 		}
 	}
-
+	async deleteTransaction(transaction: Transaction): Promise<boolean> {
+		try {
+			console.log("Deleting transaction");
+			return await this.transactionDao.deleteTransaction(transaction);
+		} catch (error) {
+			console.error("Error delleting transaction:", error);
+			return false;
+		}
+	}
 	async getMonetaryValue(userUid: string): Promise<number | null> {
 		try {
 			console.log("Getting monetary value for:", userUid);
@@ -114,7 +122,7 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 		bit3: number,
 	): Promise<boolean> {
 		try {
-			console.log("Checking if bits already in use:", bit1, bit2, bit3);
+			
 			return await this.coinDao.bitsAlreadyInUse(bit1, bit2, bit3);
 		} catch (error) {
 			console.error("Error checking bits usage:", error);

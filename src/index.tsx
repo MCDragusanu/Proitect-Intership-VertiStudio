@@ -26,7 +26,7 @@ import { GetCoinById } from "./api/routes/coins/GetCoinById";
 import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
 import { GetCoinSupply } from "./api/routes/coins/GetRemainingCoins";
-
+import { CreateTransaction } from "./api/routes/transactions/CreateTransaction";
 /*seedDatabase(getModule().database, {
 	transactionCount: 500,
 	clientCount: 250,
@@ -134,6 +134,23 @@ const server = serve({
 			}
 			return methodNotAllowed();
 		},
+		"/api/coins/buy/:{userUid}": async (req) => {
+			const routeUserUid = req.url.split("/").pop();
+			console.log("UserUid in url : ");
+			console.log(routeUserUid);
+			if (req.method === "POST" && routeUserUid !== undefined) {
+				console.log("Preparing to validate purchase ");
+				const tokenValidationError = await validateTokens(req, routeUserUid);
+				if (tokenValidationError) {
+					console.log("Validation failed ");
+					return tokenValidationError;
+				}
+				console.log("Geneating new coins");
+				return await CreateTransaction(req, routeUserUid);
+			}
+
+			return methodNotAllowed();
+		},
 		"/api/coins/generate/:userUid": async (req) => {
 			const routeUserUid = req.url.split("/").pop();
 			console.log("UserUid in url : ");
@@ -145,7 +162,7 @@ const server = serve({
 					console.log("Validation failed ");
 					return tokenValidationError;
 				}
-				console.log("Geneating new coins");
+				console.log("Processing Transaction");
 				return await CreateNewCoins(req, routeUserUid);
 			}
 

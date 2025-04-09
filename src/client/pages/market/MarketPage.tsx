@@ -24,6 +24,9 @@ import { useCoinSupply } from "../../components/hooks/CoinSupply";
 import { FaTimes } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
 import { PaginationParams } from "../../requrests/GetAllCoins";
+import { useBuyNewCoin } from "../../components/hooks/BuyCoin";
+import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import ConfirmCoinModal from "../../components/ui/BuyBitSlowDialogue";
 const handleError = async (error: string, actionName: string) => {
 	console.log(error);
 	toast.error(`Something went wrong while ${actionName}`);
@@ -69,18 +72,67 @@ const MarketDashboard = () => {
 			setGenerateDialogeVisibility(false);
 		}
 	};
+	const [showBuyDialogue, setBuyDialogeVisibility] = useState(false);
+	const { coinToBuy, setCoinToBuy, setSubmission } = useBuyNewCoin(
+    userUid,
+    accessToken,
+    (message) => {
+      handleError(message, "processing your new purchase. Action aborted!");
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+    },
+    () => {
+      handleMissingCredentials("buying a new BitSlow!");
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+    },
+    () => {
+      toast.success(
+        "You successfully bought a new BitSlow! Enjoy your new purchase!",
+      );
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+      setRefresh((prev) => !prev);
+      setRefreshSupply((prev) => !prev);
+    },
+    () => {
+      toast.error("Coin not found! Please try again.");
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+    },
+    () => {
+      toast.error("This coin is already owned! Please select a different one.");
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+    },
+    () => {
+      toast.error("Transaction failed! Please try again.");
+      setBuyDialogeVisibility(false);
+      setSubmission(false);
+      setCoinToBuy(null);
+    }
+  );
+  
 	const { newCoins, setAmount, newCoinsLoading } = useGeneratedCoins(
 		userUid,
 		accessToken,
 		(message) => {
 			handleError(message, "loading the coin history!");
+			setSubmission(false);
 		},
 		() => {
 			handleMissingCredentials("generate new BitSlows!");
+			setSubmission(false);
 		},
 		() => {
 			toast.success("You successfully generated new BitSlows");
 			setGenerateDialogeVisibility(false);
+			setSubmission(false);
 			setRefresh((prev) => !prev);
 			setRefreshSupply((prev) => !prev);
 		},
@@ -228,7 +280,10 @@ const MarketDashboard = () => {
 									setCoinUid(coin.coin_id);
 									setShowHistoryModal(true);
 								}}
-								onClickToBuy={() => {}}
+								onClickToBuy={(coin) => {
+									setCoinToBuy(coin);
+									setBuyDialogeVisibility(true);
+								}}
 							/>
 						)}
 					</div>
@@ -287,6 +342,17 @@ const MarketDashboard = () => {
 				onBuy={(value: number) => {
 					setAmount(value);
 				}}
+			/>
+			<ConfirmCoinModal
+				isOpen={showBuyDialogue}
+				onClose={() => {
+					setBuyDialogeVisibility(false);
+					setSubmission(false);
+				}}
+				onConfirm={(coin: CoinDTO) => {
+					setSubmission(true);
+				}}
+				selectedCoin={coinToBuy}
 			/>
 			<ToastContainer />
 		</div>

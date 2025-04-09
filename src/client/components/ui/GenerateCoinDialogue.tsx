@@ -7,7 +7,6 @@ import {
 	Info,
 	AlertCircle,
 } from "lucide-react";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 type BuyCoinModalProps = {
 	isOpen: boolean;

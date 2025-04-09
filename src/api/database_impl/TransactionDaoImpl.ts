@@ -126,4 +126,11 @@ export default class SQLiteTransactionDao implements TransactionDao {
 
 		return result?.count || 0;
 	}
+	async deleteTransaction(transaction: Transaction): Promise<boolean> {
+		const stmt = getModule().database.prepare(
+			"DELETE from transactions WHERE id = ?",
+		);
+		const info = stmt.run(transaction.id);
+		return info.changes === 1;
+	}
 }
