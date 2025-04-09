@@ -7,7 +7,8 @@ function loadNewCoins(
   userUid: string,
   accessToken: string,
   errorCallback: (message: string) => void,
-  unAuthorizedAccessCallback: () => void
+  unAuthorizedAccessCallback: () => void,
+  
 ): Promise<CoinDTO[]> {
   return fetchGeneratedCoins(
     amount,

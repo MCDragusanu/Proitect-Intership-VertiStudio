@@ -12,12 +12,12 @@ function loadCoins(
 
 export const useCoinDatabase = (
   onError: (error: string) => void,
-  
   onLoaded?: () => void
 ) => {
   const [coins, setCoins] = useState<CoinDTO[]>([]);
   const [refresh , setRefresh] = useState(false)
   useEffect(() => {
+    console.log("A new refresh triggered")
     loadCoins(onError)
       .then((data) => {
         setCoins(data);

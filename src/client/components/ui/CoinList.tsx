@@ -41,14 +41,12 @@ export const CoinList: React.FC<CoinListProps> = ({ coins, buyButtonEnables , on
           <div className="p-8 bg-gray-50 rounded-lg border border-gray-200 text-center">
             <SiBit size={48} className="mx-auto text-gray-400 mb-3" />
             <p className="text-gray-500 text-lg">
-              No coins found in your collection
+              Coins are being loaded or no coins are available
             </p>
-            <p className="text-gray-400 mt-2">
-              Transactions will appear here once you acquire coins
-            </p>
+            
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {currentCoins.map((coin) => (
               <CoinCard
                 key={coin.coin_id}

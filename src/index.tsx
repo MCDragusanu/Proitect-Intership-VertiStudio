@@ -27,9 +27,9 @@ import { CreateNewCoins } from "./api/routes/coins/GenerateNewCoins";
 import { seedDatabase } from "./api/seed";
 
 seedDatabase(getModule().database , {
-  clientCount: 20,
-  bitSlowCount: 25,
-  transactionCount: 20,
+  clientCount: 50,
+  bitSlowCount: 150,
+  transactionCount: 76,
   clearExisting: true,
 });
 // Helper function to handle method not allowed response

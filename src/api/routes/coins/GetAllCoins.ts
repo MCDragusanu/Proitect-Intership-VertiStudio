@@ -2,7 +2,7 @@ import { computeBitSlow } from "@/src/bitslow";
 import { getModule } from "../../module";
 import { RowsIcon } from "lucide-react";
 import { CoinDTO as CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
-
+import BitSlow from "@/src/shared/bitslow";
 export const GetAllCoins = async (): Promise<any> => {
   try {
     // Fetch the coin history from the repository
@@ -21,6 +21,16 @@ export const GetAllCoins = async (): Promise<any> => {
         let bitSlow
         if(!bitSlowEntity){
              bitSlow = computeBitSlow(rawCoin.bit1 , rawCoin.bit2 , rawCoin.bit3)
+               const newBitSlow: BitSlow = {
+                    id : Date.now(),
+                     coinId: rawCoin.coin_id,
+                     bit1: rawCoin.bit1,
+                     bit2: rawCoin.bit2,
+                     bit3: rawCoin.bit3,
+                     computedBitSlow: bitSlow,
+                   };
+                   //save it for later
+                   await getModule().bitSlowRepo.insertBitSlow(newBitSlow);
         }else bitSlow = bitSlowEntity.computedBitSlow
         const coin : CoinDTO = {
             ...rawCoin,

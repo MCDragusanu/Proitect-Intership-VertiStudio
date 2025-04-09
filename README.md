@@ -154,18 +154,18 @@ Bonus Challenge: New transactions should appear without requiring a manual refre
 - **BitSlow Marketplace Dashboard:**
   - Displays all **available BitSlows** (paginated, 30 per page).
   - Shows each coin’s details:
-    - **Hash** (Unique ID).
-    - **Component Numbers** (3 numbers used in the hash).
-    - **Monetary Value**.
-    - **Current Owner (if any).**
+    - **Hash** (Unique ID). **CHECK**
+    - **Component Numbers** (3 numbers used in the hash).**CHECK**
+    - **Monetary Value**.**CHECK**
+    - **Current Owner (if any).****CHECK**
   - Includes a **"Buy" button** (only for unowned BitSlows).
 - **Buying Process:**
   - When a user **buys** a BitSlow, a new **transaction is recorded**, and **ownership is transferred**. (No need to check if the buyer can afford it, but change the owner with the new transaction).
 - **Generating New BitSlows:**
-  - Users can **generate a new BitSlow** by clicking **"Generate Coin"**.
-  - They must enter an amount. (Think what component is the best for representing this: modal, new page, etc.)
-  - The system should **find 3 unique numbers** that haven't been used in an existing BitSlow.
-  - If no unique combinations remain, the **"Generate Coin"** button should disappear.
+  - Users can **generate a new BitSlow** by clicking **"Generate Coin"**.**CHECK**
+  - They must enter an amount. (Think what component is the best for representing this: modal, new page, etc.)**CHECK**
+  - The system should **find 3 unique numbers** that haven't been used in an existing BitSlow.**CHECK**
+  - If no unique combinations remain, the **"Generate Coin"** button should disappear.**CHECK**
 
 Bonus Challenge: For each coin, offer the possibility to display the previous owners of the coin based on the transaction history. (Tip: It can be a simple button that displays a popup with the owner list).
 

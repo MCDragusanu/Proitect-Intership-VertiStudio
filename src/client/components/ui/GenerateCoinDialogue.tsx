@@ -35,13 +35,13 @@ const BuyCoinModal: React.FC<BuyCoinModalProps> = ({
 
   const handleBuy = () => {
     setIsProcessing(true);
-    
+     onBuy(amount);
     // Simulate API call
-    setTimeout(() => {
-      onBuy(amount);
+    /*setTimeout(() => {
+     
       setIsProcessing(false);
       onClose();
-    }, 1500);
+    }, 1500);*/
   };
 
   
@@ -49,7 +49,7 @@ const BuyCoinModal: React.FC<BuyCoinModalProps> = ({
   
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
       <div 
         className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative animate-fadeIn"
         onClick={(e) => e.stopPropagation()}

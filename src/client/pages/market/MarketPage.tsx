@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import {
   ClockIcon,
@@ -19,20 +19,23 @@ import CreateCoinCard from "../../components/ui/CreateNewCardSection";
 import { useGeneratedCoins } from "../../components/hooks/GenerateCoins";
 import BuyCoinModal from "../../components/ui/GenerateCoinDialogue";
 import { useNavigate } from "react-router-dom";
+import TransactionLoader from "../../components/ui/TransactionLoader";
 
 const handleError = async (error: string, actionName: string) => {
   console.log(error);
   toast.error(`Something went wrong while ${actionName}`);
 };
+
 const handleMissingCredentials = (action: string) => {
   console.log("No credentials found");
   toast.warning(`You must be logged in order to ${action}`);
 };
+
 const MarketDashboard = () => {
   const userUid = localStorage.getItem("userUid");
   const accessToken = sessionStorage.getItem("accessToken");
-
-  const { transactions, loading, filters, error, setFilters } =
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const { transactions, loading: transactionsLoading, filters, error, setFilters, setLoading: setTransactionsLoading } =
     useQueriedTransaction((message) => {
       handleError(message, "loading the most recent transactions!");
     });
@@ -60,38 +63,65 @@ const MarketDashboard = () => {
     },
     () => {
       toast.success("You successfully generated new BitSlows");
-      setGenerateDialogeVisibility(false)
+      setGenerateDialogeVisibility(false);
+      setRefresh((prev) => !prev);
     }
   );
-  const { coins } = useCoinDatabase(
+
+  // Track coin database loading separately
+  const [coinsLoading, setCoinsLoading] = useState(true);
+  
+  const { coins, setCoins, setRefresh } = useCoinDatabase(
     (message) => {
       handleError(message, "loading the coin database!");
     },
-    () => {}
+    () => {
+      setCoinsLoading(false); // Set coinsLoading to false after coins are loaded
+      
+    }
   );
 
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [loadingTime, setLoadingTime] = useState(0);
   const [lastRefreshMoment, setNewMoment] = useState(new Date());
-  const navigate = useNavigate();
-  // Fixed transaction refresh function
-  const transactionRefresh = () => {
-    const now = new Date();
-    const newFilters = { ...filters, afterDateTimeStamp: now.toISOString() };
-    setFilters(newFilters);
-    console.log(`Last Update Moment: ${lastRefreshMoment.toISOString()}`);
-    setNewMoment(now);
-    toast.info("Refreshed transactions data");
-  };
 
-  // Fixed interval - 5 minutes in milliseconds (300000ms)
-  // useIntervalEffect(transactionRefresh, 300000); // 5 * 60 * 1000
+  const navigate = useNavigate();
+
+ 
+
+  useEffect(() => {
+    let timerId: number | undefined;
+
+    if (transactionsLoading) {
+      timerId = window.setInterval(() => {
+        setLoadingTime((prevTime) => prevTime + 1);
+      }, 1000);
+    }
+
+
+    return () => {
+      if (timerId) clearInterval(timerId);
+    };
+  }, [transactionsLoading]);
+
+ 
 
   const handleGoBack = () => {
-    // Implementation for going back - adjust as needed
     toast.info("Navigating back...");
     navigate(-1);
-    // You might want to use router.push('/previous-page') or similar here
   };
+
+  // Show loading indicator for transactions if still loading
+  if (coinsLoading || transactionsLoading) {
+    return <TransactionLoader loadingTime={loadingTime} />;
+  }
+
+  // Coin database loader component
+  const CoinDatabaseLoader = () => (
+    <div className="flex flex-col items-center justify-center h-full py-8">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mb-4"></div>
+      <p className="text-gray-600">Loading coin database...</p>
+    </div>
+  );
 
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">
@@ -114,7 +144,7 @@ const MarketDashboard = () => {
       {/* Top Row - Two Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CreateCoinCard
-          remainingItem={1000 - coins.length}
+          remainingItem={1000 - 110 - coins.length}
           createNewCoin={() => {
             setGenerateDialogeVisibility(true);
           }}
@@ -129,15 +159,20 @@ const MarketDashboard = () => {
             <p> See all the existing coins and spend some moooney</p>
           </div>
           <div className="overflow-x-auto">
-            <CoinList
-              coins={coins}
-              buyButtonEnables={true}
-              onClick={(coin) => {
-                setCoinId(coin.coin_id);
-                setShowHistoryModal(true);
-              }}
-              onClickToBuy={() => {}}
-            />
+            {coinsLoading ? (
+              <CoinDatabaseLoader />
+            ) : (
+              <CoinList
+                coins={coins}
+                buyButtonEnables={true}
+                onClick={(coin) => {
+                  setCoinId(coin.coin_id);
+                  setCoinUid(coin.coin_id)
+                  setShowHistoryModal(true);
+                }}
+                onClickToBuy={() => {}}
+              />
+            )}
           </div>
         </section>
       </div>
@@ -155,7 +190,7 @@ const MarketDashboard = () => {
           onFilterChange={setFilters}
         />
 
-        {loading ? (
+        {transactionsLoading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
@@ -183,13 +218,14 @@ const MarketDashboard = () => {
         coin={coin}
         history={coinHistory}
       />
-      {/* Coin History Modal */}
+      
+      {/* Coin Generation Modal */}
       <BuyCoinModal
         isOpen={showGenerateDialogue}
         onClose={() => {
           setGenerateDialogeVisibility(false);
         }}
-        maxAmount={1000 - coins.length}
+        maxAmount={1000 -110 - coins.length}
         onBuy={(value: number) => {
           setAmount(value);
         }}
