@@ -115,14 +115,20 @@ export class SQLiteBitSlowRepository implements BitSlowRepository {
 			return null;
 		}
 	}
-
+	async getUserCoinCount(userUid: string): Promise<number> {
+		try {
+			return await this.coinDao.getUserCoinCount(userUid);
+		} catch (error) {
+			console.error("Error checking coin count usage:", error);
+			return -1;
+		}
+	}
 	async bitsAlreadyInUse(
 		bit1: number,
 		bit2: number,
 		bit3: number,
 	): Promise<boolean> {
 		try {
-			
 			return await this.coinDao.bitsAlreadyInUse(bit1, bit2, bit3);
 		} catch (error) {
 			console.error("Error checking bits usage:", error);

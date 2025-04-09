@@ -12,7 +12,7 @@ function processTransaction(
 	unAuthorizedAccessCallback: () => void,
 	onCoinNotFound: () => void,
 	onCoinAlreadyOwned: () => void,
-	onTransactionFailed: () => void
+	onTransactionFailed: () => void,
 ): Promise<void> {
 	return buyNewCoin(
 		coinId,
@@ -22,7 +22,7 @@ function processTransaction(
 		unAuthorizedAccessCallback,
 		onCoinNotFound,
 		onCoinAlreadyOwned,
-		onTransactionFailed
+		onTransactionFailed,
 	);
 }
 
@@ -34,7 +34,7 @@ export const useBuyNewCoin = (
 	onComplete: () => void,
 	onCoinNotFound: () => void,
 	onCoinAlreadyOwned: () => void,
-	onTransactionFailed: () => void
+	onTransactionFailed: () => void,
 ) => {
 	const [coinToBuy, setCoinToBuy] = useState<CoinDTO | null>(null);
 	const [isSubmitted, setSubmission] = useState(false);
@@ -54,7 +54,7 @@ export const useBuyNewCoin = (
 				onMissingCredentials,
 				onCoinNotFound,
 				onCoinAlreadyOwned,
-				onTransactionFailed
+				onTransactionFailed,
 			)
 				.then(() => {
 					onComplete();

@@ -9,10 +9,10 @@ export const CreateTransaction = async (
 	try {
 		console.log("Begin Creating new Transaction");
 		// Fetch the coin by coin_id from the repository
-		const {coinId} =await req.json();
+		const { coinId } = await req.json();
 		const coinIdValue = Number(coinId);
 		if (!coinId || Number.isNaN(coinId)) {
-            console.log("No coinId field found or is malformed: " + coinId);
+			console.log("No coinId field found or is malformed: " + coinId);
 			return new Response(
 				JSON.stringify({ message: "CoinId field invalid or not found" }),
 				{
@@ -23,15 +23,15 @@ export const CreateTransaction = async (
 		}
 		const coin = await getModule().bitSlowRepo.getCoinById(coinIdValue);
 		if (!coin) {
-            console.log("No coin found");
-            console.log(coin);
+			console.log("No coin found");
+			console.log(coin);
 			return new Response(JSON.stringify({ message: "Coin not found!" }), {
 				status: 405,
 				headers: { "Content-Type": "application/json" },
 			});
 		}
 		if (coin.client_id !== "") {
-            console.log("Coin is alreadyd owned : " + coin.client_id);
+			console.log("Coin is alreadyd owned : " + coin.client_id);
 			return new Response(
 				JSON.stringify({ message: "Coin is already owned by somebody else" }),
 				{
@@ -61,7 +61,7 @@ export const CreateTransaction = async (
 			await getModule().bitSlowRepo.insertTransaction(transaction);
 
 		if (!result1 || !result2) {
-            console.log(`Failed one of the transaction ${result1} ,${result2}`);
+			console.log(`Failed one of the transaction ${result1} ,${result2}`);
 			//revert to prev state
 			if (result1) {
 				await getModule().bitSlowRepo.updateCoin(coin);
@@ -76,11 +76,11 @@ export const CreateTransaction = async (
 					headers: { "Content-Type": "application/json" },
 				},
 			);
-		}  
-        const updatedCoin = await getModule().bitSlowRepo.getCoinById(coinIdValue)
-        console.log("Coin has been purchased!");
-        console.log("Bought coin : ")
-        console.log(updatedCoin)
+		}
+		const updatedCoin = await getModule().bitSlowRepo.getCoinById(coinIdValue);
+		console.log("Coin has been purchased!");
+		console.log("Bought coin : ");
+		console.log(updatedCoin);
 		// Return the result
 		return new Response(JSON.stringify({}), {
 			status: 200,

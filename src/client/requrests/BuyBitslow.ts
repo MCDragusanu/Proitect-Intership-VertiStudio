@@ -9,12 +9,12 @@ export async function buyNewCoin(
 	onUnAuthorizedRequest: () => void,
 	onCoinNotFound: () => void,
 	onCoinAlreadyOwned: () => void,
-	onTransactionFailed: () => void
+	onTransactionFailed: () => void,
 ): Promise<void> {
 	try {
 		console.log("Sending token : ");
 		console.log(accessToken);
-        console.log("CoinId :  " + coinId )
+		console.log("CoinId :  " + coinId);
 		const headers: Headers = new Headers();
 		headers.set("Authorization", `Bearer ${accessToken}`);
 		headers.set("Content-Type", "application/json");

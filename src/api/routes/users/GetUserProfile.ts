@@ -11,14 +11,15 @@ export const getUserInformation = async (
 	try {
 		const maxLimit = 30;
 		const safeLimit = Math.max(limit, maxLimit);
-	
+
 		// Fetch coins related to the user
 		const coins = await getModule().bitSlowRepo.getUserCoins(
 			userUid,
 			offset,
 			safeLimit,
 		);
-
+		const totalCoinCount =
+			await getModule().bitSlowRepo.getUserCoinCount(userUid);
 		// Fetch monetary value related to the user
 		const monetaryValue =
 			await getModule().bitSlowRepo.getMonetaryValue(userUid);
@@ -87,6 +88,7 @@ export const getUserInformation = async (
 			ownedCoins: processedCoins,
 			monetaryValue: monetaryValue,
 			totalTransactionCount: totalTransactions,
+			totalCoinCount: totalCoinCount,
 		};
 
 		// Return the combined user information

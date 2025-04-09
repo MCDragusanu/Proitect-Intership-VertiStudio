@@ -10,6 +10,7 @@ interface UserProfileData {
 	profile: any;
 	monetaryValue: number;
 	totalTransactions: number;
+	totalCoins: number;
 }
 
 export function useProfileInformation(
@@ -27,6 +28,7 @@ export function useProfileInformation(
 	const [profile, setProfile] = useState<any>({});
 	const [monetaryValue, setMonetaryValue] = useState<number>(0);
 	const [transactionAmount, setAmount] = useState(0);
+	const [coinCount, setCoinAmount] = useState(0);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
 
@@ -58,6 +60,7 @@ export function useProfileInformation(
 				setMonetaryValue(data.monetaryValue);
 				setProfile(data.profile);
 				setAmount(data.totalTransactions);
+				setCoinAmount(data.totalCoins);
 				setLoading(false);
 			} catch (err) {
 				handleError(err as Error);
@@ -71,6 +74,7 @@ export function useProfileInformation(
 		coins,
 		pageParams,
 		profile,
+		coinCount,
 		monetaryValue,
 		transactionAmount,
 		loading,

@@ -74,50 +74,50 @@ const MarketDashboard = () => {
 	};
 	const [showBuyDialogue, setBuyDialogeVisibility] = useState(false);
 	const { coinToBuy, setCoinToBuy, setSubmission } = useBuyNewCoin(
-    userUid,
-    accessToken,
-    (message) => {
-      handleError(message, "processing your new purchase. Action aborted!");
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-    },
-    () => {
-      handleMissingCredentials("buying a new BitSlow!");
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-    },
-    () => {
-      toast.success(
-        "You successfully bought a new BitSlow! Enjoy your new purchase!",
-      );
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-      setRefresh((prev) => !prev);
-      setRefreshSupply((prev) => !prev);
-    },
-    () => {
-      toast.error("Coin not found! Please try again.");
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-    },
-    () => {
-      toast.error("This coin is already owned! Please select a different one.");
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-    },
-    () => {
-      toast.error("Transaction failed! Please try again.");
-      setBuyDialogeVisibility(false);
-      setSubmission(false);
-      setCoinToBuy(null);
-    }
-  );
-  
+		userUid,
+		accessToken,
+		(message) => {
+			handleError(message, "processing your new purchase. Action aborted!");
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+		},
+		() => {
+			handleMissingCredentials("buying a new BitSlow!");
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+		},
+		() => {
+			toast.success(
+				"You successfully bought a new BitSlow! Enjoy your new purchase!",
+			);
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+			setRefresh((prev) => !prev);
+			setRefreshSupply((prev) => !prev);
+		},
+		() => {
+			toast.error("Coin not found! Please try again.");
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+		},
+		() => {
+			toast.error("This coin is already owned! Please select a different one.");
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+		},
+		() => {
+			toast.error("Transaction failed! Please try again.");
+			setBuyDialogeVisibility(false);
+			setSubmission(false);
+			setCoinToBuy(null);
+		},
+	);
+
 	const { newCoins, setAmount, newCoinsLoading } = useGeneratedCoins(
 		userUid,
 		accessToken,

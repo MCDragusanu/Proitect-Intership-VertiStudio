@@ -12,7 +12,7 @@ interface CoinDao {
 	getFreeCoins(offset: number, limit: number): Promise<Coin[] | null>;
 	getCoinById(coinId: number): Promise<Coin | null>;
 	getMonetaryValue(userUid: string): Promise<number | null>;
-
+	getUserCoinCount(userUid: string): Promise<number>;
 	bitsAlreadyInUse(bit1: number, bit2: number, bit3: number): Promise<boolean>;
 }
 
