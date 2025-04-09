@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { CoinHistoryEntry } from "../ui/CoinHistory";
-import { fetchCoinHistory } from "../../requrests/CoinGetHistory";
 import { getFreeCoins } from "../../requrests/GetAllCoins";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { PaginationParams } from "../../requrests/GetAllCoins";
 
 function loadCoins(

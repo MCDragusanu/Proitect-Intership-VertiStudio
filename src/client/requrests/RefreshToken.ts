@@ -1,11 +1,6 @@
 const ENDPOINT_URL = "http://localhost:3000/api/auth/refresh";
 
-interface RefreshTokenResponse {
-	userUid: string | null;
-	lastLogin: string | null;
-	accessToken: string | null;
-	errorMessage?: string;
-}
+
 
 export const fetchAccessToken = async (
 	onRefresh: (token: string) => void,

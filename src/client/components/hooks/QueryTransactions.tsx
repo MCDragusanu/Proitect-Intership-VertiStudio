@@ -1,8 +1,8 @@
-import { TransactionFilters } from "../ui/TransactionFilter";
+import type  { TransactionFilters } from "../ui/TransactionFilter";
 import { OnErrorCallback } from "../../requrests/getTransactions";
 import { fetchTransactions } from "../../requrests/getTransactions";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+
 
 function loadTransactions(
 	filters: TransactionFilters,

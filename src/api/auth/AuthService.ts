@@ -35,10 +35,10 @@ interface AuthService {
  * Enum containg all the flags for the password requirments
  */
 enum PasswordFlags {
-	DigitCount,
-	SpecialCharacterCount,
-	MinimumLength,
-	UpperCaseCharactersCount,
+	DigitCount = 0,
+	SpecialCharacterCount = 1,
+	MinimumLength = 2,
+	UpperCaseCharactersCount = 3,
 }
 
 interface PasswordRequirements {
@@ -61,30 +61,22 @@ interface AuthResult {
 
 //Base class for all AuthErrors
 class AuthError extends Error {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Thrown when the credentials are not valid when logging
 class InvalidCredentials extends AuthError {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Thrown when the email is already In Use when registering
 class UserCollision extends AuthError {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Thrown when no user is found
 class UserNotFound extends AuthError {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Thrown if the password is too weak

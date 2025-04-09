@@ -1,4 +1,4 @@
-import BitSlow from "@/src/shared/bitslow";
+import type BitSlow from "@/src/shared/bitslow";
 
 export default interface BitSlowDao {
 	insertBitSlow(bitslow: BitSlow): Promise<boolean>;

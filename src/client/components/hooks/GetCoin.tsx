@@ -1,5 +1,5 @@
 import { fetchCoinById } from "../../requrests/GetCoin";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { useState, useEffect } from "react";
 // Function to load the coin data
 function loadCoin(

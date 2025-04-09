@@ -1,7 +1,4 @@
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
-import UserProfile from "@/src/shared/user_profile";
 import { buildPaginationURL, PaginationParams } from "./GetAllCoins";
-import { use } from "react";
 
 const ENDPOINT_URL = "http://localhost:3000/api/users";
 

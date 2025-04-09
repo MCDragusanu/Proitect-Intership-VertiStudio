@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchGeneratedCoins } from "../../requrests/GenerateNewCoins";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 function loadNewCoins(
 	amount: number,

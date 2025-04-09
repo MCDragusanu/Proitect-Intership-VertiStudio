@@ -1,4 +1,4 @@
-import UserCredentials from "@/src/shared/user_credentials";
+import type UserCredentials from "@/src/shared/user_credentials";
 import UserCredentialsDao from "../database/UserCredentialsDao";
 import { getModule } from "../module";
 

@@ -10,22 +10,22 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 //A JWTService implementation as a Singleton
 class JWTServiceImpl implements JWTService {
 	//this will be changed later
-	private jwtAccessSecret = "ACCESS_TEST";
-	private jwtRefreshSecret = "REFRESH_SECRET";
+	private static jwtAccessSecret = "ACCESS_TEST";
+	private static jwtRefreshSecret = "REFRESH_SECRET";
 
 	//a private static instance to use
 
 	constructor() {}
 
 	async issueAccessToken(payload: TokenPayLoad): Promise<string> {
-		return jwt.sign({ data: payload }, this.jwtAccessSecret, {
+		return jwt.sign({ data: payload }, JWTServiceImpl.jwtAccessSecret, {
 			algorithm: "HS256",
 			expiresIn: this.getAccessTokenDurationInSeconds(),
 		});
 	}
 
 	async issueRefreshToken(payload: TokenPayLoad): Promise<string> {
-		return jwt.sign({ data: payload }, this.jwtRefreshSecret, {
+		return jwt.sign({ data: payload }, JWTServiceImpl.jwtRefreshSecret, {
 			algorithm: "HS256",
 			expiresIn: this.getRefreshTokenDurationInSeconds(),
 		});
@@ -43,7 +43,7 @@ class JWTServiceImpl implements JWTService {
 		token: string,
 	): Promise<TokenPayLoad | JWTError> {
 		try {
-			const result = jwt.verify(token, this.jwtAccessSecret) as JwtPayload;
+			const result = jwt.verify(token, JWTServiceImpl.jwtAccessSecret) as JwtPayload;
 			if (!result.data || typeof result.data !== "object") {
 				return new JWTInvalid("Invalid token payload!");
 			}
@@ -66,7 +66,7 @@ class JWTServiceImpl implements JWTService {
 		token: string,
 	): Promise<TokenPayLoad | JWTError> {
 		try {
-			const result = jwt.verify(token, this.jwtRefreshSecret) as JwtPayload;
+			const result = jwt.verify(token, JWTServiceImpl.jwtRefreshSecret) as JwtPayload;
 			if (!result.data || typeof result.data !== "object") {
 				return new JWTInvalid("Invalid token payload!");
 			}

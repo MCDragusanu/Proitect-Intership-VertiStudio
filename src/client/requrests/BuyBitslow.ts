@@ -1,5 +1,4 @@
 const ENDPOINT_URL = "http://localhost:3000/api/coins/buy";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 export async function buyNewCoin(
 	coinId: number,

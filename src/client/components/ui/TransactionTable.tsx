@@ -1,6 +1,6 @@
 import React from "react";
 import TransactionRow from "./TransactionRow";
-import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
+import type { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
 
 interface TransactionTableProps {
 	transactions: TransactionDTO[];

@@ -1,4 +1,4 @@
-import Coin from "@/src/shared/coin";
+import type Coin from "@/src/shared/coin";
 
 interface CoinDao {
 	insertCoin(coin: Coin): Promise<boolean>;

@@ -1,22 +1,16 @@
 //Base class for all JWT-related errors
 class JWTError extends Error {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Exception thrown when token is expired
 class JWTExpired extends JWTError {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Exception Thrown when the token is corrupted
 class JWTInvalid extends JWTError {
-	constructor(message: string) {
-		super(message);
-	}
+	
 }
 
 //Interface to standardise the token payload
@@ -34,10 +28,10 @@ abstract class JWTService {
 	abstract issueRefreshToken(payload: TokenPayLoad): Promise<string>;
 
 	//Returns the active duration in seconds of a Access Token
-	abstract getAccessTokenDurationInSeconds(): Number;
+	abstract getAccessTokenDurationInSeconds(): number;
 
 	//Returns the active Duration in seconds of a Refresh Token
-	abstract getRefreshTokenDurationInSeconds(): Number;
+	abstract getRefreshTokenDurationInSeconds(): number;
 
 	//Processes the token and returns the embedded data
 	//Throws JWTInvalid if the token is corrupted

@@ -1,7 +1,6 @@
 import { getModule } from "../../module";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
-import { computeBitSlow } from "@/src/bitslow";
-import Transaction from "@/src/shared/transaction";
+
+import type Transaction from "@/src/shared/transaction";
 export const CreateTransaction = async (
 	req: Request,
 	buyer_id: string,

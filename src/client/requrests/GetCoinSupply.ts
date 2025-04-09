@@ -1,4 +1,3 @@
-import { CoinHistoryEntry } from "../components/ui/CoinHistory";
 
 export const fetchCoinSupply = async (
 	errorCallback: (message: string) => void,

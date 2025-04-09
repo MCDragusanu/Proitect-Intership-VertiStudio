@@ -1,4 +1,4 @@
-import UserProfile from "@/src/shared/user_profile";
+import type UserProfile from "@/src/shared/user_profile";
 
 interface UserProfileDao {
 	insertUserProfile(profile: UserProfile): Promise<boolean>;

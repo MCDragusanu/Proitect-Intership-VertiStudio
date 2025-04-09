@@ -1,10 +1,10 @@
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { getModule } from "../../module";
-import Coin from "@/src/shared/coin";
-import Transaction from "@/src/shared/transaction";
+import type Coin from "@/src/shared/coin";
+import type Transaction from "@/src/shared/transaction";
 import { computeBitSlow } from "@/src/bitslow";
-import BitSlow from "@/src/shared/bitslow";
-import { randomUUIDv7 } from "bun";
+import type BitSlow from "@/src/shared/bitslow";
+
 
 export const CreateNewCoins = async (
 	req: Request,

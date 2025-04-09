@@ -2,7 +2,6 @@ import { getModule } from "../../module";
 import {
 	JWTExpired,
 	JWTInvalid,
-	JWTError,
 	TokenPayLoad,
 } from "@/src/api/auth/JWTService";
 import {

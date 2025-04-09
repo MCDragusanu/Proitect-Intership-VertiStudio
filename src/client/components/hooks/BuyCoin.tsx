@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchGeneratedCoins } from "../../requrests/GenerateNewCoins";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { buyNewCoin } from "../../requrests/BuyBitslow";
 
 // Updated to accept and pass all error handling callbacks

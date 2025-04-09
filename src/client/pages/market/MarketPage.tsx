@@ -6,12 +6,11 @@ import {
 	CoinsIcon,
 	ArrowLeftIcon,
 } from "lucide-react";
-import { TransactionFilter } from "../../components/ui/TransactionFilter";
+import  { TransactionFilter } from "../../components/ui/TransactionFilter";
 import TransactionTable from "../../components/ui/TransactionTable";
 import CoinHistoryModal from "../../components/ui/CoinHistory";
 import { useQueriedTransaction } from "../../components/hooks/QueryTransactions";
 import { useCoinHistory } from "../../components/hooks/CoinHistory";
-import { useIntervalEffect } from "../../components/hooks/TimedInterval";
 import { useCoinDatabase } from "../../components/hooks/GetAllCoins";
 import { useCoin } from "../../components/hooks/GetCoin";
 import { CoinList } from "../../components/ui/CoinList";
@@ -21,11 +20,8 @@ import BuyCoinModal from "../../components/ui/GenerateCoinDialogue";
 import { useNavigate } from "react-router-dom";
 import TransactionLoader from "../../components/ui/TransactionLoader";
 import { useCoinSupply } from "../../components/hooks/CoinSupply";
-import { FaTimes } from "react-icons/fa";
-import { FaBars } from "react-icons/fa";
-import { PaginationParams } from "../../requrests/GetAllCoins";
 import { useBuyNewCoin } from "../../components/hooks/BuyCoin";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import ConfirmCoinModal from "../../components/ui/BuyBitSlowDialogue";
 const handleError = async (error: string, actionName: string) => {
 	console.log(error);

@@ -1,7 +1,7 @@
 import React from "react";
 import { SiBit } from "react-icons/si";
 import { FaCoins, FaUser, FaCalendarAlt, FaTag } from "react-icons/fa";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 type CoinCardProps = {
 	coin: CoinDTO;

@@ -1,9 +1,9 @@
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { SiBit } from "react-icons/si";
 import CoinCard from "./CoinCard";
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { PaginationParams } from "../../requrests/GetAllCoins";
+import type { PaginationParams } from "../../requrests/GetAllCoins";
 
 type CoinListProps = {
 	params: PaginationParams;

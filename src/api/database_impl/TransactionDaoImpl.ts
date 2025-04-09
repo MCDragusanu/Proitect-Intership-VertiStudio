@@ -1,7 +1,6 @@
-import Transaction from "@/src/shared/transaction";
+import type Transaction from "@/src/shared/transaction";
 import TransactionDao from "../database/TransactionDao";
 import { getModule } from "../module";
-import { tr } from "@faker-js/faker";
 
 export default class SQLiteTransactionDao implements TransactionDao {
 	constructor() {}

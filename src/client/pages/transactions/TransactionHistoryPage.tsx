@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import {
-	FaUser,
-	FaStore,
+
 	FaHistory,
-	FaUserAlt,
+	
 	FaBars,
 	FaTimes,
 } from "react-icons/fa";
@@ -13,7 +12,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TransactionFilter } from "../../components/ui/TransactionFilter";
 import { useNavigate } from "react-router-dom";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { useQueriedTransaction } from "../../components/hooks/QueryTransactions";
 import { useCoinHistory } from "../../components/hooks/CoinHistory";
 import CoinHistoryModal from "../../components/ui/CoinHistory";

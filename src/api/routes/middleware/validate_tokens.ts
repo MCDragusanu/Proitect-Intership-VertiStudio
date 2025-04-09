@@ -5,7 +5,7 @@ import {
 } from "../../../api/routes/auth/utils";
 import { getModule } from "../../../api/module";
 import { JWTExpired, JWTInvalid } from "../../../api/auth/JWTService";
-import { TokenPayLoad } from "../../../api/auth/JWTService";
+import type { TokenPayLoad } from "../../../api/auth/JWTService";
 
 export const validateTokens = async (req: Request, routeUserUid: string) => {
 	const accessToken = extractAccessToken(req);

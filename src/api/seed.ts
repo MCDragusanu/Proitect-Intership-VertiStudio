@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import { faker } from "@faker-js/faker";
-import { uuid } from "uuidv4";
+
 import bcrypt from "bcrypt";
 import { getModule } from "./module";
 import { randomUUIDv7 } from "bun";

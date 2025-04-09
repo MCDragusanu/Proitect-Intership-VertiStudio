@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CoinHistoryEntry } from "../ui/CoinHistory";
+import type { CoinHistoryEntry } from "../ui/CoinHistory";
 import { fetchCoinHistory } from "../../requrests/CoinGetHistory";
 
 function loadCoinHistory(

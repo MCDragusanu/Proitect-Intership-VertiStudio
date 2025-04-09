@@ -1,6 +1,6 @@
 import { computeBitSlow } from "@/src/bitslow";
-import BitSlow from "@/src/shared/bitslow";
-import Transaction from "@/src/shared/transaction";
+import type BitSlow from "@/src/shared/bitslow";
+
 import { getModule } from "../../module";
 
 /**

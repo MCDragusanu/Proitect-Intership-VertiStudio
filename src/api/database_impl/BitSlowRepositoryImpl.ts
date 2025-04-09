@@ -1,7 +1,7 @@
 import BitSlowRepository from "../database/BitSlowRepository";
-import BitSlow from "../../shared/bitslow";
-import Coin from "../../shared/coin";
-import Transaction from "../../shared/transaction";
+import type BitSlow from "../../shared/bitslow";
+import type Coin from "../../shared/coin";
+import type Transaction from "../../shared/transaction";
 import SQLiteBitSlowDao from "./BitSlowDaoImpl";
 import SQLiteCoinDao from "./CoinDaoImpl";
 import SQLiteTransactionDao from "./TransactionDaoImpl";

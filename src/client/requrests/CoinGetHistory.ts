@@ -1,5 +1,5 @@
-import e from "cors";
-import { CoinHistoryEntry } from "../components/ui/CoinHistory";
+
+import type { CoinHistoryEntry } from "../components/ui/CoinHistory";
 
 export const fetchCoinHistory = async (
 	coinId: number,

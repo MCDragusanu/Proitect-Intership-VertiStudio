@@ -1,6 +1,6 @@
 import React from "react";
 import { X, ArrowRight } from "lucide-react";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 export type CoinHistoryEntry = {
 	sellerName: string;

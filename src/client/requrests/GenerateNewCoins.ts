@@ -1,5 +1,5 @@
 const ENDPOINT_URL = "http://localhost:3000/api/coins/generate";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 export async function fetchGeneratedCoins(
 	amount: number,

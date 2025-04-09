@@ -5,7 +5,7 @@ import {
 	UserCollision,
 	WeakCredentials,
 } from "@/src/api/auth/AuthService";
-import { TokenPayLoad } from "@/src/api/auth/JWTService";
+import type { TokenPayLoad } from "@/src/api/auth/JWTService";
 import {
 	checkPasswordStrength,
 	validateEmail,
@@ -17,9 +17,9 @@ import {
 	makeErrorResponse,
 	makeSuccessResponse,
 } from "./utils";
-import UserCredentials from "@/src/shared/user_credentials";
+import type  UserCredentials from "@/src/shared/user_credentials";
 import bcrypt from "bcrypt";
-import UserProfile from "@/src/shared/user_profile";
+import type  UserProfile from "@/src/shared/user_profile";
 
 // Main register handler
 export const register = async (req: Request): Promise<Response> => {

@@ -1,7 +1,7 @@
 import { computeBitSlow } from "@/src/bitslow";
 import { getModule } from "../../module";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
-import BitSlow from "@/src/shared/bitslow";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type BitSlow from "@/src/shared/bitslow";
 
 export const GetAvailableCoins = async (
 	offset: number,

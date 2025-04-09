@@ -1,6 +1,6 @@
 import { getModule } from "../module"; // Assuming getModule() provides access to the database
-import BitSlow from "@/src/shared/bitslow";
-import BitSlowDao from "../database/BitSlowDao";
+import type BitSlow from "@/src/shared/bitslow";
+import type BitSlowDao from "../database/BitSlowDao";
 export default class SQLBitSlowDao implements BitSlowDao {
 	// Insert a new BitSlow record
 	async insertBitSlow(bitslow: BitSlow): Promise<boolean> {

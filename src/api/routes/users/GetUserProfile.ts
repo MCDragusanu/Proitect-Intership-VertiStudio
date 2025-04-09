@@ -1,7 +1,7 @@
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { getModule } from "../../module";
 import { computeBitSlow } from "@/src/bitslow";
-import BitSlow from "@/src/shared/bitslow";
+import type BitSlow from "@/src/shared/bitslow";
 export const getUserInformation = async (
 	req: Request,
 	userUid: string,

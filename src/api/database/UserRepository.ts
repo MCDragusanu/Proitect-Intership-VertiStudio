@@ -1,5 +1,5 @@
-import UserProfile from "@/src/shared/user_profile";
-import UserCredentials from "@/src/shared/user_credentials";
+import  type UserProfile from "@/src/shared/user_profile";
+import type UserCredentials from "@/src/shared/user_credentials";
 
 export default interface UserRepository {
 	insertProfile(profile: UserProfile): Promise<boolean>;

@@ -1,15 +1,14 @@
-import {
-	AuthResult,
-	AuthService,
-	AuthError,
-	InvalidCredentials,
-	UserCollision,
-	PasswordFlags,
-	UserNotFound,
-	WeakCredentials,
-	PasswordRequirements,
+import  {
+	 AuthResult,
+	 AuthService,
+	 AuthError,
+	 InvalidCredentials,
+	 UserCollision,
+	 PasswordFlags,
+	 WeakCredentials,
+	 PasswordRequirements,
 } from "../auth/AuthService";
-import UserCredentialsDao from "../database/UserCredentialsDao";
+import type UserCredentialsDao from "../database/UserCredentialsDao";
 import bcrypt from "bcrypt";
 import { randomUUIDv7 } from "bun";
 
@@ -58,6 +57,7 @@ export class AuthServiceImpl implements AuthService {
 				return new AuthError(
 					"Unknown Error has occurred while authentificating user!",
 				);
+
 		}
 	}
 

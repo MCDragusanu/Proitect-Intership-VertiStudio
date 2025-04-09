@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { fetchUserInformation } from "../../requrests/getUserInformation";
-import { fetchAccessToken } from "../../requrests/RefreshToken";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
-import { PaginationParams } from "../../requrests/GetAllCoins";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { PaginationParams } from "../../requrests/GetAllCoins";
 
 interface UserProfileData {
 	coins: CoinDTO[];

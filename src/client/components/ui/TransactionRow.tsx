@@ -3,7 +3,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { HiCurrencyDollar } from "react-icons/hi";
 import { BiTime } from "react-icons/bi";
 import { AiOutlineTransaction } from "react-icons/ai";
-import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
+import type { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
 
 interface TransactionRowProps {
 	transaction: TransactionDTO;

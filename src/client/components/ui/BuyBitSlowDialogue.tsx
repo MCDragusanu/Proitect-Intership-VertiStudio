@@ -8,7 +8,7 @@ import {
 	ShieldCheck,
 } from "lucide-react";
 
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import  type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 type ConfirmCoinModalProps = {
 	isOpen: boolean;

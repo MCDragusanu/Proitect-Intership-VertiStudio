@@ -1,4 +1,4 @@
-import Coin from "@/src/shared/coin";
+import type Coin from "@/src/shared/coin";
 import CoinDao from "../database/CoinDao";
 import { getModule } from "../module";
 

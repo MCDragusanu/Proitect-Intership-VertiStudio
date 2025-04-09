@@ -1,5 +1,5 @@
 import { getModule } from "../../module";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import { computeBitSlow } from "@/src/bitslow";
 export const GetCoinById = async (coinId: number): Promise<any> => {
 	try {

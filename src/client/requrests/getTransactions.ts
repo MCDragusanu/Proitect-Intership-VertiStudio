@@ -1,5 +1,5 @@
-import { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
-import { TransactionFilters } from "../components/ui/TransactionFilter";
+import type { TransactionDTO } from "@/src/shared/DataTransferObjects/TransactionDTO";
+import type { TransactionFilters } from "../components/ui/TransactionFilter";
 
 const ENDPOINT_URL = "http://localhost:3000/api/transactions/v2";
 

@@ -1,4 +1,4 @@
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
+import type { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 
 const ENDPOINT_URL = "http://localhost:3000/api/coins";
 

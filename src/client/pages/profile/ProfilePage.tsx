@@ -5,15 +5,11 @@ import TransactionLoader from "../../components/ui/TransactionLoader";
 import TransactionTable from "../../components/ui/TransactionTable";
 import { TransactionFilter } from "../../components/ui/TransactionFilter";
 import { useNavigate } from "react-router-dom";
-import { fetchAccessToken } from "../../requrests/RefreshToken";
-import CoinCard from "../../components/ui/CoinCard";
-import { CoinDTO } from "@/src/shared/DataTransferObjects/CoinDTO";
 import CoinHistoryModal from "../../components/ui/CoinHistory";
 import { logoutUser } from "../../requrests/UserLogout";
 import { useCoinHistory } from "../../components/hooks/CoinHistory";
 import { useTransactions as useLoadUserTransactions } from "../../components/hooks/LoadUserTransactions";
 import { useProfileInformation } from "../../components/hooks/LoadUserInformation";
-import { parseToken } from "../../requrests/parseJWT";
 
 import {
 	User,
